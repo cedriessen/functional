@@ -52,7 +52,7 @@ public final class JObjectWrite implements JValue, Iterable<JField> {
   public JObjectWrite merge(Iterable<JField> obj) {
     final Map<String, JField> m = Stream.$(Stream.$(this).append(obj).groupMulti(Jsons.keyOfFieldFn).values())
             .foldl(new HashMap<String, JField>(), new Fn2<HashMap<String, JField>, List<JField>, HashMap<String, JField>>() {
-              @Override public HashMap<String, JField> _(HashMap<String, JField> sum, List<JField> fields) {
+              @Override public HashMap<String, JField> ap(HashMap<String, JField> sum, List<JField> fields) {
                 // list "fields" has at least one element
                 final JField head = fields.get(0);
                 if (fields.size() > 1) {

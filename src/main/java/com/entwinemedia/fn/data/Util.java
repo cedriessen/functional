@@ -26,7 +26,7 @@ public final class Util {
   }
 
   private static final Fn2<Integer, Collection, Integer> sumSizeFn = new Fn2<Integer, Collection, Integer>() {
-    @Override public Integer _(Integer sum, Collection xs) {
+    @Override public Integer ap(Integer sum, Collection xs) {
       return sum + xs.size();
     }
   };

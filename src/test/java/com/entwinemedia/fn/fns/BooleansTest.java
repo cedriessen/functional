@@ -24,28 +24,28 @@ import org.junit.Test;
 public class BooleansTest {
   @Test
   public void test() throws Exception {
-    assertTrue(Booleans.<Integer, Integer>lt()._(10, 20));
+    assertTrue(Booleans.<Integer, Integer>lt().ap(10, 20));
     assertTrue(Booleans.<Integer, Integer>lt(20).ap(10));
-    assertFalse(Booleans.<Integer, Integer>lt()._(20, 10));
+    assertFalse(Booleans.<Integer, Integer>lt().ap(20, 10));
     assertFalse(Booleans.<Integer, Integer>lt(10).ap(20));
     //
-    assertTrue(Booleans.<Integer, Integer>le()._(10, 20));
+    assertTrue(Booleans.<Integer, Integer>le().ap(10, 20));
     assertTrue(Booleans.<Integer, Integer>le(20).ap(10));
-    assertFalse(Booleans.<Integer, Integer>le()._(20, 10));
+    assertFalse(Booleans.<Integer, Integer>le().ap(20, 10));
     assertFalse(Booleans.<Integer, Integer>le(10).ap(20));
-    assertTrue(Booleans.<Integer, Integer>le()._(10, 10));
+    assertTrue(Booleans.<Integer, Integer>le().ap(10, 10));
     assertTrue(Booleans.<Integer, Integer>le(10).ap(10));
     //
-    assertTrue(Booleans.<Integer, Integer>gt()._(20, 10));
+    assertTrue(Booleans.<Integer, Integer>gt().ap(20, 10));
     assertTrue(Booleans.<Integer, Integer>gt(10).ap(20));
-    assertFalse(Booleans.<Integer, Integer>gt()._(10, 20));
+    assertFalse(Booleans.<Integer, Integer>gt().ap(10, 20));
     assertFalse(Booleans.<Integer, Integer>gt(20).ap(10));
     //
-    assertTrue(Booleans.<Integer, Integer>ge()._(20, 10));
+    assertTrue(Booleans.<Integer, Integer>ge().ap(20, 10));
     assertTrue(Booleans.<Integer, Integer>ge(10).ap(20));
-    assertFalse(Booleans.<Integer, Integer>ge()._(10, 20));
+    assertFalse(Booleans.<Integer, Integer>ge().ap(10, 20));
     assertFalse(Booleans.<Integer, Integer>ge(20).ap(10));
-    assertTrue(Booleans.<Integer, Integer>ge()._(10, 10));
+    assertTrue(Booleans.<Integer, Integer>ge().ap(10, 10));
     assertTrue(Booleans.<Integer, Integer>ge(10).ap(10));
   }
 }

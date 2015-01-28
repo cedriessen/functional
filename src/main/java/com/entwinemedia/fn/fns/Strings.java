@@ -139,7 +139,7 @@ public final class Strings {
   public static final StreamOp<String, String> removeBlankSO = StreamOp.<String>id().filter(isNotBlank);
 
   public static final Fn2<String, String, String> concat = new Fn2<String, String, String>() {
-    @Override public String _(String a, String b) {
+    @Override public String ap(String a, String b) {
       return a + b;
     }
   };

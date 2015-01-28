@@ -42,7 +42,7 @@ public final class Monoids {
     return new Monoid<List<A>>(builder.<A>nil(), new Fn2<List<A>, List<A>, List<A>>() {
       @Override
       @SuppressWarnings("unchecked")
-      public List<A> _(List<A> a, List<A> b) {
+      public List<A> ap(List<A> a, List<A> b) {
         return builder.concat2(a, b);
       }
     });
@@ -52,7 +52,7 @@ public final class Monoids {
     return new Monoid<Set<A>>(builder.<A>empty(), new Fn2<Set<A>, Set<A>, Set<A>>() {
       @Override
       @SuppressWarnings("unchecked")
-      public Set<A> _(Set<A> a, Set<A> b) {
+      public Set<A> ap(Set<A> a, Set<A> b) {
         return builder.concat(a, b);
       }
     });

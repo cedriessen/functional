@@ -33,7 +33,7 @@ public final class Monoid<A> {
 
   /** An associative operation. */
   public A op(A a, A b) {
-    return op._(a, b);
+    return op.ap(a, b);
   }
 
   /** An associative operation. */

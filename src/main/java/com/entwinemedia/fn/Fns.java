@@ -123,7 +123,7 @@ public final class Fns {
       @Override public Fn<B, C> ap(final A a) {
         return new Fn<B, C>() {
           @Override public C ap(B b) {
-            return f._(a, b);
+            return f.ap(a, b);
           }
         };
       }
@@ -133,7 +133,7 @@ public final class Fns {
   /** Uncurry to a function of arity 2. */
   public static <A, B, C> Fn2<A, B, C> uncurry(final Fn<A, Fn<B, C>> f) {
     return new Fn2<A, B, C>() {
-      @Override public C _(A a, B b) {
+      @Override public C ap(A a, B b) {
         return f.ap(a).ap(b);
       }
     };
@@ -142,8 +142,8 @@ public final class Fns {
   /** Flip arguments of a function of arity 2. */
   public static <A, B, C> Fn2<B, A, C> flip(final Fn2<? super A, ? super B, ? extends C> f) {
     return new Fn2<B, A, C>() {
-      @Override public C _(B b, A a) {
-        return f._(a, b);
+      @Override public C ap(B b, A a) {
+        return f.ap(a, b);
       }
     };
   }
@@ -152,7 +152,7 @@ public final class Fns {
   public static <A, B, C> Fn<B, C> _1p(final Fn2<? super A, ? super B, ? extends C> f, final A a) {
     return new Fn<B, C>() {
       @Override public C ap(B b) {
-        return f._(a, b);
+        return f.ap(a, b);
       }
     };
   }
@@ -161,7 +161,7 @@ public final class Fns {
   public static <A, B, C> Fn<A, C> _2p(final Fn2<? super A, ? super B, ? extends C> f, final B b) {
     return new Fn<A, C>() {
       @Override public C ap(A a) {
-        return f._(a, b);
+        return f.ap(a, b);
       }
     };
   }

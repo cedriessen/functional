@@ -19,7 +19,7 @@ package com.entwinemedia.fn;
 /** Binary function. */
 public abstract class Fn2<A, B, C> {
   /** Function application. */
-  public abstract C _(A a, B b);
+  public abstract C ap(A a, B b);
 
   public Fn<A, Fn<B, C>> curry() {
     return Fns.curry(this);

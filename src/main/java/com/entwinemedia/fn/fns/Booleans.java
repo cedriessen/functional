@@ -43,7 +43,7 @@ public final class Booleans {
 
   public static <A extends Comparable<A>, B extends A> Fn2<A, B, Boolean> lt() {
     return new Fn2<A, B, Boolean>() {
-      @Override public Boolean _(A a, B b) {
+      @Override public Boolean ap(A a, B b) {
         return a.compareTo(b) < 0;
       }
     };
@@ -59,7 +59,7 @@ public final class Booleans {
 
   public static <A extends Comparable<A>, B extends A> Fn2<A, B, Boolean> le() {
     return new Fn2<A, B, Boolean>() {
-      @Override public Boolean _(A a, B b) {
+      @Override public Boolean ap(A a, B b) {
         return a.compareTo(b) <= 0;
       }
     };
@@ -75,7 +75,7 @@ public final class Booleans {
 
   public static <A extends Comparable<A>, B extends A> Fn2<A, B, Boolean> gt() {
     return new Fn2<A, B, Boolean>() {
-      @Override public Boolean _(A a, B b) {
+      @Override public Boolean ap(A a, B b) {
         return a.compareTo(b) > 0;
       }
     };
@@ -91,7 +91,7 @@ public final class Booleans {
 
   public static <A extends Comparable<A>, B extends A> Fn2<A, B, Boolean> ge() {
     return new Fn2<A, B, Boolean>() {
-      @Override public Boolean _(A a, B b) {
+      @Override public Boolean ap(A a, B b) {
         return a.compareTo(b) >= 0;
       }
     };
@@ -107,7 +107,7 @@ public final class Booleans {
 
   public static <A, B> Fn2<A, B, Boolean> eq() {
     return new Fn2<A, B, Boolean>() {
-      @Override public Boolean _(A a, B b) {
+      @Override public Boolean ap(A a, B b) {
         return a.equals(b);
       }
     };
@@ -123,7 +123,7 @@ public final class Booleans {
 
   public static <A, B> Fn2<A, B, Boolean> ne() {
     return new Fn2<A, B, Boolean>() {
-      @Override public Boolean _(A a, B b) {
+      @Override public Boolean ap(A a, B b) {
         return !a.equals(b);
       }
     };

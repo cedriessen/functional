@@ -88,7 +88,7 @@ public final class Bool {
           @Override public Parser<B> ap(final Fn2<A, A, B> op) {
             return value.bind(new Fn<A, Parser<B>>() {
               @Override public Parser<B> ap(A b) {
-                return Parsers.yield(op._(a, b));
+                return Parsers.yield(op.ap(a, b));
               }
             });
           }
@@ -109,7 +109,7 @@ public final class Bool {
             .or(Parsers.bool);
     // enrich boolean base value parser
     final Parser<Boolean> value = $(valueParser).foldl(valueBase, new Fn2<Parser<Boolean>, Parser<Boolean>, Parser<Boolean>>() {
-      @Override public Parser<Boolean> _(Parser<Boolean> sum, Parser<Boolean> p) {
+      @Override public Parser<Boolean> ap(Parser<Boolean> sum, Parser<Boolean> p) {
         return sum.or(p);
       }
     });

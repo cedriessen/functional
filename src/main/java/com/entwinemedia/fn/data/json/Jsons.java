@@ -49,7 +49,7 @@ public final class Jsons {
             .foldl(new HashMap<String, JField>(),
                    new Fn2<HashMap<String, JField>, Entry<String, JValue>, HashMap<String, JField>>() {
                      @Override
-                     public HashMap<String, JField> _(HashMap<String, JField> sum, Entry<String, JValue> e) {
+                     public HashMap<String, JField> ap(HashMap<String, JField> sum, Entry<String, JValue> e) {
                        sum.put(e.getKey(), f(e.getKey(), e.getValue()));
                        return sum;
                      }

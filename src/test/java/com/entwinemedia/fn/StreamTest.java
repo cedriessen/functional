@@ -593,7 +593,7 @@ public class StreamTest {
 
   private static <A, B> Fn2<Map<A, B>, Entry<A, B>, Map<A, B>> mapFold() {
     return new Fn2<Map<A, B>, Entry<A, B>, Map<A, B>>() {
-      @Override public Map<A, B> _(Map<A, B> sum, Entry<A, B> a) {
+      @Override public Map<A, B> ap(Map<A, B> sum, Entry<A, B> a) {
         sum.put(a.getKey(), a.getValue());
         return sum;
       }
