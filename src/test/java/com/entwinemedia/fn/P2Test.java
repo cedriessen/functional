@@ -16,9 +16,9 @@
 
 package com.entwinemedia.fn;
 
+import static com.entwinemedia.fn.Equality.eq;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static com.entwinemedia.fn.Equality.eq;
 
 import org.junit.Test;
 
@@ -27,11 +27,11 @@ public class P2Test {
   public void testEquality1() {
     final P2<Integer, String> x = Products.E.p2(1, "2");
     final P2<Integer, String> y = new P2<Integer, String>() {
-      @Override public Integer _1() {
+      @Override public Integer get1() {
         return 1;
       }
 
-      @Override public String _2() {
+      @Override public String get2() {
         return "2";
       }
     };
@@ -75,11 +75,11 @@ public class P2Test {
       this.hint = hint;
     }
 
-    @Override public A _1() {
+    @Override public A get1() {
       return _1;
     }
 
-    @Override public B _2() {
+    @Override public B get2() {
       return _2;
     }
 

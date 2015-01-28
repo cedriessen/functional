@@ -94,7 +94,7 @@ public final class Parsers {
       @Override public Parser<P3<A, B, C>> ap(final P2<A, B> a) {
         return p.bind(new Fn<C, Parser<P3<A, B, C>>>() {
           @Override public Parser<P3<A, B, C>> ap(C c) {
-            return yield(Products.E.p3(a._1(), a._2(), c));
+            return yield(Products.E.p3(a.get1(), a.get2(), c));
           }
         });
       }

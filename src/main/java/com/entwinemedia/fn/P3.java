@@ -21,9 +21,11 @@ import static com.entwinemedia.fn.Equality.hash;
 
 /** Product of arity 3. */
 public abstract class P3<A, B, C> {
-  public abstract A _1();
-  public abstract B _2();
-  public abstract C _3();
+  public abstract A get1();
+
+  public abstract B get2();
+
+  public abstract C get3();
 
   @Override public boolean equals(Object that) {
     return (this == that) || (that instanceof P3 && eqFields((P3) that));
@@ -34,14 +36,14 @@ public abstract class P3<A, B, C> {
   }
 
   private boolean eqFields(P3 that) {
-    return that.canEqual(this) && eq(_1(), that._1()) && eq(_2(), that._2()) && eq(_3(), that._3());
+    return that.canEqual(this) && eq(get1(), that.get1()) && eq(get2(), that.get2()) && eq(get3(), that.get3());
   }
 
   @Override public int hashCode() {
-    return hash(_1(), _2(), _3());
+    return hash(get1(), get2(), get3());
   }
 
   @Override public String toString() {
-    return "(" + _1() + "," + _2() + "," + _3() + ")";
+    return "(" + get1() + "," + get2() + "," + get3() + ")";
   }
 }

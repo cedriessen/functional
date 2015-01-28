@@ -21,7 +21,7 @@ import static com.entwinemedia.fn.Equality.hash;
 
 /** Product of arity 1. */
 public abstract class P1<A> {
-  public abstract A _1();
+  public abstract A get1();
 
   public abstract <B> P1<B> fmap(final Fn<? super A, ? extends B> f);
 
@@ -32,7 +32,7 @@ public abstract class P1<A> {
   }
 
   private boolean eqFields(P1 that) {
-    return that.canEqual(this) && eq(_1(), that._1());
+    return that.canEqual(this) && eq(get1(), that.get1());
   }
 
   public boolean canEqual(Object that) {
@@ -40,10 +40,10 @@ public abstract class P1<A> {
   }
 
   @Override public int hashCode() {
-    return hash(_1());
+    return hash(get1());
   }
 
   @Override public String toString() {
-    return "(" + _1() + ")";
+    return "(" + get1() + ")";
   }
 }

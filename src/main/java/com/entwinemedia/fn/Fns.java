@@ -333,7 +333,7 @@ public final class Fns {
 //    return new Fn<P2<A, B>, C>() {
 //      @Override
 //      public C p4(P2<A, B> t) {
-//        return f.p4(t._1(), t._2());
+//        return f.p4(t._1(), t.get2());
 //      }
 //    };
 //  }

@@ -51,25 +51,25 @@ public abstract class Opt<A> implements Iterable<A> {
     if (isSome()) {
       return some.ap(get());
     } else {
-      return none._1();
+      return none.get1();
     }
   }
 
   public <B> B fold(P1<? extends B> some, P1<? extends B> none) {
     // cannot be written using the ternary operator ?: because of type inference issues
     if (isSome()) {
-      return some._1();
+      return some.get1();
     } else {
-      return none._1();
+      return none.get1();
     }
   }
 
   public <B> B fold(P2<? extends B, ? extends B> someNone) {
     // cannot be written using the ternary operator ?: because of type inference issues
     if (isSome()) {
-      return someNone._1();
+      return someNone.get1();
     } else {
-      return someNone._2();
+      return someNone.get2();
     }
   }
 
@@ -142,7 +142,7 @@ public abstract class Opt<A> implements Iterable<A> {
 
   /** Get the contained value in case of being "some" or return the result of evaluating <code>none</code> otherwise. */
   public A or(P1<A> none) {
-    return isSome() ? get() : none._1();
+    return isSome() ? get() : none.get1();
   }
 
   /** To interface with legacy applications or frameworks that still use <code>null</code> values. */

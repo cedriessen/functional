@@ -27,15 +27,15 @@ public class EagerProductBuilder implements ProductBuilder {
 
   @Override public <A, B, C> P3<A, B, C> p3(final A a, final B b, final C c) {
     return new P3<A, B, C>() {
-      @Override public A _1() {
+      @Override public A get1() {
         return a;
       }
 
-      @Override public B _2() {
+      @Override public B get2() {
         return b;
       }
 
-      @Override public C _3() {
+      @Override public C get3() {
         return c;
       }
     };
@@ -43,19 +43,19 @@ public class EagerProductBuilder implements ProductBuilder {
 
   @Override public <A, B, C, D> P4<A, B, C, D> p4(final A a, final B b, final C c, final D d) {
     return new P4<A, B, C, D>() {
-      @Override public A _1() {
+      @Override public A get1() {
         return a;
       }
 
-      @Override public B _2() {
+      @Override public B get2() {
         return b;
       }
 
-      @Override public C _3() {
+      @Override public C get3() {
         return c;
       }
 
-      @Override public D _4() {
+      @Override public D get4() {
         return d;
       }
     };

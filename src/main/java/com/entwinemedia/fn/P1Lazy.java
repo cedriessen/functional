@@ -19,7 +19,7 @@ package com.entwinemedia.fn;
 import static com.entwinemedia.fn.Equality.eq;
 
 /**
- * Implementation of {@link P1} with lazy evaluation of the encapsulated value {@link P1#_1()}.
+ * Implementation of {@link P1} with lazy evaluation of the encapsulated value {@link P1#get1()}.
  */
 public abstract class P1Lazy<A> extends P1<A> {
   public P1Lazy() {
@@ -27,7 +27,7 @@ public abstract class P1Lazy<A> extends P1<A> {
 
   public static <A> P1<A> p(final A a) {
     return new P1Lazy<A>() {
-      @Override public A _1() {
+      @Override public A get1() {
         return a;
       }
     };
@@ -35,35 +35,35 @@ public abstract class P1Lazy<A> extends P1<A> {
 
   @Override public <B> P1<B> fmap(final Fn<? super A, ? extends B> f) {
     return new P1Lazy<B>() {
-      @Override public B _1() {
-        return f.ap(P1Lazy.this._1());
+      @Override public B get1() {
+        return f.ap(P1Lazy.this.get1());
       }
     };
   }
 
   @Override public <B> P1<B> bind(final Fn<? super A, P1<B>> f) {
     return new P1Lazy<B>() {
-      @Override public B _1() {
-        return f.ap(P1Lazy.this._1())._1();
+      @Override public B get1() {
+        return f.ap(P1Lazy.this.get1()).get1();
       }
     };
   }
 
-  /** Evaluate {@link #_1()} and memoize it. */
+  /** Evaluate {@link #get1()} and memoize it. */
   public P1<A> memo() {
-    final A a = _1();
+    final A a = get1();
     return new P1Lazy<A>() {
-      @Override public A _1() {
+      @Override public A get1() {
         return a;
       }
     };
   }
 
   @Override public int hashCode() {
-    return _1().hashCode();
+    return get1().hashCode();
   }
 
   @Override public boolean equals(Object o) {
-    return o instanceof P1 && eq(_1(), ((P1) o)._1());
+    return o instanceof P1 && eq(get1(), ((P1) o).get1());
   }
 }

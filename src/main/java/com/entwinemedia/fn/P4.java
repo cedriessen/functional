@@ -16,14 +16,15 @@
 
 package com.entwinemedia.fn;
 
-import static com.entwinemedia.fn.Equality.hash;
-
 /** Product of arity 4. */
 public abstract class P4<A, B, C, D> {
-  public abstract A _1();
-  public abstract B _2();
-  public abstract C _3();
-  public abstract D _4();
+  public abstract A get1();
+
+  public abstract B get2();
+
+  public abstract C get3();
+
+  public abstract D get4();
 
 
   @Override public boolean equals(Object that) {
@@ -36,14 +37,14 @@ public abstract class P4<A, B, C, D> {
 
   private boolean eqFields(P4 that) {
     return that.canEqual(this)
-            && Equality.eq(_1(), that._1()) && Equality.eq(_2(), that._2()) && Equality.eq(_3(), that._3()) && Equality.eq(_4(), that._4());
+            && Equality.eq(get1(), that.get1()) && Equality.eq(get2(), that.get2()) && Equality.eq(get3(), that.get3()) && Equality.eq(get4(), that.get4());
   }
 
   @Override public int hashCode() {
-    return Equality.hash(_1(), _2(), _3(), _4());
+    return Equality.hash(get1(), get2(), get3(), get4());
   }
 
   @Override public String toString() {
-    return "(" + _1() + "," + _2() + "," + _3() + "," + _4() + ")";
+    return "(" + get1() + "," + get2() + "," + get3() + "," + get4() + ")";
   }
 }

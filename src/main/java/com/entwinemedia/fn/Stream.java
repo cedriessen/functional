@@ -159,7 +159,7 @@ public abstract class Stream<A> implements Iterable<A> {
           }
 
           @Override public A next() {
-            return p._1();
+            return p.get1();
           }
         };
       }

@@ -27,7 +27,7 @@ public final class Products {
   public static <A> Fn<P1<A>, A> p1_1() {
     return new Fn<P1<A>, A>() {
       @Override public A ap(P1<A> p) {
-        return p._1();
+        return p.get1();
       }
     };
   }
@@ -35,7 +35,7 @@ public final class Products {
   public static <A> Fn<P2<A, ?>, A> p2_1() {
     return new Fn<P2<A, ?>, A>() {
       @Override public A ap(P2<A, ?> p) {
-        return p._1();
+        return p.get1();
       }
     };
   }
@@ -43,7 +43,7 @@ public final class Products {
   public static <B> Fn<P2<?, B>, B> p2_2() {
     return new Fn<P2<?, B>, B>() {
       @Override public B ap(P2<?, B> p) {
-        return p._2();
+        return p.get2();
       }
     };
   }

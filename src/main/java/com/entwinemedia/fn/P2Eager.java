@@ -25,11 +25,11 @@ public final class P2Eager<A, B> extends P2<A, B> {
     this.b = b;
   }
 
-  @Override public A _1() {
+  @Override public A get1() {
     return a;
   }
 
-  @Override public B _2() {
+  @Override public B get2() {
     return b;
   }
 }

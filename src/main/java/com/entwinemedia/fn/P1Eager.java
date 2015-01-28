@@ -17,7 +17,7 @@
 package com.entwinemedia.fn;
 
 /**
- * Implementation of {@link P1} with eager evaluation of the encapsulated value {@link P1#_1()}.
+ * Implementation of {@link P1} with eager evaluation of the encapsulated value {@link P1#get1()}.
  */
 public final class P1Eager<A> extends P1<A> {
   private final A a;
@@ -30,7 +30,7 @@ public final class P1Eager<A> extends P1<A> {
     return new P1Eager<A>(a);
   }
 
-  @Override public A _1() {
+  @Override public A get1() {
     return a;
   }
 
