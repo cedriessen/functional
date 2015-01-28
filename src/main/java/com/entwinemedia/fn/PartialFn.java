@@ -21,14 +21,14 @@ import com.entwinemedia.fn.data.Opt;
 /** A partial function. Partial functions are not defined at any argument. */
 public abstract class PartialFn<A, B> extends Fn<A, B> {
   /** @return null to indicate that the function is not defined at <code>a</code>. */
-  protected abstract B __(A a);
+  protected abstract B partial(A a);
 
   public Opt<B> isDefinedAt(A a) {
-    return Opt.nul(__(a));
+    return Opt.nul(partial(a));
   }
 
   @Override public final B ap(A a) {
-    final B b = __(a);
+    final B b = partial(a);
     if (b != null) {
       return b;
     } else {
@@ -38,9 +38,9 @@ public abstract class PartialFn<A, B> extends Fn<A, B> {
 
   public PartialFn<A, B> or(final PartialFn<? super A, ? extends B> f) {
     return new PartialFn<A, B>() {
-      @Override public B __(A a) {
-        final B b = PartialFn.this.__(a);
-        return b != null ? b : f.__(a);
+      @Override public B partial(A a) {
+        final B b = PartialFn.this.partial(a);
+        return b != null ? b : f.partial(a);
       }
     };
   }
@@ -49,7 +49,7 @@ public abstract class PartialFn<A, B> extends Fn<A, B> {
   public Fn<A, Opt<B>> lift() {
     return new Fn<A, Opt<B>>() {
       @Override public Opt<B> ap(A a) {
-        return Opt.nul(PartialFn.this.__(a));
+        return Opt.nul(PartialFn.this.partial(a));
       }
     };
   }

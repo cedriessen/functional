@@ -16,6 +16,9 @@
 
 package com.entwinemedia.fn;
 
+import static com.entwinemedia.fn.Prelude.chuck;
+import static com.entwinemedia.fn.Stream.$;
+import static com.entwinemedia.fn.fns.Booleans.eq;
 import static java.lang.String.format;
 import static org.hamcrest.Matchers.arrayContaining;
 import static org.hamcrest.Matchers.contains;
@@ -28,20 +31,15 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static com.entwinemedia.fn.Prelude.chuck;
-import static com.entwinemedia.fn.Stream.$;
-import static com.entwinemedia.fn.data.Opt.none;
-import static com.entwinemedia.fn.fns.Booleans.eq;
 
 import com.entwinemedia.fn.data.ImmutableListWrapper;
 import com.entwinemedia.fn.data.ListBuilder;
 import com.entwinemedia.fn.data.ListBuilders;
+import com.entwinemedia.fn.data.Opt;
 import com.entwinemedia.fn.data.SetB;
 import com.entwinemedia.fn.fns.Booleans;
 import com.entwinemedia.fn.fns.Numbers;
 import com.entwinemedia.fn.fns.Strings;
-
-import com.entwinemedia.fn.data.Opt;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import org.junit.FixMethodOrder;
@@ -517,17 +515,17 @@ public class StreamTest {
   @Test
   public void testFindMap() {
     PartialFn<Integer, String> greater3 = new PartialFn<Integer, String>() {
-      @Override protected String __(Integer integer) {
+      @Override protected String partial(Integer integer) {
         return integer > 3 ? "greater than three" : null;
       }
     };
     PartialFn<Number, String> equals2 = new PartialFn<Number, String>() {
-      @Override protected String __(Number number) {
+      @Override protected String partial(Number number) {
         return number.intValue() == 2 ? "equals two" : null;
       }
     };
     PartialFn<Number, String> less2 = new PartialFn<Number, String>() {
-      @Override protected String __(Number number) {
+      @Override protected String partial(Number number) {
         return number.intValue() < 2 ? "less than two" : null;
       }
     };
