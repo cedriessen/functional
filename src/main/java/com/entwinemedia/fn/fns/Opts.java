@@ -26,7 +26,7 @@ public final class Opts {
 
   public static <A> Fn<Opt<A>, A> or(final A a) {
     return new Fn<Opt<A>, A>() {
-      @Override public A _(Opt<A> o) {
+      @Override public A ap(Opt<A> o) {
         return o.or(a);
       }
     };

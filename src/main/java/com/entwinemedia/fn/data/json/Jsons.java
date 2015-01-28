@@ -112,7 +112,7 @@ public final class Jsons {
 
   public static <A> Fn<JPrimitive<A>, A> valueFn() {
     return new Fn<JPrimitive<A>, A>() {
-      @Override public A _(JPrimitive<A> j) {
+      @Override public A ap(JPrimitive<A> j) {
         return j.getValue();
       }
     };

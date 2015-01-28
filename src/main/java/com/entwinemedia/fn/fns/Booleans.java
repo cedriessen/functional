@@ -51,7 +51,7 @@ public final class Booleans {
 
   public static <A extends Comparable<A>, B extends A> Pred<A> lt(final B b) {
     return new Pred<A>() {
-      @Override public Boolean _(A a) {
+      @Override public Boolean ap(A a) {
         return a.compareTo(b) < 0;
       }
     };
@@ -67,7 +67,7 @@ public final class Booleans {
 
   public static <A extends Comparable<A>, B extends A> Pred<A> le(final B b) {
     return new Pred<A>() {
-      @Override public Boolean _(A a) {
+      @Override public Boolean ap(A a) {
         return a.compareTo(b) <= 0;
       }
     };
@@ -83,7 +83,7 @@ public final class Booleans {
 
   public static <A extends Comparable<A>, B extends A> Pred<A> gt(final B b) {
     return new Pred<A>() {
-      @Override public Boolean _(A a) {
+      @Override public Boolean ap(A a) {
         return a.compareTo(b) > 0;
       }
     };
@@ -99,7 +99,7 @@ public final class Booleans {
 
   public static <A extends Comparable<A>, B extends A> Pred<A> ge(final B b) {
     return new Pred<A>() {
-      @Override public Boolean _(A a) {
+      @Override public Boolean ap(A a) {
         return a.compareTo(b) >= 0;
       }
     };
@@ -115,7 +115,7 @@ public final class Booleans {
 
   public static <A> Pred<A> eq(final A b) {
     return new Pred<A>() {
-      @Override public Boolean _(A a) {
+      @Override public Boolean ap(A a) {
         return a.equals(b);
       }
     };
@@ -134,7 +134,7 @@ public final class Booleans {
 
   public static <A> Pred<A> or(final Fn<? super A, Boolean> p1, final Fn<? super A, Boolean> p2) {
     return new Pred<A>() {
-      @Override public Boolean _(A a) {
+      @Override public Boolean ap(A a) {
         return p1.ap(a) || p2.ap(a);
       }
     };
@@ -142,7 +142,7 @@ public final class Booleans {
 
   public static <A> Pred<A> and(final Fn<? super A, Boolean> p1, final Fn<? super A, Boolean> p2) {
     return new Pred<A>() {
-      @Override public Boolean _(A a) {
+      @Override public Boolean ap(A a) {
         return p1.ap(a) && p2.ap(a);
       }
     };
@@ -150,7 +150,7 @@ public final class Booleans {
 
   public static <A> Pred<A> not(final Fn<? super A, Boolean> p) {
     return new Pred<A>() {
-      @Override public Boolean _(A a) {
+      @Override public Boolean ap(A a) {
         return !p.ap(a);
       }
     };
@@ -164,7 +164,7 @@ public final class Booleans {
 
   public static <A> Pred<A> all(final Fn<? super A, Boolean>... ps) {
     return new Pred<A>() {
-      @Override public Boolean _(A a) {
+      @Override public Boolean ap(A a) {
         for (Fn<? super A, Boolean> p : ps) {
           if (!p.ap(a)) {
             return false;
@@ -177,7 +177,7 @@ public final class Booleans {
 
   public static <A> Pred<A> one(final Fn<? super A, Boolean>... ps) {
     return new Pred<A>() {
-      @Override public Boolean _(A a) {
+      @Override public Boolean ap(A a) {
         for (Fn<? super A, Boolean> p : ps) {
           if (p.ap(a)) {
             return true;
