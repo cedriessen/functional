@@ -31,12 +31,12 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
   private static final ProductBuilder p = Products.E;
 
   /** Apply the operation to stream <code>s</code>. */
-  public abstract Stream<B> _(Stream<? extends A> s);
+  public abstract Stream<B> ap(Stream<? extends A> s);
 
   /** Create a new identity stream operation. */
   public static <A> StreamOp<A, A> id() {
     return new StreamOp<A, A>() {
-      @Override public Stream<A> _(final Stream<? extends A> s) {
+      @Override public Stream<A> ap(final Stream<? extends A> s) {
         return new Stream<A>(s.getSizeHint()) {
           @Override public Iterator<A> iterator() {
             return (Iterator<A>) s.iterator();
@@ -55,8 +55,8 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
    */
   public <C> StreamOp<C, B> compose(final StreamOp<? super C, ? extends A> op) {
     return new StreamOp<C, B>() {
-      @Override public Stream<B> _(Stream<? extends C> s) {
-        return StreamOp.this._(op._(s));
+      @Override public Stream<B> ap(Stream<? extends C> s) {
+        return StreamOp.this.ap(op.ap(s));
       }
     };
   }
@@ -70,7 +70,7 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
   public <C> StreamFold<A, C> then(final StreamFold<? super B, ? extends C> fold) {
     return new StreamFold<A, C>() {
       @Override public C _(Stream<? extends A> s) {
-        return fold._(StreamOp.this._(s));
+        return fold._(StreamOp.this.ap(s));
       }
     };
   }
@@ -78,8 +78,8 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
   /** Map function <code>f</code> over the elements of a stream. */
   public <C> StreamOp<A, C> fmap(final Fn<? super B, ? extends C> f) {
     return new StreamOp<A, C>() {
-      @Override public Stream<C> _(final Stream<? extends A> s) {
-        return StreamOp.fmap(f, StreamOp.this._(s));
+      @Override public Stream<C> ap(final Stream<? extends A> s) {
+        return StreamOp.fmap(f, StreamOp.this.ap(s));
       }
     };
   }
@@ -90,7 +90,7 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
       @Override public Iterator<B> iterator() {
         return new Iterate<A, B>(s.iterator()) {
           @Override protected B _(A b) {
-            return f._(b);
+            return f.ap(b);
           }
         };
       }
@@ -100,8 +100,8 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
   /** Map function <code>f</code> over the elements of a stream and concatenate the results. */
   public <C> StreamOp<A, C> bind(final Fn<? super B, ? extends Iterable<C>> f) {
     return new StreamOp<A, C>() {
-      @Override public Stream<C> _(Stream<? extends A> s) {
-        return StreamOp.bind(f, StreamOp.this._(s));
+      @Override public Stream<C> ap(Stream<? extends A> s) {
+        return StreamOp.bind(f, StreamOp.this.ap(s));
       }
     };
   }
@@ -131,7 +131,7 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
 
           private Iterator<B> step() {
             while (!step.hasNext() && wrapped.hasNext()) {
-              step = f._(wrapped.next()).iterator();
+              step = f.ap(wrapped.next()).iterator();
             }
             return step;
           }
@@ -143,8 +143,8 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
   /** Take <code>n</code> elements from the head of a stream. */
   public StreamOp<A, B> take(final int n) {
     return new StreamOp<A, B>() {
-      @Override public Stream<B> _(final Stream<? extends A> s) {
-        return StreamOp.take(n, StreamOp.this._(s));
+      @Override public Stream<B> ap(final Stream<? extends A> s) {
+        return StreamOp.take(n, StreamOp.this.ap(s));
       }
     };
   }
@@ -172,8 +172,8 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
   /** Drop <code>n</code> elements from the head of a stream. */
   public StreamOp<A, B> drop(final int n) {
     return new StreamOp<A, B>() {
-      @Override public Stream<B> _(Stream<? extends A> s) {
-        return StreamOp.drop(n, StreamOp.this._(s));
+      @Override public Stream<B> ap(Stream<? extends A> s) {
+        return StreamOp.drop(n, StreamOp.this.ap(s));
       }
     };
   }
@@ -200,8 +200,8 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
 
   public StreamOp<A, B> dropWhile(final Fn<? super B, Boolean> p) {
     return new StreamOp<A, B>() {
-      @Override public Stream<B> _(Stream<? extends A> s) {
-        return StreamOp.dropWhile(p, StreamOp.this._(s));
+      @Override public Stream<B> ap(Stream<? extends A> s) {
+        return StreamOp.dropWhile(p, StreamOp.this.ap(s));
       }
     };
   }
@@ -215,7 +215,7 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
           @Override protected A _(A a) {
             if (take) {
               return a;
-            } else if (p._(a)) {
+            } else if (p.ap(a)) {
               return null;
             } else {
               take = true;
@@ -229,8 +229,8 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
 
   public StreamOp<A, P2<B, Integer>> zipWithIndex() {
     return new StreamOp<A, P2<B, Integer>>() {
-      @Override public Stream<P2<B, Integer>> _(Stream<? extends A> s) {
-        return zipWithIndex(StreamOp.this._(s));
+      @Override public Stream<P2<B, Integer>> ap(Stream<? extends A> s) {
+        return zipWithIndex(StreamOp.this.ap(s));
       }
     };
   }
@@ -251,8 +251,8 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
 
   public <C> StreamOp<A, P2<B, C>> zip(final Stream<? extends C> b) {
     return new StreamOp<A, P2<B, C>>() {
-      @Override public Stream<P2<B, C>> _(Stream<? extends A> s) {
-        return zip(b, StreamOp.this._(s));
+      @Override public Stream<P2<B, C>> ap(Stream<? extends A> s) {
+        return zip(b, StreamOp.this.ap(s));
       }
     };
   }
@@ -278,8 +278,8 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
   /** Take elements from the head of a stream until predicate <code>p</code> yields false. */
   public StreamOp<A, B> takeWhile(final Fn<? super B, Boolean> p) {
     return new StreamOp<A, B>() {
-      @Override public Stream<B> _(Stream<? extends A> s) {
-        return StreamOp.takeWhile(p, StreamOp.this._(s));
+      @Override public Stream<B> ap(Stream<? extends A> s) {
+        return StreamOp.takeWhile(p, StreamOp.this.ap(s));
       }
     };
   }
@@ -290,7 +290,7 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
       @Override public Iterator<A> iterator() {
         return new IdentityIterate<A>(s.iterator()) {
           @Override protected A _(A a) throws Exit {
-            return p._(a) ? a : StreamOp.<A>exit();
+            return p.ap(a) ? a : StreamOp.<A>exit();
           }
         };
       }
@@ -300,8 +300,8 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
   /** Keep all elements of a stream that match predicate <code>p</code>. */
   public StreamOp<A, B> filter(final Fn<? super B, Boolean> p) {
     return new StreamOp<A, B>() {
-      @Override public Stream<B> _(Stream<? extends A> s) {
-        return StreamOp.filter(p, StreamOp.this._(s));
+      @Override public Stream<B> ap(Stream<? extends A> s) {
+        return StreamOp.filter(p, StreamOp.this.ap(s));
       }
     };
   }
@@ -312,7 +312,7 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
       @Override public Iterator<A> iterator() {
         return new IdentityIterate<A>(s.iterator()) {
           @Override protected A _(A a) {
-            return p._(a) ? a : null;
+            return p.ap(a) ? a : null;
           }
         };
       }
@@ -322,8 +322,8 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
   /** Reverse a stream. */
   public StreamOp<A, B> reverse() {
     return new StreamOp<A, B>() {
-      @Override public Stream<B> _(Stream<? extends A> s) {
-        return StreamOp.reverse(StreamOp.this._(s));
+      @Override public Stream<B> ap(Stream<? extends A> s) {
+        return StreamOp.reverse(StreamOp.this.ap(s));
       }
     };
   }
@@ -344,8 +344,8 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
   /** Sort a stream. */
   public StreamOp<A, B> sort(final Comparator<B> order) {
     return new StreamOp<A, B>() {
-      @Override public Stream<B> _(Stream<? extends A> s) {
-        return StreamOp.sort(order, StreamOp.this._(s));
+      @Override public Stream<B> ap(Stream<? extends A> s) {
+        return StreamOp.sort(order, StreamOp.this.ap(s));
       }
     };
   }
@@ -365,7 +365,7 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
 
   public StreamOp<A, A> append(final Stream<? extends A> s) {
     return new StreamOp<A, A>() {
-      @Override public Stream<A> _(Stream<? extends A> u) {
+      @Override public Stream<A> ap(Stream<? extends A> u) {
         return StreamOp.append(u, s);
       }
     };
@@ -381,7 +381,7 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
 
   public StreamOp<A, A> append(final Iterable<? extends A> s) {
     return new StreamOp<A, A>() {
-      @Override public Stream<A> _(Stream<? extends A> u) {
+      @Override public Stream<A> ap(Stream<? extends A> u) {
         return StreamOp.append(u, s);
       }
     };
@@ -397,8 +397,8 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
 
   public StreamOp<A, B> inject(final B a) {
     return new StreamOp<A, B>() {
-      @Override public Stream<B> _(Stream<? extends A> s) {
-        return StreamOp.inject(a, StreamOp.this._(s));
+      @Override public Stream<B> ap(Stream<? extends A> s) {
+        return StreamOp.inject(a, StreamOp.this.ap(s));
       }
     };
   }
@@ -429,8 +429,8 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
 
   public StreamOp<A, B> wrap(final B pre, final B post) {
     return new StreamOp<A, B>() {
-      @Override public Stream<B> _(Stream<? extends A> s) {
-        return StreamOp.wrap(pre, post, StreamOp.this._(s));
+      @Override public Stream<B> ap(Stream<? extends A> s) {
+        return StreamOp.wrap(pre, post, StreamOp.this.ap(s));
       }
     };
   }
@@ -469,8 +469,8 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
 
   public StreamOp<A, B> each(final Fx<? super B> f) {
     return new StreamOp<A, B>() {
-      @Override public Stream<B> _(Stream<? extends A> s) {
-        return StreamOp.each(f, StreamOp.this._(s));
+      @Override public Stream<B> ap(Stream<? extends A> s) {
+        return StreamOp.each(f, StreamOp.this.ap(s));
       }
     };
   }
@@ -490,8 +490,8 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
 
   public <C> StreamOp<A, P2<C, B>> group(final Fn<? super B, ? extends C> key) {
     return new StreamOp<A, P2<C, B>>() {
-      @Override public Stream<P2<C, B>> _(Stream<? extends A> s) {
-        return StreamOp.group(key, StreamOp.this._(s));
+      @Override public Stream<P2<C, B>> ap(Stream<? extends A> s) {
+        return StreamOp.group(key, StreamOp.this.ap(s));
       }
     };
   }
@@ -506,8 +506,8 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
 
   public StreamOp<A, List<B>> partition(final int size) {
     return new StreamOp<A, List<B>>() {
-      @Override public Stream<List<B>> _(Stream<? extends A> s) {
-        return StreamOp.partition(size, StreamOp.this._(s));
+      @Override public Stream<List<B>> ap(Stream<? extends A> s) {
+        return StreamOp.partition(size, StreamOp.this.ap(s));
       }
     };
   }
@@ -549,8 +549,8 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
 
   public StreamOp<A, B> repeat(final int times) {
     return new StreamOp<A, B>() {
-      @Override public Stream<B> _(Stream<? extends A> s) {
-        return StreamOp.repeat(times, StreamOp.this._(s));
+      @Override public Stream<B> ap(Stream<? extends A> s) {
+        return StreamOp.repeat(times, StreamOp.this.ap(s));
       }
     };
   }

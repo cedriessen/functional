@@ -30,11 +30,11 @@ public class FnsTest {
   @Test
   public void testVary() throws Exception {
     final Fn<String, Number> f = Fns.<String, Number>vy(new Fn<Object, Integer>() {
-      @Override public Integer _(Object s) {
+      @Override public Integer ap(Object s) {
         return s.hashCode() + s.hashCode();
       }
     });
-    assertTrue(f._("bla") instanceof Number);
+    assertTrue(f.ap("bla") instanceof Number);
   }
 
   @Test
@@ -45,10 +45,10 @@ public class FnsTest {
       }
     };
     try {
-      f._(10);
+      f.ap(10);
       fail();
     } catch (Exception ignore) {
     }
-    assertEquals(Opt.<String>none(), f.tryOpt()._(10));
+    assertEquals(Opt.<String>none(), f.tryOpt().ap(10));
   }
 }

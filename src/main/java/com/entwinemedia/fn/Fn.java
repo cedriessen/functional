@@ -26,7 +26,7 @@ import java.lang.reflect.Type;
 /** Function from A to B. */
 public abstract class Fn<A, B> {
   /** Function application. */
-  public abstract B _(A a);
+  public abstract B ap(A a);
 
   /** Function composition. */
   public <C> Fn<C, B> o(final Fn<? super C, ? extends A> g) {

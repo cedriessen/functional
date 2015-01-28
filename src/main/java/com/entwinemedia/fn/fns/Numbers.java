@@ -21,7 +21,7 @@ import com.entwinemedia.fn.Fn2;
 
 public final class Numbers {
   public static Fn<Number, String> toString = new Fn<Number, String>() {
-    @Override public String _(Number number) {
+    @Override public String ap(Number number) {
       return number.toString();
     }
   };

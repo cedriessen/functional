@@ -83,11 +83,11 @@ public final class Bool {
   /** Create a parser for operations. */
   private <A, B> Parser<B> op(final Parser<A> value, final Parser<Fn2<A, A, B>> opLiteral) {
     return value.bind(new Fn<A, Parser<B>>() {
-      @Override public Parser<B> _(final A a) {
+      @Override public Parser<B> ap(final A a) {
         return opLiteral.bind(new Fn<Fn2<A, A, B>, Parser<B>>() {
-          @Override public Parser<B> _(final Fn2<A, A, B> op) {
+          @Override public Parser<B> ap(final Fn2<A, A, B> op) {
             return value.bind(new Fn<A, Parser<B>>() {
-              @Override public Parser<B> _(A b) {
+              @Override public Parser<B> ap(A b) {
                 return Parsers.yield(op._(a, b));
               }
             });
@@ -101,7 +101,7 @@ public final class Bool {
     // base value parser
     final Parser<Boolean> valueBase = Parsers.symbol("(")
             .bind(new Fn<String, Parser<Boolean>>() {
-              @Override public Parser<Boolean> _(String ignore) {
+              @Override public Parser<Boolean> ap(String ignore) {
                 return expression[0];
               }
             })
@@ -116,7 +116,7 @@ public final class Bool {
     // negation
     final Parser<Boolean> negation = notLiteral
             .bind(new Fn<String, Parser<Boolean>>() {
-              @Override public Parser<Boolean> _(String ignore) {
+              @Override public Parser<Boolean> ap(String ignore) {
                 return term[0];
               }
             })
@@ -128,11 +128,11 @@ public final class Bool {
     // a term
     term[0] = negation
             .or(value.or(relation).bind(new Fn<Boolean, Parser<Boolean>>() {
-              @Override public Parser<Boolean> _(final Boolean a) {
+              @Override public Parser<Boolean> ap(final Boolean a) {
                 return andLiteral
                         .bind(Parsers.fnIgnorePrevious(term[0]))
                         .bind(new Fn<Boolean, Parser<Boolean>>() {
-                          @Override public Parser<Boolean> _(Boolean b) {
+                          @Override public Parser<Boolean> ap(Boolean b) {
                             return Parsers.yield(a && b);
                           }
                         })
@@ -141,11 +141,11 @@ public final class Bool {
             }));
     // an expression
     expression[0] = term[0].bind(new Fn<Boolean, Parser<Boolean>>() {
-      @Override public Parser<Boolean> _(final Boolean a) {
+      @Override public Parser<Boolean> ap(final Boolean a) {
         return orLiteral
                 .bind(Parsers.fnIgnorePrevious(expression[0]))
                 .bind(new Fn<Boolean, Parser<Boolean>>() {
-                  @Override public Parser<Boolean> _(Boolean b) {
+                  @Override public Parser<Boolean> ap(Boolean b) {
                     return Parsers.yield(a || b);
                   }
                 })

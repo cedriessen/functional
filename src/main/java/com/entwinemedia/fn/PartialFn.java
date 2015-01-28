@@ -27,7 +27,7 @@ public abstract class PartialFn<A, B> extends Fn<A, B> {
     return Opt.nul(__(a));
   }
 
-  @Override public final B _(A a) {
+  @Override public final B ap(A a) {
     final B b = __(a);
     if (b != null) {
       return b;
@@ -48,7 +48,7 @@ public abstract class PartialFn<A, B> extends Fn<A, B> {
   /** Convert into a function that returns an option. */
   public Fn<A, Opt<B>> lift() {
     return new Fn<A, Opt<B>>() {
-      @Override public Opt<B> _(A a) {
+      @Override public Opt<B> ap(A a) {
         return Opt.nul(PartialFn.this.__(a));
       }
     };

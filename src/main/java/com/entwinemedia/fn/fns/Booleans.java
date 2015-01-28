@@ -23,7 +23,7 @@ import com.entwinemedia.fn.Pred;
 /** Functions on booleans. */
 public final class Booleans {
   private static final Pred yes = new Pred() {
-    @Override public Boolean _(Object a) {
+    @Override public Boolean ap(Object a) {
       return true;
     }
   };
@@ -135,7 +135,7 @@ public final class Booleans {
   public static <A> Pred<A> or(final Fn<? super A, Boolean> p1, final Fn<? super A, Boolean> p2) {
     return new Pred<A>() {
       @Override public Boolean _(A a) {
-        return p1._(a) || p2._(a);
+        return p1.ap(a) || p2.ap(a);
       }
     };
   }
@@ -143,7 +143,7 @@ public final class Booleans {
   public static <A> Pred<A> and(final Fn<? super A, Boolean> p1, final Fn<? super A, Boolean> p2) {
     return new Pred<A>() {
       @Override public Boolean _(A a) {
-        return p1._(a) && p2._(a);
+        return p1.ap(a) && p2.ap(a);
       }
     };
   }
@@ -151,13 +151,13 @@ public final class Booleans {
   public static <A> Pred<A> not(final Fn<? super A, Boolean> p) {
     return new Pred<A>() {
       @Override public Boolean _(A a) {
-        return !p._(a);
+        return !p.ap(a);
       }
     };
   }
 
   public static Fn<Boolean, Boolean> not = new Fn<Boolean, Boolean>() {
-    @Override public Boolean _(Boolean a) {
+    @Override public Boolean ap(Boolean a) {
       return !a;
     }
   };
@@ -166,7 +166,7 @@ public final class Booleans {
     return new Pred<A>() {
       @Override public Boolean _(A a) {
         for (Fn<? super A, Boolean> p : ps) {
-          if (!p._(a)) {
+          if (!p.ap(a)) {
             return false;
           }
         }
@@ -179,7 +179,7 @@ public final class Booleans {
     return new Pred<A>() {
       @Override public Boolean _(A a) {
         for (Fn<? super A, Boolean> p : ps) {
-          if (p._(a)) {
+          if (p.ap(a)) {
             return true;
           }
         }
@@ -189,7 +189,7 @@ public final class Booleans {
   }
 
   public static Fn<String, Boolean> parseBoolean = new Fn<String, Boolean>() {
-    @Override public Boolean _(String s) {
+    @Override public Boolean ap(String s) {
       return Boolean.parseBoolean(s);
     }
   };

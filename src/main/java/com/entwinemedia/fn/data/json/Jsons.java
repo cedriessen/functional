@@ -119,19 +119,19 @@ public final class Jsons {
   }
 
   public static Fn<JField, JValue> valueOfFieldFn = new Fn<JField, JValue>() {
-    @Override public JValue _(JField j) {
+    @Override public JValue ap(JField j) {
       return j.getValue();
     }
   };
 
   public static Fn<JField, String> keyOfFieldFn = new Fn<JField, String>() {
-    @Override public String _(JField j) {
+    @Override public String ap(JField j) {
       return j.getKey();
     }
   };
 
   public static Fn<JValue, List<Object>> valueOfPrimitiveFn = new Fn<JValue, List<Object>>() {
-    @Override public List<Object> _(JValue j) {
+    @Override public List<Object> ap(JValue j) {
       if (j instanceof JPrimitive) {
         return l.mk(((JPrimitive) j).getValue());
       } else {
@@ -141,13 +141,13 @@ public final class Jsons {
   };
 
   public static Fn<Entry<String, JValue>, JField> entryToJFieldFn = new Fn<Entry<String, JValue>, JField>() {
-    @Override public JField _(Entry<String, JValue> e) {
+    @Override public JField ap(Entry<String, JValue> e) {
       return new JField(e.getKey(), e.getValue());
     }
   };
 
   public static Fn<String, JValue> stringToJValueFn = new Fn<String, JValue>() {
-    @Override public JValue _(String s) {
+    @Override public JValue ap(String s) {
       return v(s);
     }
   };

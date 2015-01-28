@@ -370,7 +370,7 @@ public abstract class Stream<A> implements Iterable<A> {
 
   /** Apply a stream operation to this stream. */
   public final <B> Stream<B> _(StreamOp<? super A, B> op) {
-    return op._(this);
+    return op.ap(this);
   }
 
   /** Apply a stream fold to this stream. */
@@ -380,7 +380,7 @@ public abstract class Stream<A> implements Iterable<A> {
 
   /** Apply a stream fold to this stream. */
   public final <B> B _(Fn<Stream<? super A>, B> fold) {
-    return fold._(this);
+    return fold.ap(this);
   }
 
   // -- evaluations

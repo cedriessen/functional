@@ -33,13 +33,13 @@ public final class Strings {
   }
 
   public static final Fn<String, Integer> len = new Fn<String, Integer>() {
-    @Override public Integer _(String s) {
+    @Override public Integer ap(String s) {
       return s.length();
     }
   };
 
   public static final Fn<String, String> trim = new Fn<String, String>() {
-    @Override public String _(String s) {
+    @Override public String ap(String s) {
       return s.trim();
     }
   };
@@ -49,13 +49,13 @@ public final class Strings {
    * In contrast to {@link #trimToNone} strings are not trimmed.
    */
   public static final Fn<String, Opt<String>> blankToNone = new Fn<String, Opt<String>>() {
-    @Override public Opt<String> _(String s) {
+    @Override public Opt<String> ap(String s) {
       return s.trim().isEmpty() ? Opt.<String>none() : Opt.some(s);
     }
   };
 
   public static final Fn<String, Opt<String>> emptyToNone = new Fn<String, Opt<String>>() {
-    @Override public Opt<String> _(String s) {
+    @Override public Opt<String> ap(String s) {
       return !s.isEmpty() ? Opt.some(s) : Opt.<String>none();
     }
   };
@@ -65,21 +65,21 @@ public final class Strings {
 
   public static Fn<String, String> wrap(final String pre, final String post) {
     return new Fn<String, String>() {
-      @Override public String _(String s) {
+      @Override public String ap(String s) {
         return pre + s + post;
       }
     };
   }
 
   public static final Fn<String, String> toLowerCase = new Fn<String, String>() {
-    @Override public String _(String s) {
+    @Override public String ap(String s) {
       return s.toLowerCase();
     }
   };
 
   public static Fn<Object, String> format(final String format) {
     return new Fn<Object, String>() {
-      @Override public String _(Object s) {
+      @Override public String ap(Object s) {
         return String.format(format, s);
       }
     };
@@ -93,7 +93,7 @@ public final class Strings {
   /** @see java.util.regex.Matcher#matches() */
   public static Pred<String> matches(final Pattern pattern) {
     return new Pred<String>() {
-      @Override public Boolean _(String s) {
+      @Override public Boolean ap(String s) {
         return pattern.matcher(s).matches();
       }
     };
@@ -105,7 +105,7 @@ public final class Strings {
 
   public static Fn<String, Stream<String>> split(final Pattern pattern) {
     return new Fn<String, Stream<String>>() {
-      @Override public Stream<String> _(String s) {
+      @Override public Stream<String> ap(String s) {
         return $(pattern.split(s));
       }
     };
@@ -119,7 +119,7 @@ public final class Strings {
   public static StreamOp<String, String> soSplitNewLineTrim = StreamOp.<String>id().bind(split("\n")).fmap(trim);
 
   public static final Pred<String> isEmpty = new Pred<String>() {
-    @Override public Boolean _(String s) {
+    @Override public Boolean ap(String s) {
       return s.isEmpty();
     }
   };
@@ -129,7 +129,7 @@ public final class Strings {
   public static final StreamOp<String, String> removeEmptySO = StreamOp.<String>id().filter(isNotEmpty);
 
   public static final Pred<String> isBlank = new Pred<String>() {
-    @Override public Boolean _(String s) {
+    @Override public Boolean ap(String s) {
       return s.trim().isEmpty();
     }
   };
@@ -146,7 +146,7 @@ public final class Strings {
 
   /** Convert a string into a long if possible. */
   public static final Fn<String, Opt<Long>> toLong = new Fn<String, Opt<Long>>() {
-    @Override public Opt<Long> _(String s) {
+    @Override public Opt<Long> ap(String s) {
       try {
         return Opt.some(Long.parseLong(s));
       } catch (NumberFormatException e) {
@@ -157,14 +157,14 @@ public final class Strings {
 
   /** Convert a string into a long if possible. */
   public static final Fn<String, Long> toLongF = new Fn<String, Long>() {
-    @Override public Long _(String s) {
+    @Override public Long ap(String s) {
       return Long.parseLong(s);
     }
   };
 
   /** Convert a string into an integer if possible. */
   public static final Fn<String, Opt<Integer>> toInt = new Fn<String, Opt<Integer>>() {
-    @Override public Opt<Integer> _(String s) {
+    @Override public Opt<Integer> ap(String s) {
       try {
         return Opt.some(Integer.parseInt(s));
       } catch (NumberFormatException e) {
@@ -175,7 +175,7 @@ public final class Strings {
 
   /** Convert a string into an integer if possible. */
   public static final Fn<String, Integer> toIntF = new Fn<String, Integer>() {
-    @Override public Integer _(String s) {
+    @Override public Integer ap(String s) {
       return Integer.parseInt(s);
     }
   };

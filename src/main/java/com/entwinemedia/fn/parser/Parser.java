@@ -28,7 +28,7 @@ public abstract class Parser<A> {
     return new Parser<B>() {
       @Override public Result<B> parse(String input) {
         final Result<A> r = Parser.this.parse(input);
-        return r.isDefined() ? p._(r.getResult()).parse(r.getRest()) : fail();
+        return r.isDefined() ? p.ap(r.getResult()).parse(r.getRest()) : fail();
       }
     };
   }

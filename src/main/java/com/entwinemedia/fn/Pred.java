@@ -26,7 +26,7 @@ public abstract class Pred<A> extends Fn<A, Boolean> {
   public static <A> Pred<A> mk(final Fn<A, Boolean> f) {
     return new Pred<A>() {
       @Override public Boolean _(A a) {
-        return f._(a);
+        return f.ap(a);
       }
     };
   }

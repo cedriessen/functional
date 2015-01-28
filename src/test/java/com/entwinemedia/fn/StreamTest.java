@@ -604,7 +604,7 @@ public class StreamTest {
 
   private static <A> Fn<A, A> countCalls(final int[] calls) {
     return new Fn<A, A>() {
-      @Override public A _(A a) {
+      @Override public A ap(A a) {
         calls[0]++;
         return a;
       }
@@ -612,13 +612,13 @@ public class StreamTest {
   }
 
   private static final Fn<Integer, Integer> doubleValue = new Fn<Integer, Integer>() {
-    @Override public Integer _(Integer i) {
+    @Override public Integer ap(Integer i) {
       return 2 * i;
     }
   };
 
   private static final Fn<Integer, Integer> tripleValue = new Fn<Integer, Integer>() {
-    @Override public Integer _(Integer i) {
+    @Override public Integer ap(Integer i) {
       return 3 * i;
     }
   };
@@ -626,7 +626,7 @@ public class StreamTest {
   private static <A> Fn<A, List<A>> doubleList() {
     return new Fn<A, List<A>>() {
       @SuppressWarnings("unchecked")
-      @Override public List<A> _(A a) {
+      @Override public List<A> ap(A a) {
         return l.mk(a, a);
       }
     };

@@ -115,7 +115,7 @@ public class SimpleSerializer implements Serializer {
 
   public Fn<JField, String> jFieldToJson() {
     return new Fn<JField, String>() {
-      @Override public String _(JField j) {
+      @Override public String ap(JField j) {
         return toJson(j);
       }
     };

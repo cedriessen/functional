@@ -33,7 +33,7 @@ public abstract class Fx<A> {
 
   public Fn<A, Unit> toFn() {
     return new Fn<A, Unit>() {
-      @Override public Unit _(A a) {
+      @Override public Unit ap(A a) {
         Fx.this._(a);
         return Unit.unit;
       }

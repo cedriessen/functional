@@ -36,7 +36,7 @@ public abstract class P1Lazy<A> extends P1<A> {
   @Override public <B> P1<B> fmap(final Fn<? super A, ? extends B> f) {
     return new P1Lazy<B>() {
       @Override public B _1() {
-        return f._(P1Lazy.this._1());
+        return f.ap(P1Lazy.this._1());
       }
     };
   }
@@ -44,7 +44,7 @@ public abstract class P1Lazy<A> extends P1<A> {
   @Override public <B> P1<B> bind(final Fn<? super A, P1<B>> f) {
     return new P1Lazy<B>() {
       @Override public B _1() {
-        return f._(P1Lazy.this._1())._1();
+        return f.ap(P1Lazy.this._1())._1();
       }
     };
   }
