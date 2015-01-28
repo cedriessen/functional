@@ -21,11 +21,11 @@ import static com.entwinemedia.fn.Prelude.chuck;
 public abstract class Fn_<A, B> extends Fn<A, B> {
   @Override public final B ap(A a) {
     try {
-      return __(a);
+      return apx(a);
     } catch (Exception e) {
       return chuck(e);
     }
   }
 
-  public abstract B __(A a) throws Exception;
+  public abstract B apx(A a) throws Exception;
 }

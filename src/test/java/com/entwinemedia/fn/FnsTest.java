@@ -40,7 +40,7 @@ public class FnsTest {
   @Test
   public void testFn_() {
     final Fn<Integer, String> f = new Fn_<Integer, String>() {
-      @Override public String __(Integer integer) throws IOException {
+      @Override public String apx(Integer integer) throws IOException {
         throw new IOException();
       }
     };
