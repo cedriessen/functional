@@ -166,7 +166,7 @@ public final class Parsers {
     @Override public Parser<String> ap(final Opt<Character> minus) {
       return natString.bind(new Fn<String, Parser<String>>() {
         @Override public Parser<String> ap(String s) {
-          return yield(minus.isSome() ? minus._() + s : s);
+          return yield(minus.isSome() ? minus.get() + s : s);
         }
       });
     }

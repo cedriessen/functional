@@ -37,7 +37,7 @@ public abstract class Opt<A> implements Iterable<A> {
   private Opt() {
   }
 
-  public abstract A _();
+  public abstract A get();
 
   public abstract boolean isSome();
 
@@ -49,7 +49,7 @@ public abstract class Opt<A> implements Iterable<A> {
   public <B> B fold(Fn<? super A, ? extends B> some, P1<? extends B> none) {
     // cannot be written using the ternary operator ?: because of type inference issues
     if (isSome()) {
-      return some.ap(_());
+      return some.ap(get());
     } else {
       return none._1();
     }
@@ -76,7 +76,7 @@ public abstract class Opt<A> implements Iterable<A> {
 //  public abstract Option<A> foreach(Function<A, Void> f);
 
   public <B> Opt<B> fmap(Fn<? super A, ? extends B> f) {
-    return isSome() ? some(f.ap(_())) : Opt.<B>none();
+    return isSome() ? some(f.ap(get())) : Opt.<B>none();
   }
 
   /** @see #fmap(com.entwinemedia.fn.Fn) */
@@ -86,7 +86,7 @@ public abstract class Opt<A> implements Iterable<A> {
 
   /** Monadic bind operation <code>m a -> (a -> m b) -> m b</code>. */
   public <B> Opt<B> bind(Fn<? super A, Opt<B>> f) {
-    return isSome() ? f.ap(_()) : Opt.<B>none();
+    return isSome() ? f.ap(get()) : Opt.<B>none();
   }
 
   /** @see #bind(com.entwinemedia.fn.Fn) */
@@ -97,14 +97,14 @@ public abstract class Opt<A> implements Iterable<A> {
   /** Run side effect <code>f</code> on the value of a some; do nothing otherwise. */
   public final Opt<A> each(Fx<? super A> f) {
     if (isSome()) {
-      f._(_());
+      f._(get());
     }
     return this;
   }
 
   /** If predicate <code>p</code> does not match return none. */
   public Opt<A> filter(Fn<? super A, Boolean> p) {
-    return isSome() && p.ap(_()) ? this : Opt.<A>none();
+    return isSome() && p.ap(get()) ? this : Opt.<A>none();
   }
 
   /** Throw <code>none</code> if none. */
@@ -137,17 +137,17 @@ public abstract class Opt<A> implements Iterable<A> {
 
   /** Get the contained value in case of being "some" or return parameter <code>none</code> otherwise. */
   public A or(A none) {
-    return isSome() ? _() : none;
+    return isSome() ? get() : none;
   }
 
   /** Get the contained value in case of being "some" or return the result of evaluating <code>none</code> otherwise. */
   public A or(P1<A> none) {
-    return isSome() ? _() : none._1();
+    return isSome() ? get() : none._1();
   }
 
   /** To interface with legacy applications or frameworks that still use <code>null</code> values. */
   public A orNull() {
-    return isSome() ? _() : null;
+    return isSome() ? get() : null;
   }
 
   /** Short hand methods for <code>toStream()._(op)</code>. */
@@ -163,13 +163,13 @@ public abstract class Opt<A> implements Iterable<A> {
   /** Transform the option into a monadic list. */
   @SuppressWarnings("unchecked")
   public Stream<A> toStream() {
-    return isSome() ? Stream.mk(_()) : Stream.<A>empty();
+    return isSome() ? Stream.mk(get()) : Stream.<A>empty();
   }
 
   /** Transform an option into an immutable list, either with a single element or an empty list. */
   @SuppressWarnings("unchecked")
   public List<A> toList() {
-    return isSome() ? l.mk(_()) : l.<A>nil();
+    return isSome() ? l.mk(get()) : l.<A>nil();
   }
 
   /**
@@ -212,7 +212,7 @@ public abstract class Opt<A> implements Iterable<A> {
       this.a = a;
     }
 
-    @Override public A _() {
+    @Override public A get() {
       return a;
     }
 
@@ -226,7 +226,7 @@ public abstract class Opt<A> implements Iterable<A> {
 
     @Override public boolean equals(Object o) {
       // since an Option does NEVER contain any null this is safe
-      return o instanceof Some && a.equals(((Some) o)._());
+      return o instanceof Some && a.equals(((Some) o).get());
     }
 
     @Override public String toString() {
@@ -235,7 +235,7 @@ public abstract class Opt<A> implements Iterable<A> {
   }
 
   private static final Opt NONE = new Opt() {
-    @Override public Object _() {
+    @Override public Object get() {
       throw new Error("a none does not contain a value");
     }
 
