@@ -21,7 +21,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import com.entwinemedia.fn.data.Opt;
-
 import org.junit.Test;
 
 import java.io.IOException;
@@ -39,7 +38,7 @@ public class FnsTest {
 
   @Test
   public void testFn_() {
-    final Fn<Integer, String> f = new Fn_<Integer, String>() {
+    final Fn<Integer, String> f = new FnX<Integer, String>() {
       @Override public String apx(Integer integer) throws IOException {
         throw new IOException();
       }
