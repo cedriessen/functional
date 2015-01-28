@@ -1,2 +1,2 @@
-# functions
-Introduction of functional programming paradigms to Java
+# functional
+A library for functional programming in Java.
