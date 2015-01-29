@@ -180,6 +180,12 @@
     </snapshotRepository>
   </distributionManagement>
 
+  <scm>
+    <connection>scm:git:https://github.com/entwinemedia/functional.git</connection>
+    <developerConnection>scm:git:git@github.com:entwinemedia/functional.git</developerConnection>
+    <url>https://github.com/entwinemedia/functional</url>
+  </scm>
+
   <licenses>
     <license>
       <name>Apache License, Version 2.0</name>
