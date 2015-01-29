@@ -18,7 +18,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.entwinemedia.common</groupId>
   <artifactId>functional</artifactId>
-  <version>0.10-SNAPSHOT</version>
+  <version>1.0-SNAPSHOT</version>
   <name>functional</name>
   <description>A library for functional programming.</description>
   <inceptionYear>2013</inceptionYear>
