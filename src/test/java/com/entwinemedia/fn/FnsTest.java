@@ -37,7 +37,7 @@ public class FnsTest {
   }
 
   @Test
-  public void testFn_() {
+  public void testFnX() {
     final Fn<Integer, String> f = new FnX<Integer, String>() {
       @Override public String apx(Integer integer) throws IOException {
         throw new IOException();

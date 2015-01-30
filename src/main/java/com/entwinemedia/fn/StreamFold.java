@@ -16,8 +16,6 @@
 
 package com.entwinemedia.fn;
 
-import static com.entwinemedia.fn.data.Opt.none;
-
 import com.entwinemedia.fn.data.ImmutableMapWrapper;
 import com.entwinemedia.fn.data.ListFactory;
 import com.entwinemedia.fn.data.Opt;
@@ -30,12 +28,12 @@ import java.util.NoSuchElementException;
 
 public abstract class StreamFold<A, B> {
   /** Apply the fold to stream <code>s</code>. */
-  public abstract B _(Stream<? extends A> s);
+  public abstract B apply(Stream<? extends A> s);
 
   public Fn<Stream<A>, B> toFn() {
     return new Fn<Stream<A>, B>() {
       @Override public B ap(Stream<A> s) {
-        return StreamFold.this._(s);
+        return StreamFold.this.apply(s);
       }
     };
   }
@@ -44,7 +42,7 @@ public abstract class StreamFold<A, B> {
   public static <A, B> StreamFold<A, B> mk(final Fn<Stream<A>, ? extends B> f) {
     return new StreamFold<A, B>() {
       @SuppressWarnings("unchecked")
-      @Override public B _(Stream<? extends A> s) {
+      @Override public B apply(Stream<? extends A> s) {
         return f.ap((Stream<A>) s);
       }
     };
@@ -53,15 +51,15 @@ public abstract class StreamFold<A, B> {
   /** Map function <code>f</code> over the result of this fold. */
   public <C> StreamFold<A, C> fmap(final Fn<? super B, ? extends C> f) {
     return new StreamFold<A, C>() {
-      @Override public C _(Stream<? extends A> s) {
-        return f.ap(StreamFold.this._(s));
+      @Override public C apply(Stream<? extends A> s) {
+        return f.ap(StreamFold.this.apply(s));
       }
     };
   }
 
   public static <A, B> StreamFold<A, B> foldl(final B zero, final Fn2<? super B, ? super A, ? extends B> f) {
     return new StreamFold<A, B>() {
-      @Override public B _(Stream<? extends A> s) {
+      @Override public B apply(Stream<? extends A> s) {
         return foldl(zero, f, s);
       }
     };
@@ -77,7 +75,7 @@ public abstract class StreamFold<A, B> {
 
   public static <A> StreamFold<A, String> mkString(final String sep) {
     return new StreamFold<A, String>() {
-      @Override public String _(Stream<? extends A> s) {
+      @Override public String apply(Stream<? extends A> s) {
         return mkString(sep, s);
       }
     };
@@ -99,7 +97,7 @@ public abstract class StreamFold<A, B> {
 
   public static <A> StreamFold<A, Boolean> exists(final Fn<? super A, Boolean> p) {
     return new StreamFold<A, Boolean>() {
-      @Override public Boolean _(Stream<? extends A> s) {
+      @Override public Boolean apply(Stream<? extends A> s) {
         return StreamFold.exists(p, s);
       }
     };
@@ -114,7 +112,7 @@ public abstract class StreamFold<A, B> {
 
   public static <A> StreamFold<A, Opt<A>> find(final Fn<? super A, Boolean> p) {
     return new StreamFold<A, Opt<A>>() {
-      @Override public Opt<A> _(Stream<? extends A> s) {
+      @Override public Opt<A> apply(Stream<? extends A> s) {
         return StreamFold.find(p, s);
       }
     };
@@ -130,7 +128,7 @@ public abstract class StreamFold<A, B> {
   /** Map function <code>p</code> over the elements of the stream unless <code>p</code> yields a some. */
   public static <A, B> StreamFold<A, Opt<B>> findMap(final Fn<? super A, Opt<B>> p) {
     return new StreamFold<A, Opt<B>>() {
-      @Override public Opt<B> _(Stream<? extends A> s) {
+      @Override public Opt<B> apply(Stream<? extends A> s) {
         return StreamFold.findMap(p, s);
       }
     };
@@ -148,7 +146,7 @@ public abstract class StreamFold<A, B> {
 
   public static <A> StreamFold<A, Opt<A>> head() {
     return new StreamFold<A, Opt<A>>() {
-      @Override public Opt<A> _(Stream<? extends A> s) {
+      @Override public Opt<A> apply(Stream<? extends A> s) {
         return StreamFold.head(s);
       }
     };
@@ -162,7 +160,7 @@ public abstract class StreamFold<A, B> {
 
   public static <A> StreamFold<A, A> head2() {
     return new StreamFold<A, A>() {
-      @Override public A _(Stream<? extends A> s) {
+      @Override public A apply(Stream<? extends A> s) {
         return StreamFold.head2(s);
       }
     };
@@ -180,7 +178,7 @@ public abstract class StreamFold<A, B> {
 
   public static <A> StreamFold<A, A> sum(final Monoid<A> m) {
     return new StreamFold<A, A>() {
-      @Override public A _(Stream<? extends A> s) {
+      @Override public A apply(Stream<? extends A> s) {
         return StreamFold.sum(m, s);
       }
     };
@@ -193,7 +191,7 @@ public abstract class StreamFold<A, B> {
   // todo use MapBuilder
   public static <B, A> StreamFold<A, Map<B, A>> group(final Fn<? super A, ? extends B> key) {
     return new StreamFold<A, Map<B, A>>() {
-      @Override public Map<B, A> _(Stream<? extends A> s) {
+      @Override public Map<B, A> apply(Stream<? extends A> s) {
         return StreamFold.group(key, s);
       }
     };
@@ -214,7 +212,7 @@ public abstract class StreamFold<A, B> {
   public static <C, B, A> StreamFold<A, Map<B, C>> group(final Fn<? super A, ? extends B> key,
                                                          final Fn<? super A, ? extends C> value) {
     return new StreamFold<A, Map<B, C>>() {
-      @Override public Map<B, C> _(Stream<? extends A> s) {
+      @Override public Map<B, C> apply(Stream<? extends A> s) {
         return StreamFold.group(key, value, s);
       }
     };
@@ -237,7 +235,7 @@ public abstract class StreamFold<A, B> {
   public static <B, A> StreamFold<A, Map<B, List<A>>> groupMulti(
           final ListFactory f, final Fn<? super A, ? extends B> key) {
     return new StreamFold<A, Map<B, List<A>>>() {
-      @Override public Map<B, List<A>> _(Stream<? extends A> s) {
+      @Override public Map<B, List<A>> apply(Stream<? extends A> s) {
         return StreamFold.groupMulti(f, key, s);
       }
     };

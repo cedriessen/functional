@@ -35,7 +35,7 @@ public class SimpleSerializer implements Serializer {
   /** {@link SimpleSerializer#toJson(java.io.Writer, JValue)} as an effect. */
   public Fx<Writer> toJsonFx(final JValue j) {
     return new Fx<Writer>() {
-      @Override public void _(Writer writer) {
+      @Override public void ap(Writer writer) {
         toJson(writer, j);
       }
     };
@@ -107,7 +107,7 @@ public class SimpleSerializer implements Serializer {
 
   public Fx<JField> jFieldToJson(final Writer writer) {
     return new Fx<JField>() {
-      @Override public void _(JField j) {
+      @Override public void ap(JField j) {
         toJson(writer, j);
       }
     };

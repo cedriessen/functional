@@ -97,7 +97,7 @@ public abstract class Opt<A> implements Iterable<A> {
   /** Run side effect <code>f</code> on the value of a some; do nothing otherwise. */
   public final Opt<A> each(Fx<? super A> f) {
     if (isSome()) {
-      f._(get());
+      f.ap(get());
     }
     return this;
   }
@@ -150,14 +150,14 @@ public abstract class Opt<A> implements Iterable<A> {
     return isSome() ? get() : null;
   }
 
-  /** Short hand methods for <code>toStream()._(op)</code>. */
-  public <B> Stream<B> _(StreamOp<? super A, B> op) {
-    return toStream()._(op);
+  /** Short hand methods for <code>toStream().apply(op)</code>. */
+  public <B> Stream<B> apply(StreamOp<? super A, B> op) {
+    return toStream().apply(op);
   }
 
-  /** Short hand methods for <code>toStream()._(fold)</code>. */
-  public <B> B _(StreamFold<? super A, B> fold) {
-    return toStream()._(fold);
+  /** Short hand methods for <code>toStream().apply(fold)</code>. */
+  public <B> B apply(StreamFold<? super A, B> fold) {
+    return toStream().apply(fold);
   }
 
   /** Transform the option into a monadic list. */

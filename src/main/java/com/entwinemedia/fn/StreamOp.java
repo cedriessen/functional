@@ -69,8 +69,8 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
   /** Left to right composition with a stream fold. */
   public <C> StreamFold<A, C> then(final StreamFold<? super B, ? extends C> fold) {
     return new StreamFold<A, C>() {
-      @Override public C _(Stream<? extends A> s) {
-        return fold._(StreamOp.this.ap(s));
+      @Override public C apply(Stream<? extends A> s) {
+        return fold.apply(StreamOp.this.ap(s));
       }
     };
   }
@@ -89,7 +89,7 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
     return new Stream<B>(s.getSizeHint()) {
       @Override public Iterator<B> iterator() {
         return new Iterate<A, B>(s.iterator()) {
-          @Override protected B _(A b) {
+          @Override protected B apply(A b) {
             return f.ap(b);
           }
         };
@@ -185,7 +185,7 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
         return new IdentityIterate<A>(s.iterator()) {
           private int count = n;
 
-          @Override protected A _(A a) {
+          @Override protected A apply(A a) {
             if (count == 0) {
               return a;
             } else {
@@ -212,7 +212,7 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
         return new IdentityIterate<A>(s.iterator()) {
           boolean take = false;
 
-          @Override protected A _(A a) {
+          @Override protected A apply(A a) {
             if (take) {
               return a;
             } else if (p.ap(a)) {
@@ -241,7 +241,7 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
         return new Iterate<A, P2<A, Integer>>(s.iterator()) {
           private int index = 0;
 
-          @Override protected P2<A, Integer> _(A a) {
+          @Override protected P2<A, Integer> apply(A a) {
             return p.p2(a, index++);
           }
         };
@@ -289,7 +289,7 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
     return new Stream<A>(s.getSizeHint()) {
       @Override public Iterator<A> iterator() {
         return new IdentityIterate<A>(s.iterator()) {
-          @Override protected A _(A a) throws Exit {
+          @Override protected A apply(A a) throws Exit {
             return p.ap(a) ? a : StreamOp.<A>exit();
           }
         };
@@ -311,7 +311,7 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
     return new Stream<A>(s.getSizeHint()) {
       @Override public Iterator<A> iterator() {
         return new IdentityIterate<A>(s.iterator()) {
-          @Override protected A _(A a) {
+          @Override protected A apply(A a) {
             return p.ap(a) ? a : null;
           }
         };
@@ -479,8 +479,8 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
     return new Stream<A>(s.getSizeHint()) {
       @Override public Iterator<A> iterator() {
         return new IdentityIterate<A>(s.iterator()) {
-          @Override protected A _(A a) throws Exit {
-            f._(a);
+          @Override protected A apply(A a) throws Exit {
+            f.ap(a);
             return a;
           }
         };
@@ -655,7 +655,7 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
     }
 
     /** Return either a value, null to skip <code>a</code> or throw an exception to stop processing. */
-    protected abstract B _(A a) throws Exit;
+    protected abstract B apply(A a) throws Exit;
 
     /** Return false to early exit processing. The next element up the chain will not be evaluated anymore. */
     protected boolean cont() {
@@ -665,7 +665,7 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
     @Override public final boolean hasNext() {
       try {
         while (next == null && cont() && wrapped.hasNext()) {
-          next = _(wrapped.next());
+          next = apply(wrapped.next());
         }
         return next != null;
       } catch (Exit e) {
@@ -692,7 +692,7 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
       super(it);
     }
 
-    @Override protected A _(A a) throws Exit {
+    @Override protected A apply(A a) throws Exit {
       return a;
     }
   }

@@ -16,8 +16,6 @@
 
 package com.entwinemedia.fn.data;
 
-import static com.entwinemedia.fn.Stream.$;
-
 import com.entwinemedia.fn.Stream;
 
 import java.util.Collection;
@@ -39,7 +37,7 @@ public abstract class SetBuilder {
   protected abstract <A> Set<A> create();
 
   /** Create a new set from an array of elements. */
-  public <A> Set<A> _(A... as) {
+  public <A> Set<A> mk(A... as) {
     final Set<A> buf = create(as.length);
     Collections.addAll(buf, as);
     return finish(buf);
@@ -52,7 +50,7 @@ public abstract class SetBuilder {
    * To force the creation of a new set use {@link #force(java.util.Collection)}.
    */
   @SuppressWarnings("unchecked")
-  public <A> Set<A> _(Collection<? extends A> as) {
+  public <A> Set<A> mk(Collection<? extends A> as) {
     if (as instanceof Set && as instanceof Immutable) {
       return (Set<A>) as;
     } else {
@@ -61,12 +59,12 @@ public abstract class SetBuilder {
   }
 
   /** Create a new set from an iterator. */
-  public <A> Set<A> _(final Iterator<? extends A> as) {
+  public <A> Set<A> mk(final Iterator<? extends A> as) {
     return fillAndFinish(this.<A>create(), as);
   }
 
   /** Create a new set from an iterator using a size hint. */
-  public <A> Set<A> _(int size, final Iterator<? extends A> as) {
+  public <A> Set<A> mk(int size, final Iterator<? extends A> as) {
     return fillAndFinish(this.<A>create(size), as);
   }
 
@@ -78,23 +76,23 @@ public abstract class SetBuilder {
   }
 
   /** Create a new set from an iterable. */
-  public <A> Set<A> _(final Iterable<? extends A> as) {
-    return _(as.iterator());
+  public <A> Set<A> mk(final Iterable<? extends A> as) {
+    return mk(as.iterator());
   }
 
   /** Create a new set from an iterable using a size hint. */
-  public <A> Set<A> _(int size, final Iterable<? extends A> as) {
-    return _(size, as.iterator());
+  public <A> Set<A> mk(int size, final Iterable<? extends A> as) {
+    return mk(size, as.iterator());
   }
 
   /** Force the creation of a new set from <code>as</code>. */
   public <A> Set<A> force(Collection<? extends A> as) {
-    return _(as.size(), as.iterator());
+    return mk(as.size(), as.iterator());
   }
 
   /** Concatenate a set of collections into a new list. */
   public <A> Set<A> concat(final Collection<? extends A>... ass) {
-    final Set<A> buf = create(Stream.$(ass)._(Util.sumSizeFold));
+    final Set<A> buf = create(Stream.$(ass).apply(Util.sumSizeFold));
     for (Collection<? extends A> as : ass) {
       buf.addAll(as);
     }
@@ -103,7 +101,7 @@ public abstract class SetBuilder {
 
   /** Concatenate a collection of collections into a new set. */
   public <A> Set<A> concat(Collection<Collection<A>> ass) {
-    final Set<A> buf = create(Stream.$(ass)._(Util.sumSizeFold));
+    final Set<A> buf = create(Stream.$(ass).apply(Util.sumSizeFold));
     for (Collection<A> as : ass) {
       buf.addAll(as);
     }
