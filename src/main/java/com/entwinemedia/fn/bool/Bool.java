@@ -72,12 +72,12 @@ public final class Bool {
   private final Parser<Double> number = Parsers.token(Parsers.dbl);
 
   private Parser<Fn2<Double, Double, Boolean>> relationLiteral(String token, Fn2<Double, Double, Boolean> f) {
-    return Parsers.token(Parsers.string(token)).bind(Parsers.<String, Fn2<Double, Double, Boolean>>fnIgnorePrevious(Parsers.yield(f)));
+    return Parsers.token(Parsers.string(token)).bind(Parsers.<String, Fn2<Double, Double, Boolean>>ignorePrevious(Parsers.yield(f)));
   }
 
   private Parser<Fn2<Double, Double, Double>> numberOperationLiteral(
           String token, Fn2<Double, Double, Double> f) {
-    return Parsers.token(Parsers.string(token)).bind(Parsers.<String, Fn2<Double, Double, Double>>fnIgnorePrevious(Parsers.yield(f)));
+    return Parsers.token(Parsers.string(token)).bind(Parsers.<String, Fn2<Double, Double, Double>>ignorePrevious(Parsers.yield(f)));
   }
 
   /** Create a parser for operations. */
@@ -105,7 +105,7 @@ public final class Bool {
                 return expression[0];
               }
             })
-            .bind(Parsers.<Boolean, String>fnPassThrough(Parsers.symbol(")")))
+            .bind(Parsers.<Boolean, String>ignore(Parsers.symbol(")")))
             .or(Parsers.bool);
     // enrich boolean base value parser
     final Parser<Boolean> value = $(valueParser).foldl(valueBase, new Fn2<Parser<Boolean>, Parser<Boolean>, Parser<Boolean>>() {
@@ -120,7 +120,7 @@ public final class Bool {
                 return term[0];
               }
             })
-            .bind(Parsers.fnYield(Booleans.not));
+            .bind(Parsers.apply(Booleans.not));
     // operation
     final Parser<Double> operation = op(number, operationLiteral);
     // relation
@@ -130,7 +130,7 @@ public final class Bool {
             .or(value.or(relation).bind(new Fn<Boolean, Parser<Boolean>>() {
               @Override public Parser<Boolean> ap(final Boolean a) {
                 return andLiteral
-                        .bind(Parsers.fnIgnorePrevious(term[0]))
+                        .bind(Parsers.ignorePrevious(term[0]))
                         .bind(new Fn<Boolean, Parser<Boolean>>() {
                           @Override public Parser<Boolean> ap(Boolean b) {
                             return Parsers.yield(a && b);
@@ -143,7 +143,7 @@ public final class Bool {
     expression[0] = term[0].bind(new Fn<Boolean, Parser<Boolean>>() {
       @Override public Parser<Boolean> ap(final Boolean a) {
         return orLiteral
-                .bind(Parsers.fnIgnorePrevious(expression[0]))
+                .bind(Parsers.ignorePrevious(expression[0]))
                 .bind(new Fn<Boolean, Parser<Boolean>>() {
                   @Override public Parser<Boolean> ap(Boolean b) {
                     return Parsers.yield(a || b);

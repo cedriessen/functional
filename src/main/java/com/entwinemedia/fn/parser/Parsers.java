@@ -32,7 +32,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/** Collection of parsers and useful functions. */
+/**
+ * Collection of parsers and useful functions.
+ */
 public final class Parsers {
   private Parsers() {
   }
@@ -40,14 +42,14 @@ public final class Parsers {
   // -- bind functions
 
   /** Parser that returns {@link com.entwinemedia.fn.Unit}. */
-  public static Fn<Object, Parser<Unit>> fnNothing = new Fn<Object, Parser<Unit>>() {
+  public static final Fn<Object, Parser<Unit>> nothing = new Fn<Object, Parser<Unit>>() {
     @Override public Parser<Unit> ap(Object ignore) {
       return yield(Unit.unit);
     }
   };
 
-  /** Run parser <code>p</code> but pass through the result of the previous parser. */
-  public static <A, B> Fn<A, Parser<A>> fnPassThrough(final Parser<B> p) {
+  /** Run parser <code>p</code> and ignore its outcome. Go on with the result of the previous parser. */
+  public static <A, B> Fn<A, Parser<A>> ignore(final Parser<B> p) {
     return new Fn<A, Parser<A>>() {
       @Override public Parser<A> ap(final A a) {
         return p.bind(new Fn<B, Parser<A>>() {
@@ -59,8 +61,8 @@ public final class Parsers {
     };
   }
 
-  /** Ignore the result of the previous parser, then run parser <code>p</code>. */
-  public static <A, B> Fn<A, Parser<B>> fnIgnorePrevious(final Parser<B> p) {
+  /** Ignore the result of the previous parser, run parser <code>p</code>. */
+  public static <A, B> Fn<A, Parser<B>> ignorePrevious(final Parser<B> p) {
     return new Fn<A, Parser<B>>() {
       @Override public Parser<B> ap(A a) {
         return p;
@@ -69,7 +71,7 @@ public final class Parsers {
   }
 
   /** Apply function <code>f</code> to the value returned by the previous parser and return it. */
-  public static <A, B> Fn<A, Parser<B>> fnYield(final Fn<A, B> f) {
+  public static <A, B> Fn<A, Parser<B>> apply(final Fn<A, B> f) {
     return new Fn<A, Parser<B>>() {
       @Override public Parser<B> ap(A a) {
         return yield(f.ap(a));
@@ -146,23 +148,23 @@ public final class Parsers {
     return match(Characters.isCharacter(c));
   }
 
-  public static Parser<Character> digit = match(Characters.isDigit);
-  public static Parser<Character> lower = match(Characters.isLower);
-  public static Parser<Character> letter = match(Characters.isLetter);
-  public static Parser<Character> alphaNum = match(Characters.isAlphaNum);
-  public static Parser<Character> space = match(Characters.isSpace);
-  public static Parser<Character> parenthesisOpen = character('(');
-  public static Parser<Character> parenthesisClose = character(')');
+  public static final Parser<Character> digit = match(Characters.isDigit);
+  public static final Parser<Character> lower = match(Characters.isLower);
+  public static final Parser<Character> letter = match(Characters.isLetter);
+  public static final Parser<Character> alphaNum = match(Characters.isAlphaNum);
+  public static final Parser<Character> space = match(Characters.isSpace);
+  public static final Parser<Character> parenthesisOpen = character('(');
+  public static final Parser<Character> parenthesisClose = character(')');
 
   /** Matches only positive integers including 0 and returns them as a string. */
-  public static Parser<String> natString = many1(digit).bind(new Fn<List<Character>, Parser<String>>() {
+  public static final Parser<String> natString = many1(digit).bind(new Fn<List<Character>, Parser<String>>() {
     @Override public Parser<String> ap(List<Character> characters) {
       return yield(Characters.mkString.ap(characters));
     }
   });
 
   /** Matches integers and returns them as a string. */
-  public static Parser<String> integerString = opt(character('-')).bind(new Fn<Opt<Character>, Parser<String>>() {
+  public static final Parser<String> integerString = opt(character('-')).bind(new Fn<Opt<Character>, Parser<String>>() {
     @Override public Parser<String> ap(final Opt<Character> minus) {
       return natString.bind(new Fn<String, Parser<String>>() {
         @Override public Parser<String> ap(String s) {
@@ -172,11 +174,11 @@ public final class Parsers {
     }
   });
 
-  public static Parser<Integer> integer = integerString.bind(fnYield(Strings.toIntF));
+  public static final Parser<Integer> integer = integerString.bind(apply(Strings.toIntF));
 
-  public static Parser<Long> lng = integerString.bind(fnYield(Strings.toLongF));
+  public static final Parser<Long> lng = integerString.bind(apply(Strings.toLongF));
 
-  public static Parser<Double> dbl = integerString
+  public static final Parser<Double> dbl = integerString
           .bind(new Fn<String, Parser<Double>>() {
             @Override public Parser<Double> ap(final String pre) {
               return character('.').bind(new Fn<Character, Parser<Double>>() {
@@ -192,7 +194,7 @@ public final class Parsers {
           });
 
   /** Parser that consumes any amount of spaces. */
-  public static Parser<Unit> skipSpaces = many(space).bind(fnNothing);
+  public static final Parser<Unit> skipSpaces = many(space).bind(nothing);
 
   /** Parser that only succeeds of the input starts with string <code>s</code>. */
   public static Parser<String> string(final String s) {
@@ -230,8 +232,8 @@ public final class Parsers {
   }
 
   /** A symbol parser matching "true" and "false". */
-  public static Parser<Boolean> bool =
-          token(stringIgnoreCase("true")).or(token(stringIgnoreCase("false"))).bind(fnYield(Booleans.parseBoolean));
+  public static final Parser<Boolean> bool =
+          token(stringIgnoreCase("true")).or(token(stringIgnoreCase("false"))).bind(apply(Booleans.parseBoolean));
 
   /** A symbol parser. Matches <code>symbol</code> with surrounding spaces. */
   public static Parser<String> symbol(String symbol) {
@@ -240,7 +242,11 @@ public final class Parsers {
 
   /** Token parser. Skips leading and trailing spaces. */
   public static <A> Parser<A> token(final Parser<A> p) {
-    return skipSpaces.bind(fnIgnorePrevious(p)).bind(Parsers.<A, Unit>fnPassThrough(skipSpaces));
+    return skipSpaces.bind(ignorePrevious(p)).bind(Parsers.<A, Unit>ignore(skipSpaces));
+  }
+
+  public static <A> Parser<A> embraced(final Parser<Object> open, final Parser<Object> close, final Parser<A> content) {
+    return open.bind(ignorePrevious(content)).bind(Parsers.<A, Object>ignore(close));
   }
 
   /** Parser that succeeds if <code>p</code> succeeds zero or more times. */
@@ -281,12 +287,4 @@ public final class Parsers {
       }
     };
   }
-
-  // -- playground
-
-  public static final Parser<Character> second = item.bind(new Fn<Character, Parser<Character>>() {
-    @Override public Parser<Character> ap(Character character) {
-      return item;
-    }
-  });
 }
