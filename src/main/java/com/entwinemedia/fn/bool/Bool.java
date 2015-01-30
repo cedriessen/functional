@@ -97,48 +97,62 @@ public final class Bool {
     });
   }
 
+  /*
+    Boolean expression
+
+    <expression> ::= <term> ["OR" <expression>]
+    <term> ::= <value> ["AND" <term>]
+    <value> ::= ["NOT"]* ( "(" <expression> ")" | <relation> | <bool-literal> )
+    <relation> ::= <relation-factor> <rel-literal> <relation-factor>
+    <relation-factor> ::= <operation> | <number>
+    <operation> ::= <number> <op-literal> <number>
+    <rel-literal> ::= ">=" | ">" | "<=" | "<" | "=" | "!="
+    <op-literal> ::= "+" | "-" | "*" | "/"
+    <bool-literal> ::= "true" | "false"
+   */
   public Bool(List<Parser<Boolean>> valueParser) {
-    // base value parser
-    final Parser<Boolean> valueBase = Parsers.symbol("(")
+    // operation
+    final Parser<Double> operation = op(number, operationLiteral);
+    // relation
+    final Parser<Boolean> relation = op(operation.or(number), relationLiteral);
+    // expression in parenthesis
+    final Parser<Boolean> parenthesizedExpression = Parsers.symbol("(")
             .bind(new Fn<String, Parser<Boolean>>() {
               @Override public Parser<Boolean> ap(String ignore) {
                 return expression[0];
               }
             })
-            .bind(Parsers.<Boolean, String>ignore(Parsers.symbol(")")))
-            .or(Parsers.bool);
+            .bind(Parsers.<Boolean, String>ignore(Parsers.symbol(")")));
+    // base value parser
+    final Parser<Boolean> valueBase = Parsers.many(notLiteral).bind(new Fn<List<String>, Parser<Boolean>>() {
+      @Override public Parser<Boolean> ap(final List<String> not) {
+        return parenthesizedExpression.or(relation).or(Parsers.bool).bind(new Fn<Boolean, Parser<Boolean>>() {
+          @Override public Parser<Boolean> ap(Boolean a) {
+            final boolean negate = not.size() % 2 == 1;
+            return Parsers.yield(a ^ negate);
+          }
+        });
+      }
+    });
     // enrich boolean base value parser
     final Parser<Boolean> value = $(valueParser).foldl(valueBase, new Fn2<Parser<Boolean>, Parser<Boolean>, Parser<Boolean>>() {
       @Override public Parser<Boolean> ap(Parser<Boolean> sum, Parser<Boolean> p) {
         return sum.or(p);
       }
     });
-    // negation
-    final Parser<Boolean> negation = notLiteral
-            .bind(new Fn<String, Parser<Boolean>>() {
-              @Override public Parser<Boolean> ap(String ignore) {
-                return term[0];
-              }
-            })
-            .bind(Parsers.apply(Booleans.not));
-    // operation
-    final Parser<Double> operation = op(number, operationLiteral);
-    // relation
-    final Parser<Boolean> relation = op(operation.or(number), relationLiteral);
     // a term
-    term[0] = negation
-            .or(value.or(relation).bind(new Fn<Boolean, Parser<Boolean>>() {
-              @Override public Parser<Boolean> ap(final Boolean a) {
-                return andLiteral
-                        .bind(Parsers.ignorePrevious(term[0]))
-                        .bind(new Fn<Boolean, Parser<Boolean>>() {
-                          @Override public Parser<Boolean> ap(Boolean b) {
-                            return Parsers.yield(a && b);
-                          }
-                        })
-                        .or(Parsers.yield(a));
-              }
-            }));
+    term[0] = value.bind(new Fn<Boolean, Parser<Boolean>>() {
+      @Override public Parser<Boolean> ap(final Boolean a) {
+        return andLiteral
+                .bind(Parsers.ignorePrevious(term[0]))
+                .bind(new Fn<Boolean, Parser<Boolean>>() {
+                  @Override public Parser<Boolean> ap(Boolean b) {
+                    return Parsers.yield(a && b);
+                  }
+                })
+                .or(Parsers.yield(a));
+      }
+    });
     // an expression
     expression[0] = term[0].bind(new Fn<Boolean, Parser<Boolean>>() {
       @Override public Parser<Boolean> ap(final Boolean a) {
