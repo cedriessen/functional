@@ -16,27 +16,36 @@
 
 package com.entwinemedia.fn.bool;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static com.entwinemedia.fn.data.ListBuilders.LIA;
-import static com.entwinemedia.fn.parser.Parsers.fnIgnorePrevious;
+import static com.entwinemedia.fn.parser.Parsers.ignorePrevious;
 import static com.entwinemedia.fn.parser.Parsers.regex;
 import static com.entwinemedia.fn.parser.Parsers.token;
 import static com.entwinemedia.fn.parser.Parsers.yield;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import com.entwinemedia.fn.parser.Result;
-
 import org.junit.Test;
 
 import java.util.regex.Pattern;
 
 public class BoolTest {
-  final Bool b = new Bool(LIA.mk(token(regex(Pattern.compile("\\$\\{.*?\\}"))).bind(fnIgnorePrevious(yield(false)))));
+  final Bool b = new Bool(LIA.mk(token(regex(Pattern.compile("\\$\\{.*?\\}"))).bind(ignorePrevious(yield(false)))));
 
   @Test
   public void testEval() throws Exception {
     test(false, "(false OR   true ) and (False oR (FAlse and true))");
     test(true, "(false  OR true ) and (true and true or false)");
+    test(true, "true");
+    test(false, "false");
+    test(false, "!true");
+    test(false, "not true");
+    test(true, "! false");
+    test(true, "4 < 5");
+    test(true, "5 >= 5");
+    test(false, "5 > 5 + 3.0");
+    test(true, "not false");
+    test(false, "not not false");
     test(false, "!(false OR not !!false)");
     test(false, "!(${bla} OR not !!false)");
     test(true, "!true or true");
@@ -54,6 +63,7 @@ public class BoolTest {
     test(true, "10 >= 10 and (20 < 30)");
     test(true, "10 + 3 < 20");
     test(false, "10 + 10 < 20");
+    test(true, "!10 + 10 < 20");
     test(true, "9.9 + 10.1 < 20.0 and false or 10 * 20.0 == 200");
     test(true, "100 / 3 < 33.5");
     test(false, "100 / 3 < 33.332");
@@ -62,10 +72,19 @@ public class BoolTest {
     test(false, "true and ${var}");
     test(false, "false or ${var}");
     test(false, "${param} and ${var}");
+    test(false, "true AND !true");
+    test(false, "true AND !true AND !true AND !true");
+    test(false, "true AND !true AND !true");
+    test(false, "!true OR !true OR !true");
+    test(false, "!true OR !true");
+    test(true, "!!true OR !true");
+    test(true, "!!true AND !!!!true");
+    test(false, "!(!!true AND !!!!true)");
   }
 
   private void test(boolean expected, String expr) {
     final Result<Boolean> r = b.eval(expr);
+    System.out.println("Testing '" + expr + "' => " + r);
     assertTrue(r.isDefined());
     assertEquals(expected, r.getResult());
     assertTrue(r.getRest().isEmpty());
