@@ -16,13 +16,12 @@
 
 package com.entwinemedia.fn.fns;
 
-import static org.junit.Assert.assertEquals;
 import static com.entwinemedia.fn.Stream.$;
+import static org.junit.Assert.assertEquals;
 
 import com.entwinemedia.fn.data.ListBuilder;
 import com.entwinemedia.fn.data.ListBuilders;
 import com.entwinemedia.fn.data.Opt;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -53,11 +52,11 @@ public class StringsTest {
     assertEquals(l.mk("", "", "", "this"),
                  $(",,,this").bind(Strings.split(",")).toList());
     assertEquals(l.mk(" ", "this"),
-                 $(",, ,this").bind(Strings.split(","))._(Strings.removeEmptySO).toList());
+                 $(",, ,this").bind(Strings.split(",")).apply(Strings.removeEmptySO).toList());
     assertEquals(l.mk("this"),
-                 $(",, ,this").bind(Strings.splitCsv)._(Strings.removeEmptySO).toList());
+                 $(",, ,this").bind(Strings.splitCsv).apply(Strings.removeEmptySO).toList());
     assertEquals(l.mk("this"),
-                 $(",   , ,this, ").bind(Strings.splitCsv)._(Strings.removeBlankSO).toList());
+                 $(",   , ,this, ").bind(Strings.splitCsv).apply(Strings.removeBlankSO).toList());
   }
 
   @Test

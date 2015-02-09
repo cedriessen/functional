@@ -369,17 +369,17 @@ public abstract class Stream<A> implements Iterable<A> {
   // -- applications
 
   /** Apply a stream operation to this stream. */
-  public final <B> Stream<B> _(StreamOp<? super A, B> op) {
+  public final <B> Stream<B> apply(StreamOp<? super A, B> op) {
     return op.ap(this);
   }
 
   /** Apply a stream fold to this stream. */
-  public final <B> B _(StreamFold<? super A, B> fold) {
-    return fold._(this);
+  public final <B> B apply(StreamFold<? super A, B> fold) {
+    return fold.apply(this);
   }
 
   /** Apply a stream fold to this stream. */
-  public final <B> B _(Fn<Stream<? super A>, B> fold) {
+  public final <B> B apply(Fn<Stream<? super A>, B> fold) {
     return fold.ap(this);
   }
 
@@ -412,7 +412,7 @@ public abstract class Stream<A> implements Iterable<A> {
 
   /** Evaluate to a list created by the given list factory. */
   public final Set<A> toSet(SetBuilder b) {
-    return hasSizeHint() ? b._(getSizeHint(), iterator()) : b._(iterator());
+    return hasSizeHint() ? b.mk(getSizeHint(), iterator()) : b.mk(iterator());
   }
 
   /** Evaluate stream. */

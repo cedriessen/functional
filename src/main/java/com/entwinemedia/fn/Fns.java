@@ -35,7 +35,7 @@ public final class Fns {
   }
 
   private static final Fx NOP = new Fx() {
-    @Override public void _(Object o) {
+    @Override public void ap(Object o) {
     }
   };
 
@@ -215,7 +215,7 @@ public final class Fns {
   /** Turn a function into an effect by discarding its result. */
   public static <A, B> Fx<A> toFx(final Fn<? super A, ? extends B> f) {
     return new Fx<A>() {
-      @Override public void _(A a) {
+      @Override public void ap(A a) {
         f.ap(a);
       }
     };
@@ -224,9 +224,9 @@ public final class Fns {
   /** Create an effect that applies its argument to all <code>fx</code> in order. */
   public static <A> Fx<A> all(final Iterable<Fx<A>> fx) {
     return new Fx<A>() {
-      @Override public void _(A a) {
+      @Override public void ap(A a) {
         for (Fx<A> f : fx) {
-          f._(a);
+          f.ap(a);
         }
       }
     };
@@ -236,7 +236,7 @@ public final class Fns {
   public static <A, B> Fn<A, B> tee(final Fn<? super A, ? extends B> f, final Fx<? super A> fx) {
     return new Fn<A, B>() {
       @Override public B ap(A a) {
-        fx._(a);
+        fx.ap(a);
         return f.ap(a);
       }
     };

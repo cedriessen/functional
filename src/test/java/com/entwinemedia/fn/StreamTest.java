@@ -413,10 +413,10 @@ public class StreamTest {
   @Test
   public void testWrap() {
     final StreamOp<String, String> wrap = StreamOp.<String>id().wrap("{", "}");
-    assertEquals("{12345}", $(1, 2, 3, 4, 5).map(Numbers.toString)._(wrap).mkString(""));
-    assertEquals("({12345})", $(1, 2, 3, 4, 5).map(Numbers.toString)._(wrap).wrap("(", ")").mkString(""));
+    assertEquals("{12345}", $(1, 2, 3, 4, 5).map(Numbers.toString).apply(wrap).mkString(""));
+    assertEquals("({12345})", $(1, 2, 3, 4, 5).map(Numbers.toString).apply(wrap).wrap("(", ")").mkString(""));
     assertEquals(l.mk("{", "1", "2", "}"), $(1, 2).map(Numbers.toString).wrap("{", "}").toList());
-    assertEquals(l.mk("{", "}"), Stream.<Integer>empty().map(Numbers.toString)._(wrap).toList());
+    assertEquals(l.mk("{", "}"), Stream.<Integer>empty().map(Numbers.toString).apply(wrap).toList());
   }
 
   @Test
@@ -428,12 +428,12 @@ public class StreamTest {
     final StreamOp<Integer, Integer> op3 = op2.fmap(Strings.len);
     final StreamOp<Integer, Integer> op4 = op3.take(2);
     final StreamOp<Integer, Integer> op5 = op3.bind(StreamTest.<Integer>doubleList());
-    System.out.println(s._(op4).mkString(","));
+    System.out.println(s.apply(op4).mkString(","));
     System.out.println(calls[0]);
-    System.out.println(s._(op4).map(doubleValue).mkString(","));
-    System.out.println(s._(op5).mkString(","));
+    System.out.println(s.apply(op4).map(doubleValue).mkString(","));
+    System.out.println(s.apply(op5).mkString(","));
 
-    assertEquals(l.mk(1, 2, 3, 9, 8, 7), s._(StreamOp.<Integer>id().append($(9, 8, 7))).toList());
+    assertEquals(l.mk(1, 2, 3, 9, 8, 7), s.apply(StreamOp.<Integer>id().append($(9, 8, 7))).toList());
 
     System.out.println(Numbers.toString);
 
@@ -450,24 +450,24 @@ public class StreamTest {
     final StreamOp<Integer, Integer> dbl = StreamOp.<Integer>id().fmap(doubleValue);
     final StreamFold<Integer, Integer> sum = dbl.then(StreamFold.sum(Monoids.intAddition));
     final StreamFold<Object, String> mkString = StreamFold.mkString("-");
-    assertEquals(new Integer(12), s._(sum));
-    assertEquals("4-8-12", s._(dbl.o(dbl).then(StreamFold.mkString("-"))));
-    assertEquals("1-2-3", s._(StreamFold.mk(mkString.toFn())));
+    assertEquals(new Integer(12), s.apply(sum));
+    assertEquals("4-8-12", s.apply(dbl.o(dbl).then(StreamFold.mkString("-"))));
+    assertEquals("1-2-3", s.apply(StreamFold.mk(mkString.toFn())));
   }
 
   @Test
   public void testToSet() {
-    assertEquals(SetB.IH._(1, 2, 3, 4, 5), $(1, 5, 3, 4, 1, 5, 3, 4, 2, 5, 1).toSet());
+    assertEquals(SetB.IH.mk(1, 2, 3, 4, 5), $(1, 5, 3, 4, 1, 5, 3, 4, 2, 5, 1).toSet());
     assertEquals(SetB.IH.empty(), $().toSet());
     assertEquals(SetB.IH.empty(), Stream.empty().toSet());
-    assertEquals(SetB.IH._(1), $(1, 1, 1, 1, 1).toSet());
+    assertEquals(SetB.IH.mk(1), $(1, 1, 1, 1, 1).toSet());
   }
 
   @Test
   public void testVariance() {
     final Stream<Object> s = Stream.<Object>$("a", 1, 2l);
     assertEquals("a-1-2", s.mkString("-"));
-    assertEquals("a-1-2", s._(StreamFold.mkString("-")));
+    assertEquals("a-1-2", s.apply(StreamFold.mkString("-")));
   }
 
   @Test
@@ -635,14 +635,14 @@ public class StreamTest {
   }
 
   private static final Fx<Object> println = new Fx<Object>() {
-    @Override public void _(Object o) {
+    @Override public void ap(Object o) {
       System.out.println(o);
     }
   };
 
   private static Fx<Object> write(final Writer writer) {
     return new Fx<Object>() {
-      @Override public void _(Object o) {
+      @Override public void ap(Object o) {
         try {
           writer.write(o.toString());
         } catch (IOException e) {

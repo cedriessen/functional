@@ -82,7 +82,7 @@ public final class ListBuilderUtils {
 
   /** Concatenate a collection of collections to a new list. */
   public static <A> List<A> concatNew2(ListFactory f, Collection<? extends Collection<A>> ass) {
-    final List<A> buf = f.buffer($(ass)._(Util.sumSizeFold));
+    final List<A> buf = f.buffer($(ass).apply(Util.sumSizeFold));
     for (Collection<A> as : ass) {
       buf.addAll(as);
     }

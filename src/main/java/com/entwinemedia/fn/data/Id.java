@@ -46,7 +46,7 @@ public final class Id<A> {
     return o instanceof Id && id.equals(((Id) o).id);
   }
 
-  public A _() {
+  public A get() {
     return a;
   }
 }
