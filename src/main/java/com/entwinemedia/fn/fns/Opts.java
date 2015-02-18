@@ -31,4 +31,12 @@ public final class Opts {
       }
     };
   }
+
+  public static <A, B> Fn<Opt<A>, Opt<B>> lift(final Fn<? super A, ? extends B> f) {
+    return new Fn<Opt<A>, Opt<B>>() {
+      @Override public Opt<B> apply(Opt<A> as) {
+        return as.map(f);
+      }
+    };
+  }
 }
