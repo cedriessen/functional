@@ -15,9 +15,6 @@
  */
 package com.entwinemedia.fn.data.json;
 
-import static com.entwinemedia.fn.data.json.Jsons.a;
-import static com.entwinemedia.fn.data.json.Jsons.v;
-
 import static com.entwinemedia.fn.Stream.$;
 
 import com.entwinemedia.fn.Fn;
@@ -49,7 +46,7 @@ public final class Jsons {
             .foldl(new HashMap<String, JField>(),
                    new Fn2<HashMap<String, JField>, Entry<String, JValue>, HashMap<String, JField>>() {
                      @Override
-                     public HashMap<String, JField> ap(HashMap<String, JField> sum, Entry<String, JValue> e) {
+                     public HashMap<String, JField> apply(HashMap<String, JField> sum, Entry<String, JValue> e) {
                        sum.put(e.getKey(), f(e.getKey(), e.getValue()));
                        return sum;
                      }
@@ -112,26 +109,26 @@ public final class Jsons {
 
   public static <A> Fn<JPrimitive<A>, A> valueFn() {
     return new Fn<JPrimitive<A>, A>() {
-      @Override public A ap(JPrimitive<A> j) {
+      @Override public A apply(JPrimitive<A> j) {
         return j.getValue();
       }
     };
   }
 
   public static Fn<JField, JValue> valueOfFieldFn = new Fn<JField, JValue>() {
-    @Override public JValue ap(JField j) {
+    @Override public JValue apply(JField j) {
       return j.getValue();
     }
   };
 
   public static Fn<JField, String> keyOfFieldFn = new Fn<JField, String>() {
-    @Override public String ap(JField j) {
+    @Override public String apply(JField j) {
       return j.getKey();
     }
   };
 
   public static Fn<JValue, List<Object>> valueOfPrimitiveFn = new Fn<JValue, List<Object>>() {
-    @Override public List<Object> ap(JValue j) {
+    @Override public List<Object> apply(JValue j) {
       if (j instanceof JPrimitive) {
         return l.mk(((JPrimitive) j).getValue());
       } else {
@@ -141,13 +138,13 @@ public final class Jsons {
   };
 
   public static Fn<Entry<String, JValue>, JField> entryToJFieldFn = new Fn<Entry<String, JValue>, JField>() {
-    @Override public JField ap(Entry<String, JValue> e) {
+    @Override public JField apply(Entry<String, JValue> e) {
       return new JField(e.getKey(), e.getValue());
     }
   };
 
   public static Fn<String, JValue> stringToJValueFn = new Fn<String, JValue>() {
-    @Override public JValue ap(String s) {
+    @Override public JValue apply(String s) {
       return v(s);
     }
   };

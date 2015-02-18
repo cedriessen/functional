@@ -32,7 +32,7 @@ public abstract class StreamFold<A, B> {
 
   public Fn<Stream<A>, B> toFn() {
     return new Fn<Stream<A>, B>() {
-      @Override public B ap(Stream<A> s) {
+      @Override public B apply(Stream<A> s) {
         return StreamFold.this.apply(s);
       }
     };
@@ -43,7 +43,7 @@ public abstract class StreamFold<A, B> {
     return new StreamFold<A, B>() {
       @SuppressWarnings("unchecked")
       @Override public B apply(Stream<? extends A> s) {
-        return f.ap((Stream<A>) s);
+        return f.apply((Stream<A>) s);
       }
     };
   }
@@ -52,7 +52,7 @@ public abstract class StreamFold<A, B> {
   public <C> StreamFold<A, C> fmap(final Fn<? super B, ? extends C> f) {
     return new StreamFold<A, C>() {
       @Override public C apply(Stream<? extends A> s) {
-        return f.ap(StreamFold.this.apply(s));
+        return f.apply(StreamFold.this.apply(s));
       }
     };
   }
@@ -68,7 +68,7 @@ public abstract class StreamFold<A, B> {
   public static <A, B> B foldl(final B zero, final Fn2<? super B, ? super A, ? extends B> f, final Stream<A> s) {
     B fold = zero;
     for (A a : s) {
-      fold = f.ap(fold, a);
+      fold = f.apply(fold, a);
     }
     return fold;
   }
@@ -105,7 +105,7 @@ public abstract class StreamFold<A, B> {
 
   public static <A> boolean exists(Fn<? super A, Boolean> p, Stream<? extends A> s) {
     for (A a : s) {
-      if (p.ap(a)) return true;
+      if (p.apply(a)) return true;
     }
     return false;
   }
@@ -120,7 +120,7 @@ public abstract class StreamFold<A, B> {
 
   public static <A> Opt<A> find(Fn<? super A, Boolean> p, Stream<? extends A> s) {
     for (A a : s) {
-      if (p.ap(a)) return Opt.some(a);
+      if (p.apply(a)) return Opt.some(a);
     }
     return Opt.none();
   }
@@ -136,7 +136,7 @@ public abstract class StreamFold<A, B> {
 
   public static <A, B> Opt<B> findMap(Fn<? super A, Opt<B>> p, Stream<? extends A> s) {
     for (A a : s) {
-      final Opt<B> r = p.ap(a);
+      final Opt<B> r = p.apply(a);
       if (r.isSome()) {
         return r;
       }
@@ -200,8 +200,8 @@ public abstract class StreamFold<A, B> {
   // todo use MapBuilder
   public static <B, A> Map<B, A> group(final Fn<? super A, ? extends B> key, final Stream<? extends A> s) {
     final Map<B, A> sum = foldl(new HashMap<B, A>(), new Fn2<Map<B, A>, A, Map<B, A>>() {
-      @Override public Map<B, A> ap(Map<B, A> sum, A a) {
-        sum.put(key.ap(a), a);
+      @Override public Map<B, A> apply(Map<B, A> sum, A a) {
+        sum.put(key.apply(a), a);
         return sum;
       }
     }, s);
@@ -223,8 +223,8 @@ public abstract class StreamFold<A, B> {
                                           final Fn<? super A, ? extends C> value,
                                           final Stream<? extends A> s) {
     final Map<B, C> sum = foldl(new HashMap<B, C>(), new Fn2<Map<B, C>, A, Map<B, C>>() {
-      @Override public Map<B, C> ap(Map<B, C> sum, A a) {
-        sum.put(key.ap(a), value.ap(a));
+      @Override public Map<B, C> apply(Map<B, C> sum, A a) {
+        sum.put(key.apply(a), value.apply(a));
         return sum;
       }
     }, s);
@@ -245,8 +245,8 @@ public abstract class StreamFold<A, B> {
   public static <B, A> Map<B, List<A>> groupMulti(
           final ListFactory f, final Fn<? super A, ? extends B> key, final Stream<? extends A> s) {
     final Map<B, List<A>> sum = foldl(new HashMap<B, List<A>>(), new Fn2<Map<B, List<A>>, A, Map<B, List<A>>>() {
-      @Override public Map<B, List<A>> ap(Map<B, List<A>> sum, A a) {
-        final B k = key.ap(a);
+      @Override public Map<B, List<A>> apply(Map<B, List<A>> sum, A a) {
+        final B k = key.apply(a);
         if (sum.containsKey(k)) {
           sum.get(k).add(a);
         } else {

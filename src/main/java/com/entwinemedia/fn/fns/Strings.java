@@ -17,7 +17,6 @@
 package com.entwinemedia.fn.fns;
 
 import static com.entwinemedia.fn.Stream.$;
-import static com.entwinemedia.fn.data.Opt.none;
 
 import com.entwinemedia.fn.Fn;
 import com.entwinemedia.fn.Fn2;
@@ -33,13 +32,13 @@ public final class Strings {
   }
 
   public static final Fn<String, Integer> len = new Fn<String, Integer>() {
-    @Override public Integer ap(String s) {
+    @Override public Integer apply(String s) {
       return s.length();
     }
   };
 
   public static final Fn<String, String> trim = new Fn<String, String>() {
-    @Override public String ap(String s) {
+    @Override public String apply(String s) {
       return s.trim();
     }
   };
@@ -49,13 +48,13 @@ public final class Strings {
    * In contrast to {@link #trimToNone} strings are not trimmed.
    */
   public static final Fn<String, Opt<String>> blankToNone = new Fn<String, Opt<String>>() {
-    @Override public Opt<String> ap(String s) {
+    @Override public Opt<String> apply(String s) {
       return s.trim().isEmpty() ? Opt.<String>none() : Opt.some(s);
     }
   };
 
   public static final Fn<String, Opt<String>> emptyToNone = new Fn<String, Opt<String>>() {
-    @Override public Opt<String> ap(String s) {
+    @Override public Opt<String> apply(String s) {
       return !s.isEmpty() ? Opt.some(s) : Opt.<String>none();
     }
   };
@@ -65,21 +64,21 @@ public final class Strings {
 
   public static Fn<String, String> wrap(final String pre, final String post) {
     return new Fn<String, String>() {
-      @Override public String ap(String s) {
+      @Override public String apply(String s) {
         return pre + s + post;
       }
     };
   }
 
   public static final Fn<String, String> toLowerCase = new Fn<String, String>() {
-    @Override public String ap(String s) {
+    @Override public String apply(String s) {
       return s.toLowerCase();
     }
   };
 
   public static Fn<Object, String> format(final String format) {
     return new Fn<Object, String>() {
-      @Override public String ap(Object s) {
+      @Override public String apply(Object s) {
         return String.format(format, s);
       }
     };
@@ -93,7 +92,7 @@ public final class Strings {
   /** @see java.util.regex.Matcher#matches() */
   public static Pred<String> matches(final Pattern pattern) {
     return new Pred<String>() {
-      @Override public Boolean ap(String s) {
+      @Override public Boolean apply(String s) {
         return pattern.matcher(s).matches();
       }
     };
@@ -105,7 +104,7 @@ public final class Strings {
 
   public static Fn<String, Stream<String>> split(final Pattern pattern) {
     return new Fn<String, Stream<String>>() {
-      @Override public Stream<String> ap(String s) {
+      @Override public Stream<String> apply(String s) {
         return $(pattern.split(s));
       }
     };
@@ -119,7 +118,7 @@ public final class Strings {
   public static StreamOp<String, String> soSplitNewLineTrim = StreamOp.<String>id().bind(split("\n")).fmap(trim);
 
   public static final Pred<String> isEmpty = new Pred<String>() {
-    @Override public Boolean ap(String s) {
+    @Override public Boolean apply(String s) {
       return s.isEmpty();
     }
   };
@@ -129,7 +128,7 @@ public final class Strings {
   public static final StreamOp<String, String> removeEmptySO = StreamOp.<String>id().filter(isNotEmpty);
 
   public static final Pred<String> isBlank = new Pred<String>() {
-    @Override public Boolean ap(String s) {
+    @Override public Boolean apply(String s) {
       return s.trim().isEmpty();
     }
   };
@@ -139,14 +138,14 @@ public final class Strings {
   public static final StreamOp<String, String> removeBlankSO = StreamOp.<String>id().filter(isNotBlank);
 
   public static final Fn2<String, String, String> concat = new Fn2<String, String, String>() {
-    @Override public String ap(String a, String b) {
+    @Override public String apply(String a, String b) {
       return a + b;
     }
   };
 
   /** Convert a string into a long if possible. */
   public static final Fn<String, Opt<Long>> toLong = new Fn<String, Opt<Long>>() {
-    @Override public Opt<Long> ap(String s) {
+    @Override public Opt<Long> apply(String s) {
       try {
         return Opt.some(Long.parseLong(s));
       } catch (NumberFormatException e) {
@@ -157,14 +156,14 @@ public final class Strings {
 
   /** Convert a string into a long if possible. */
   public static final Fn<String, Long> toLongF = new Fn<String, Long>() {
-    @Override public Long ap(String s) {
+    @Override public Long apply(String s) {
       return Long.parseLong(s);
     }
   };
 
   /** Convert a string into an integer if possible. */
   public static final Fn<String, Opt<Integer>> toInt = new Fn<String, Opt<Integer>>() {
-    @Override public Opt<Integer> ap(String s) {
+    @Override public Opt<Integer> apply(String s) {
       try {
         return Opt.some(Integer.parseInt(s));
       } catch (NumberFormatException e) {
@@ -175,7 +174,7 @@ public final class Strings {
 
   /** Convert a string into an integer if possible. */
   public static final Fn<String, Integer> toIntF = new Fn<String, Integer>() {
-    @Override public Integer ap(String s) {
+    @Override public Integer apply(String s) {
       return Integer.parseInt(s);
     }
   };

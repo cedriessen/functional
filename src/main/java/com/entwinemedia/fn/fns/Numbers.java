@@ -21,55 +21,55 @@ import com.entwinemedia.fn.Fn2;
 
 public final class Numbers {
   public static Fn<Number, String> toString = new Fn<Number, String>() {
-    @Override public String ap(Number number) {
+    @Override public String apply(Number number) {
       return number.toString();
     }
   };
 
   public static Fn2<Integer, Integer, Integer> intPlus = new Fn2<Integer, Integer, Integer>() {
-    @Override public Integer ap(Integer a, Integer b) {
+    @Override public Integer apply(Integer a, Integer b) {
       return a + b;
     }
   };
 
   public static Fn2<Double, Double, Double> doublePlus = new Fn2<Double, Double, Double>() {
-    @Override public Double ap(Double a, Double b) {
+    @Override public Double apply(Double a, Double b) {
       return a + b;
     }
   };
 
   public static Fn2<Integer, Integer, Integer> intMinus = new Fn2<Integer, Integer, Integer>() {
-    @Override public Integer ap(Integer a, Integer b) {
+    @Override public Integer apply(Integer a, Integer b) {
       return a - b;
     }
   };
 
   public static Fn2<Double, Double, Double> doubleMinus = new Fn2<Double, Double, Double>() {
-    @Override public Double ap(Double a, Double b) {
+    @Override public Double apply(Double a, Double b) {
       return a - b;
     }
   };
 
   public static Fn2<Integer, Integer, Integer> intMult = new Fn2<Integer, Integer, Integer>() {
-    @Override public Integer ap(Integer a, Integer b) {
+    @Override public Integer apply(Integer a, Integer b) {
       return a * b;
     }
   };
 
   public static Fn2<Double, Double, Double> doubleMult = new Fn2<Double, Double, Double>() {
-    @Override public Double ap(Double a, Double b) {
+    @Override public Double apply(Double a, Double b) {
       return a * b;
     }
   };
 
   public static Fn2<Integer, Integer, Integer> intDiv = new Fn2<Integer, Integer, Integer>() {
-    @Override public Integer ap(Integer a, Integer b) {
+    @Override public Integer apply(Integer a, Integer b) {
       return a / b;
     }
   };
 
   public static Fn2<Double, Double, Double> doubleDiv = new Fn2<Double, Double, Double>() {
-    @Override public Double ap(Double a, Double b) {
+    @Override public Double apply(Double a, Double b) {
       return a / b;
     }
   };

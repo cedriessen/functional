@@ -35,10 +35,10 @@ public final class P1Eager<A> extends P1<A> {
   }
 
   @Override public <B> P1<B> fmap(Fn<? super A, ? extends B> f) {
-    return new P1Eager<B>(f.ap(a));
+    return new P1Eager<B>(f.apply(a));
   }
 
   @Override public <B> P1<B> bind(Fn<? super A, P1<B>> f) {
-    return f.ap(a);
+    return f.apply(a);
   }
 }

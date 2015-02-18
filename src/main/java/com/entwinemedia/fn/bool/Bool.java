@@ -83,12 +83,12 @@ public final class Bool {
   /** Create a parser for operations. */
   private <A, B> Parser<B> op(final Parser<A> value, final Parser<Fn2<A, A, B>> opLiteral) {
     return value.bind(new Fn<A, Parser<B>>() {
-      @Override public Parser<B> ap(final A a) {
+      @Override public Parser<B> apply(final A a) {
         return opLiteral.bind(new Fn<Fn2<A, A, B>, Parser<B>>() {
-          @Override public Parser<B> ap(final Fn2<A, A, B> op) {
+          @Override public Parser<B> apply(final Fn2<A, A, B> op) {
             return value.bind(new Fn<A, Parser<B>>() {
-              @Override public Parser<B> ap(A b) {
-                return Parsers.yield(op.ap(a, b));
+              @Override public Parser<B> apply(A b) {
+                return Parsers.yield(op.apply(a, b));
               }
             });
           }
@@ -118,16 +118,16 @@ public final class Bool {
     // expression in parenthesis
     final Parser<Boolean> parenthesizedExpression = Parsers.symbol("(")
             .bind(new Fn<String, Parser<Boolean>>() {
-              @Override public Parser<Boolean> ap(String ignore) {
+              @Override public Parser<Boolean> apply(String ignore) {
                 return expression[0];
               }
             })
             .bind(Parsers.<Boolean, String>ignore(Parsers.symbol(")")));
     // base value parser
     final Parser<Boolean> valueBase = Parsers.many(notLiteral).bind(new Fn<List<String>, Parser<Boolean>>() {
-      @Override public Parser<Boolean> ap(final List<String> not) {
+      @Override public Parser<Boolean> apply(final List<String> not) {
         return parenthesizedExpression.or(relation).or(Parsers.bool).bind(new Fn<Boolean, Parser<Boolean>>() {
-          @Override public Parser<Boolean> ap(Boolean a) {
+          @Override public Parser<Boolean> apply(Boolean a) {
             final boolean negate = not.size() % 2 == 1;
             return Parsers.yield(a ^ negate);
           }
@@ -136,17 +136,17 @@ public final class Bool {
     });
     // enrich boolean base value parser
     final Parser<Boolean> value = $(valueParser).foldl(valueBase, new Fn2<Parser<Boolean>, Parser<Boolean>, Parser<Boolean>>() {
-      @Override public Parser<Boolean> ap(Parser<Boolean> sum, Parser<Boolean> p) {
+      @Override public Parser<Boolean> apply(Parser<Boolean> sum, Parser<Boolean> p) {
         return sum.or(p);
       }
     });
     // a term
     term[0] = value.bind(new Fn<Boolean, Parser<Boolean>>() {
-      @Override public Parser<Boolean> ap(final Boolean a) {
+      @Override public Parser<Boolean> apply(final Boolean a) {
         return andLiteral
                 .bind(Parsers.ignorePrevious(term[0]))
                 .bind(new Fn<Boolean, Parser<Boolean>>() {
-                  @Override public Parser<Boolean> ap(Boolean b) {
+                  @Override public Parser<Boolean> apply(Boolean b) {
                     return Parsers.yield(a && b);
                   }
                 })
@@ -155,11 +155,11 @@ public final class Bool {
     });
     // an expression
     expression[0] = term[0].bind(new Fn<Boolean, Parser<Boolean>>() {
-      @Override public Parser<Boolean> ap(final Boolean a) {
+      @Override public Parser<Boolean> apply(final Boolean a) {
         return orLiteral
                 .bind(Parsers.ignorePrevious(expression[0]))
                 .bind(new Fn<Boolean, Parser<Boolean>>() {
-                  @Override public Parser<Boolean> ap(Boolean b) {
+                  @Override public Parser<Boolean> apply(Boolean b) {
                     return Parsers.yield(a || b);
                   }
                 })

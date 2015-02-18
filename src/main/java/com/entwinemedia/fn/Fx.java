@@ -18,14 +18,14 @@ package com.entwinemedia.fn;
 
 /** Effect */
 public abstract class Fx<A> {
-  public abstract void ap(A a);
+  public abstract void apply(A a);
 
   public Fx<A> then(final Fx<? super A>... es) {
     return new Fx<A>() {
-      @Override public void ap(A a) {
-        Fx.this.ap(a);
+      @Override public void apply(A a) {
+        Fx.this.apply(a);
         for (Fx<? super A> e : es) {
-          e.ap(a);
+          e.apply(a);
         }
       }
     };
@@ -33,8 +33,8 @@ public abstract class Fx<A> {
 
   public Fn<A, Unit> toFn() {
     return new Fn<A, Unit>() {
-      @Override public Unit ap(A a) {
-        Fx.this.ap(a);
+      @Override public Unit apply(A a) {
+        Fx.this.apply(a);
         return Unit.unit;
       }
     };

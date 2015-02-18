@@ -24,7 +24,7 @@ public final class Fns {
   }
 
   private static final Fn ID = new Fn() {
-    @Override public Object ap(Object a) {
+    @Override public Object apply(Object a) {
       return a;
     }
   };
@@ -35,7 +35,7 @@ public final class Fns {
   }
 
   private static final Fx NOP = new Fx() {
-    @Override public void ap(Object o) {
+    @Override public void apply(Object o) {
     }
   };
 
@@ -50,8 +50,8 @@ public final class Fns {
           final Fn<? super A, ? extends B> g) {
     return new Fn<A, C>() {
       @Override
-      public C ap(A a) {
-        return f.ap(g.ap(a));
+      public C apply(A a) {
+        return f.apply(g.apply(a));
       }
     };
   }
@@ -63,8 +63,8 @@ public final class Fns {
           final Fn<? super A, ? extends B> h) {
     return new Fn<A, D>() {
       @Override
-      public D ap(A a) {
-        return f.ap(g.ap(h.ap(a)));
+      public D apply(A a) {
+        return f.apply(g.apply(h.apply(a)));
       }
     };
   }
@@ -77,8 +77,8 @@ public final class Fns {
           final Fn<? super A, ? extends B> i) {
     return new Fn<A, E>() {
       @Override
-      public E ap(A a) {
-        return f.ap(g.ap(h.ap(i.ap(a))));
+      public E apply(A a) {
+        return f.apply(g.apply(h.apply(i.apply(a))));
       }
     };
   }
@@ -89,8 +89,8 @@ public final class Fns {
           final Fn<? super B, ? extends C> g) {
     return new Fn<A, C>() {
       @Override
-      public C ap(A a) {
-        return g.ap(f.ap(a));
+      public C apply(A a) {
+        return g.apply(f.apply(a));
       }
     };
   }
@@ -102,8 +102,8 @@ public final class Fns {
           final Fn<? super C, ? extends D> h) {
     return new Fn<A, D>() {
       @Override
-      public D ap(A a) {
-        return h.ap(g.ap(f.ap(a)));
+      public D apply(A a) {
+        return h.apply(g.apply(f.apply(a)));
       }
     };
   }
@@ -112,7 +112,7 @@ public final class Fns {
   public static <A, B> PartialFn<A, B> toPartial(final Fn<A, B> f) {
     return new PartialFn<A, B>() {
       @Override protected B partial(A a) {
-        return f.ap(a);
+        return f.apply(a);
       }
     };
   }
@@ -120,10 +120,10 @@ public final class Fns {
   /** Curry a function of arity 2. */
   public static <A, B, C> Fn<A, Fn<B, C>> curry(final Fn2<? super A, ? super B, ? extends C> f) {
     return new Fn<A, Fn<B, C>>() {
-      @Override public Fn<B, C> ap(final A a) {
+      @Override public Fn<B, C> apply(final A a) {
         return new Fn<B, C>() {
-          @Override public C ap(B b) {
-            return f.ap(a, b);
+          @Override public C apply(B b) {
+            return f.apply(a, b);
           }
         };
       }
@@ -133,8 +133,8 @@ public final class Fns {
   /** Uncurry to a function of arity 2. */
   public static <A, B, C> Fn2<A, B, C> uncurry(final Fn<A, Fn<B, C>> f) {
     return new Fn2<A, B, C>() {
-      @Override public C ap(A a, B b) {
-        return f.ap(a).ap(b);
+      @Override public C apply(A a, B b) {
+        return f.apply(a).apply(b);
       }
     };
   }
@@ -142,8 +142,8 @@ public final class Fns {
   /** Flip arguments of a function of arity 2. */
   public static <A, B, C> Fn2<B, A, C> flip(final Fn2<? super A, ? super B, ? extends C> f) {
     return new Fn2<B, A, C>() {
-      @Override public C ap(B b, A a) {
-        return f.ap(a, b);
+      @Override public C apply(B b, A a) {
+        return f.apply(a, b);
       }
     };
   }
@@ -151,8 +151,8 @@ public final class Fns {
   /** Partial application of argument 1. */
   public static <A, B, C> Fn<B, C> _1p(final Fn2<? super A, ? super B, ? extends C> f, final A a) {
     return new Fn<B, C>() {
-      @Override public C ap(B b) {
-        return f.ap(a, b);
+      @Override public C apply(B b) {
+        return f.apply(a, b);
       }
     };
   }
@@ -160,8 +160,8 @@ public final class Fns {
   /** Partial application of argument 2. */
   public static <A, B, C> Fn<A, C> _2p(final Fn2<? super A, ? super B, ? extends C> f, final B b) {
     return new Fn<A, C>() {
-      @Override public C ap(A a) {
-        return f.ap(a, b);
+      @Override public C apply(A a) {
+        return f.apply(a, b);
       }
     };
   }
@@ -169,8 +169,8 @@ public final class Fns {
   /** Partial application of argument 2. */
   public static <A, B, C> Fn<A, C> _2p(final Fn<? super A, Fn<? super B, ? extends C>> f, final B b) {
     return new Fn<A, C>() {
-      @Override public C ap(A a) {
-        return f.ap(a).ap(b);
+      @Override public C apply(A a) {
+        return f.apply(a).apply(b);
       }
     };
   }
@@ -183,9 +183,9 @@ public final class Fns {
 
   public static <A, B> Fn<A, Opt<B>> tryOpt(final Fn<? super A, ? extends B> f) {
     return new Fn<A, Opt<B>>() {
-      @Override public Opt<B> ap(A a) {
+      @Override public Opt<B> apply(A a) {
         try {
-          return Opt.some(f.ap(a));
+          return Opt.some(f.apply(a));
         } catch (Exception e) {
           return Opt.none();
         }
@@ -215,8 +215,8 @@ public final class Fns {
   /** Turn a function into an effect by discarding its result. */
   public static <A, B> Fx<A> toFx(final Fn<? super A, ? extends B> f) {
     return new Fx<A>() {
-      @Override public void ap(A a) {
-        f.ap(a);
+      @Override public void apply(A a) {
+        f.apply(a);
       }
     };
   }
@@ -224,9 +224,9 @@ public final class Fns {
   /** Create an effect that applies its argument to all <code>fx</code> in order. */
   public static <A> Fx<A> all(final Iterable<Fx<A>> fx) {
     return new Fx<A>() {
-      @Override public void ap(A a) {
+      @Override public void apply(A a) {
         for (Fx<A> f : fx) {
-          f.ap(a);
+          f.apply(a);
         }
       }
     };
@@ -235,9 +235,9 @@ public final class Fns {
   /** Create a function that applies its argument to <code>fx</code> and then to <code>f</code>. */
   public static <A, B> Fn<A, B> tee(final Fn<? super A, ? extends B> f, final Fx<? super A> fx) {
     return new Fn<A, B>() {
-      @Override public B ap(A a) {
-        fx.ap(a);
-        return f.ap(a);
+      @Override public B apply(A a) {
+        fx.apply(a);
+        return f.apply(a);
       }
     };
   }

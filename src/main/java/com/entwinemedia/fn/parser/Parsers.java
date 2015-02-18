@@ -43,7 +43,7 @@ public final class Parsers {
 
   /** Parser that returns {@link com.entwinemedia.fn.Unit}. */
   public static final Fn<Object, Parser<Unit>> nothing = new Fn<Object, Parser<Unit>>() {
-    @Override public Parser<Unit> ap(Object ignore) {
+    @Override public Parser<Unit> apply(Object ignore) {
       return yield(Unit.unit);
     }
   };
@@ -51,9 +51,9 @@ public final class Parsers {
   /** Run parser <code>p</code> and ignore its outcome. Go on with the result of the previous parser. */
   public static <A, B> Fn<A, Parser<A>> ignore(final Parser<B> p) {
     return new Fn<A, Parser<A>>() {
-      @Override public Parser<A> ap(final A a) {
+      @Override public Parser<A> apply(final A a) {
         return p.bind(new Fn<B, Parser<A>>() {
-          @Override public Parser<A> ap(B b) {
+          @Override public Parser<A> apply(B b) {
             return yield(a);
           }
         });
@@ -64,7 +64,7 @@ public final class Parsers {
   /** Ignore the result of the previous parser, run parser <code>p</code>. */
   public static <A, B> Fn<A, Parser<B>> ignorePrevious(final Parser<B> p) {
     return new Fn<A, Parser<B>>() {
-      @Override public Parser<B> ap(A a) {
+      @Override public Parser<B> apply(A a) {
         return p;
       }
     };
@@ -73,17 +73,17 @@ public final class Parsers {
   /** Apply function <code>f</code> to the value returned by the previous parser and return it. */
   public static <A, B> Fn<A, Parser<B>> apply(final Fn<A, B> f) {
     return new Fn<A, Parser<B>>() {
-      @Override public Parser<B> ap(A a) {
-        return yield(f.ap(a));
+      @Override public Parser<B> apply(A a) {
+        return yield(f.apply(a));
       }
     };
   }
 
   public static <A, B> Fn<A, Parser<P2<A, B>>> fnCollect(final Parser<B> p) {
     return new Fn<A, Parser<P2<A, B>>>() {
-      @Override public Parser<P2<A, B>> ap(final A a) {
+      @Override public Parser<P2<A, B>> apply(final A a) {
         return p.bind(new Fn<B, Parser<P2<A, B>>>() {
-          @Override public Parser<P2<A, B>> ap(B b) {
+          @Override public Parser<P2<A, B>> apply(B b) {
             return yield(Products.E.p2(a, b));
           }
         });
@@ -93,9 +93,9 @@ public final class Parsers {
 
   public static <A, B, C> Fn<P2<A, B>, Parser<P3<A, B, C>>> fnCollect2(final Parser<C> p) {
     return new Fn<P2<A, B>, Parser<P3<A, B, C>>>() {
-      @Override public Parser<P3<A, B, C>> ap(final P2<A, B> a) {
+      @Override public Parser<P3<A, B, C>> apply(final P2<A, B> a) {
         return p.bind(new Fn<C, Parser<P3<A, B, C>>>() {
-          @Override public Parser<P3<A, B, C>> ap(C c) {
+          @Override public Parser<P3<A, B, C>> apply(C c) {
             return yield(Products.E.p3(a.get1(), a.get2(), c));
           }
         });
@@ -138,8 +138,8 @@ public final class Parsers {
   /** Parser that only succeeds if <code>p</code> matches the next character. */
   public static Parser<Character> match(final Fn<Character, Boolean> p) {
     return item.bind(new Fn<Character, Parser<Character>>() {
-      @Override public Parser<Character> ap(Character c) {
-        return p.ap(c) ? yield(c) : Parsers.<Character>failure();
+      @Override public Parser<Character> apply(Character c) {
+        return p.apply(c) ? yield(c) : Parsers.<Character>failure();
       }
     });
   }
@@ -158,16 +158,16 @@ public final class Parsers {
 
   /** Matches only positive integers including 0 and returns them as a string. */
   public static final Parser<String> natString = many1(digit).bind(new Fn<List<Character>, Parser<String>>() {
-    @Override public Parser<String> ap(List<Character> characters) {
-      return yield(Characters.mkString.ap(characters));
+    @Override public Parser<String> apply(List<Character> characters) {
+      return yield(Characters.mkString.apply(characters));
     }
   });
 
   /** Matches integers and returns them as a string. */
   public static final Parser<String> integerString = opt(character('-')).bind(new Fn<Opt<Character>, Parser<String>>() {
-    @Override public Parser<String> ap(final Opt<Character> minus) {
+    @Override public Parser<String> apply(final Opt<Character> minus) {
       return natString.bind(new Fn<String, Parser<String>>() {
-        @Override public Parser<String> ap(String s) {
+        @Override public Parser<String> apply(String s) {
           return yield(minus.isSome() ? minus.get() + s : s);
         }
       });
@@ -180,11 +180,11 @@ public final class Parsers {
 
   public static final Parser<Double> dbl = integerString
           .bind(new Fn<String, Parser<Double>>() {
-            @Override public Parser<Double> ap(final String pre) {
+            @Override public Parser<Double> apply(final String pre) {
               return character('.').bind(new Fn<Character, Parser<Double>>() {
-                @Override public Parser<Double> ap(final Character ignore) {
+                @Override public Parser<Double> apply(final Character ignore) {
                   return natString.bind(new Fn<String, Parser<Double>>() {
-                    @Override public Parser<Double> ap(final String post) {
+                    @Override public Parser<Double> apply(final String post) {
                       return yield(Double.parseDouble(pre + "." + post));
                     }
                   });
@@ -226,7 +226,7 @@ public final class Parsers {
     return new Parser<A>() {
       @Override public Result<A> parse(String input) {
         final Matcher m = p.matcher(input);
-        return m.lookingAt() ? result(f.ap(m.group()), input.substring(m.group().length())) : fail();
+        return m.lookingAt() ? result(f.apply(m.group()), input.substring(m.group().length())) : fail();
       }
     };
   }
@@ -262,7 +262,7 @@ public final class Parsers {
   /** Parser that returns some value if <code>p</code> succeeds or none. */
   public static <A> Parser<Opt<A>> opt(final Parser<A> p) {
     return p.bind(new Fn<A, Parser<Opt<A>>>() {
-      @Override public Parser<Opt<A>> ap(A a) {
+      @Override public Parser<Opt<A>> apply(A a) {
         return yield(Opt.some(a));
       }
     }).or(yield(Opt.<A>none()));

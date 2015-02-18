@@ -29,25 +29,25 @@ public class FnsTest {
   @Test
   public void testVary() throws Exception {
     final Fn<String, Number> f = Fns.<String, Number>vy(new Fn<Object, Integer>() {
-      @Override public Integer ap(Object s) {
+      @Override public Integer apply(Object s) {
         return s.hashCode() + s.hashCode();
       }
     });
-    assertTrue(f.ap("bla") instanceof Number);
+    assertTrue(f.apply("bla") instanceof Number);
   }
 
   @Test
   public void testFnX() {
     final Fn<Integer, String> f = new FnX<Integer, String>() {
-      @Override public String apx(Integer integer) throws IOException {
+      @Override public String applyX(Integer integer) throws IOException {
         throw new IOException();
       }
     };
     try {
-      f.ap(10);
+      f.apply(10);
       fail();
     } catch (Exception ignore) {
     }
-    assertEquals(Opt.<String>none(), f.tryOpt().ap(10));
+    assertEquals(Opt.<String>none(), f.tryOpt().apply(10));
   }
 }

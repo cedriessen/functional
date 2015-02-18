@@ -16,7 +16,8 @@
 
 package com.entwinemedia.fn.fns;
 
-import com.entwinemedia.fn.*;
+import com.entwinemedia.fn.Fn;
+import com.entwinemedia.fn.P2;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -27,7 +28,7 @@ public final class Maps {
 
   public static <A, B> Fn<Map.Entry<A, B>, P2<A, B>> toP2() {
     return new Fn<Entry<A, B>, P2<A, B>>() {
-      @Override public P2<A, B> ap(Entry<A, B> e) {
+      @Override public P2<A, B> apply(Entry<A, B> e) {
         return com.entwinemedia.fn.Products.E.p2(e.getKey(), e.getValue());
       }
     };

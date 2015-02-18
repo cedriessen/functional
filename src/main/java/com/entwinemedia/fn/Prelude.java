@@ -82,7 +82,7 @@ public final class Prelude {
   /** {@link #chuck(Throwable)} as a function. */
   public static <A extends Throwable, B> Fn<A, B> chuck() {
     return new Fn<A, B>() {
-      @Override public B ap(Throwable throwable) {
+      @Override public B apply(Throwable throwable) {
         return chuck(throwable);
       }
     };

@@ -24,28 +24,28 @@ import org.junit.Test;
 public class BooleansTest {
   @Test
   public void test() throws Exception {
-    assertTrue(Booleans.<Integer, Integer>lt().ap(10, 20));
-    assertTrue(Booleans.<Integer, Integer>lt(20).ap(10));
-    assertFalse(Booleans.<Integer, Integer>lt().ap(20, 10));
-    assertFalse(Booleans.<Integer, Integer>lt(10).ap(20));
+    assertTrue(Booleans.<Integer, Integer>lt().apply(10, 20));
+    assertTrue(Booleans.<Integer, Integer>lt(20).apply(10));
+    assertFalse(Booleans.<Integer, Integer>lt().apply(20, 10));
+    assertFalse(Booleans.<Integer, Integer>lt(10).apply(20));
     //
-    assertTrue(Booleans.<Integer, Integer>le().ap(10, 20));
-    assertTrue(Booleans.<Integer, Integer>le(20).ap(10));
-    assertFalse(Booleans.<Integer, Integer>le().ap(20, 10));
-    assertFalse(Booleans.<Integer, Integer>le(10).ap(20));
-    assertTrue(Booleans.<Integer, Integer>le().ap(10, 10));
-    assertTrue(Booleans.<Integer, Integer>le(10).ap(10));
+    assertTrue(Booleans.<Integer, Integer>le().apply(10, 20));
+    assertTrue(Booleans.<Integer, Integer>le(20).apply(10));
+    assertFalse(Booleans.<Integer, Integer>le().apply(20, 10));
+    assertFalse(Booleans.<Integer, Integer>le(10).apply(20));
+    assertTrue(Booleans.<Integer, Integer>le().apply(10, 10));
+    assertTrue(Booleans.<Integer, Integer>le(10).apply(10));
     //
-    assertTrue(Booleans.<Integer, Integer>gt().ap(20, 10));
-    assertTrue(Booleans.<Integer, Integer>gt(10).ap(20));
-    assertFalse(Booleans.<Integer, Integer>gt().ap(10, 20));
-    assertFalse(Booleans.<Integer, Integer>gt(20).ap(10));
+    assertTrue(Booleans.<Integer, Integer>gt().apply(20, 10));
+    assertTrue(Booleans.<Integer, Integer>gt(10).apply(20));
+    assertFalse(Booleans.<Integer, Integer>gt().apply(10, 20));
+    assertFalse(Booleans.<Integer, Integer>gt(20).apply(10));
     //
-    assertTrue(Booleans.<Integer, Integer>ge().ap(20, 10));
-    assertTrue(Booleans.<Integer, Integer>ge(10).ap(20));
-    assertFalse(Booleans.<Integer, Integer>ge().ap(10, 20));
-    assertFalse(Booleans.<Integer, Integer>ge(20).ap(10));
-    assertTrue(Booleans.<Integer, Integer>ge().ap(10, 10));
-    assertTrue(Booleans.<Integer, Integer>ge(10).ap(10));
+    assertTrue(Booleans.<Integer, Integer>ge().apply(20, 10));
+    assertTrue(Booleans.<Integer, Integer>ge(10).apply(20));
+    assertFalse(Booleans.<Integer, Integer>ge().apply(10, 20));
+    assertFalse(Booleans.<Integer, Integer>ge(20).apply(10));
+    assertTrue(Booleans.<Integer, Integer>ge().apply(10, 10));
+    assertTrue(Booleans.<Integer, Integer>ge(10).apply(10));
   }
 }

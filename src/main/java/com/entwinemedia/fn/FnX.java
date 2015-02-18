@@ -19,13 +19,13 @@ package com.entwinemedia.fn;
 import static com.entwinemedia.fn.Prelude.chuck;
 
 public abstract class FnX<A, B> extends Fn<A, B> {
-  @Override public final B ap(A a) {
+  @Override public final B apply(A a) {
     try {
-      return apx(a);
+      return applyX(a);
     } catch (Exception e) {
       return chuck(e);
     }
   }
 
-  public abstract B apx(A a) throws Exception;
+  public abstract B applyX(A a) throws Exception;
 }

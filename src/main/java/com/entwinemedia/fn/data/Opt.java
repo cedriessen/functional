@@ -49,7 +49,7 @@ public abstract class Opt<A> implements Iterable<A> {
   public <B> B fold(Fn<? super A, ? extends B> some, P1<? extends B> none) {
     // cannot be written using the ternary operator ?: because of type inference issues
     if (isSome()) {
-      return some.ap(get());
+      return some.apply(get());
     } else {
       return none.get1();
     }
@@ -76,7 +76,7 @@ public abstract class Opt<A> implements Iterable<A> {
 //  public abstract Option<A> foreach(Function<A, Void> f);
 
   public <B> Opt<B> fmap(Fn<? super A, ? extends B> f) {
-    return isSome() ? some(f.ap(get())) : Opt.<B>none();
+    return isSome() ? some(f.apply(get())) : Opt.<B>none();
   }
 
   /** @see #fmap(com.entwinemedia.fn.Fn) */
@@ -86,7 +86,7 @@ public abstract class Opt<A> implements Iterable<A> {
 
   /** Monadic bind operation <code>m a -> (a -> m b) -> m b</code>. */
   public <B> Opt<B> bind(Fn<? super A, Opt<B>> f) {
-    return isSome() ? f.ap(get()) : Opt.<B>none();
+    return isSome() ? f.apply(get()) : Opt.<B>none();
   }
 
   /** @see #bind(com.entwinemedia.fn.Fn) */
@@ -97,14 +97,14 @@ public abstract class Opt<A> implements Iterable<A> {
   /** Run side effect <code>f</code> on the value of a some; do nothing otherwise. */
   public final Opt<A> each(Fx<? super A> f) {
     if (isSome()) {
-      f.ap(get());
+      f.apply(get());
     }
     return this;
   }
 
   /** If predicate <code>p</code> does not match return none. */
   public Opt<A> filter(Fn<? super A, Boolean> p) {
-    return isSome() && p.ap(get()) ? this : Opt.<A>none();
+    return isSome() && p.apply(get()) ? this : Opt.<A>none();
   }
 
   /** Throw <code>none</code> if none. */

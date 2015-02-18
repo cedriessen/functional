@@ -25,8 +25,8 @@ public abstract class Pred<A> extends Fn<A, Boolean> {
   /** Convert a function into a predicate. */
   public static <A> Pred<A> mk(final Fn<A, Boolean> f) {
     return new Pred<A>() {
-      @Override public Boolean ap(A a) {
-        return f.ap(a);
+      @Override public Boolean apply(A a) {
+        return f.apply(a);
       }
     };
   }
