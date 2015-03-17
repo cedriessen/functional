@@ -18,7 +18,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.entwinemedia.common</groupId>
   <artifactId>functional</artifactId>
-  <version>1.1</version>
+  <version>1.1.1</version>
   <name>functional</name>
   <description>A library for functional programming.</description>
   <inceptionYear>2013</inceptionYear>
@@ -84,11 +84,22 @@
           <instructions>
             <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
             <Build-Number>${build.number}</Build-Number>
+            <!-- Disable the generation of the
+               - <Require-Capability>osgi.ee; filter:="(&amp;(osgi.ee=JavaSE)(version=1.7))"</Require-Capability>
+               - header which causes a class not found exception when starting Matterhorn under Java 1.8
+               - See https://opencast.jira.com/browse/MH-10721 for details.
+               -->
+            <_noee>true</_noee>
             <Import-Package>
               *;resolution:=optional
             </Import-Package>
             <Export-Package>
-              com.entwinemedia.fn.*;version=${project.version}
+              com.entwinemedia.fn;version=${project.version},
+              com.entwinemedia.fn.bool;version=${project.version},
+              com.entwinemedia.fn.data;version=${project.version},
+              com.entwinemedia.fn.data.json;version=${project.version},
+              com.entwinemedia.fn.fns;version=${project.version},
+              com.entwinemedia.fn.parser;version=${project.version}
             </Export-Package>
           </instructions>
         </configuration>
