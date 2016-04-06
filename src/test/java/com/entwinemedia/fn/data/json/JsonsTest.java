@@ -23,10 +23,12 @@ import static com.entwinemedia.fn.data.json.Jsons.j;
 import static com.entwinemedia.fn.data.json.Jsons.jn;
 import static com.entwinemedia.fn.data.json.Jsons.jz;
 import static com.entwinemedia.fn.data.json.Jsons.v;
+import static com.entwinemedia.fn.data.json.Jsons.vN;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -36,6 +38,7 @@ import static org.junit.Assert.assertTrue;
 import com.entwinemedia.fn.data.Iterables;
 import com.entwinemedia.fn.data.ListBuilders;
 import com.jayway.jsonassert.JsonAssert;
+
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
@@ -121,5 +124,16 @@ public class JsonsTest {
     assertEquals(3, ListBuilders.SIA.mk(b).size());
     assertThat($(a.override(b)).map(Jsons.valueOfFieldFn).bind(Jsons.valueOfPrimitiveFn).toList(),
                Matchers.<Object>containsInAnyOrder("karl", "krause", "herne"));
+  }
+
+  @Test
+  public void testNullSafeValueHandling() {
+    final JObjectWrite a = j(f("string", vN("String")), f("number", vN(15)), f("boolTrue", vN(true)), f("boolFalse", vN(false)));
+
+    JsonAssert.with(serializer.toJson(a))
+            .assertThat("$.string", equalTo("String"))
+            .assertThat("$.number", equalTo(15))
+            .assertThat("$.boolTrue", is(true))
+            .assertThat("$.boolFalse", is(false));
   }
 }
