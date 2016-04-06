@@ -16,6 +16,13 @@
 
 package com.entwinemedia.fn.data.json;
 
+import static com.entwinemedia.fn.Stream.$;
+import static com.entwinemedia.fn.data.json.Jsons.a;
+import static com.entwinemedia.fn.data.json.Jsons.f;
+import static com.entwinemedia.fn.data.json.Jsons.j;
+import static com.entwinemedia.fn.data.json.Jsons.jn;
+import static com.entwinemedia.fn.data.json.Jsons.jz;
+import static com.entwinemedia.fn.data.json.Jsons.v;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
@@ -25,13 +32,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static com.entwinemedia.fn.Stream.$;
-import static com.entwinemedia.fn.data.json.Jsons.j;
-import static com.entwinemedia.fn.data.json.Jsons.v;
 
 import com.entwinemedia.fn.data.Iterables;
 import com.entwinemedia.fn.data.ListBuilders;
-
 import com.jayway.jsonassert.JsonAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -42,32 +45,39 @@ public class JsonsTest {
 
   @Test
   public void testEquality() throws Exception {
-    Assert.assertEquals(Jsons.jn, Jsons.jn);
-    Assert.assertNotEquals(Jsons.jn, new JBoolean(true));
-    Assert.assertNotEquals(Jsons.jn, Jsons.jz);
+    Assert.assertEquals(jn, jn);
+    Assert.assertNotEquals(jn, new JBoolean(true));
+    Assert.assertNotEquals(jn, jz);
     assertEquals(new JString("test"), new JString("test"));
     assertNotEquals(new JNumber(1), new JString("1"));
     assertNotEquals(new JNumber(1), new JNumber(1.0));
     assertEquals(new JNumber(1.0), new JNumber(1.0));
     assertNotEquals(new JNumber(1), new JNumber(1l));
     assertNotEquals(new JNumber(1), new JNumber((short) 1));
-    assertTrue(Iterables.eq(Jsons.a(Jsons.v(10), Jsons.v(20)), Jsons.a(Jsons.v(10), Jsons.v(20))));
-    assertFalse(Iterables.eq(Jsons.a(Jsons.v(10), Jsons.v(20)), Jsons.a(Jsons.v(20), Jsons.v(20))));
-    assertFalse(Iterables.eq(Jsons.a(Jsons.v(10), Jsons.v(20)), Jsons.a(Jsons.v(10), Jsons.v(20), Jsons.v("x"))));
+    assertTrue(Iterables.eq(a(v(10), v(20)), a(v(10), v(20))));
+    assertFalse(Iterables.eq(a(v(10), v(20)), a(v(20), v(20))));
+    assertFalse(Iterables.eq(a(v(10), v(20)), a(v(10), v(20), v("x"))));
+    //
+    assertEquals(a(v("1")), a(v("1")));
+    assertEquals(a(v("1"), v("2")), a(v("1"), v("2")));
+    assertNotEquals(a(v("1"), v("3")), a(v("1"), v("2")));
+    //
+    assertEquals(j(f("test", v("test"))), j(f("test", v("test"))));
+    assertNotEquals(j(f("test", v("test"))), j(f("test2", v("test2"))));
   }
 
   // see for json-path examples https://code.google.com/p/json-path/
   @Test
   public void testSerialization() {
-    final JObjectWrite o = Jsons.j(Jsons.f("key", Jsons.v(10)),
-                                   Jsons.f("bla", Jsons.v("hallo")),
-                                   Jsons.f("remove", Jsons.jz),
-                                   Jsons.f("array", Jsons.a(Jsons.v("sad,,,asd"),
-                                                            Jsons.v(10),
-                                                            Jsons.jz,
-                                                            Jsons.v(20.34),
-                                                            Jsons.v(true),
-                                                            Jsons.j(Jsons.f("key", Jsons.v(true))))));
+    final JObjectWrite o = j(f("key", v(10)),
+                             f("bla", v("hallo")),
+                             f("remove", jz),
+                             f("array", a(v("sad,,,asd"),
+                                          v(10),
+                                          jz,
+                                          v(20.34),
+                                          v(true),
+                                          j(f("key", v(true))))));
     final String json = serializer.toJson(o);
     System.out.println(json);
     JsonAssert.with(json).assertThat("$.key", equalTo(10))
@@ -76,10 +86,10 @@ public class JsonsTest {
             .assertThat("$.array", hasSize(5))
             .assertThat("$.array", hasItems("sad,,,asd", 10, 20.34, true))
             .assertThat("$.array[4].key", equalTo(true));
-    JsonAssert.with(serializer.toJson(Jsons.j(Jsons.f("a", Jsons.v(10)), Jsons.f("b", Jsons.v(20))).override(Jsons.j(Jsons.f("a", Jsons.v(30))))))
+    JsonAssert.with(serializer.toJson(j(f("a", v(10)), f("b", v(20))).override(j(f("a", v(30))))))
             .assertThat("$.a", equalTo(30))
             .assertThat("$.b", equalTo(20));
-    JsonAssert.with(serializer.toJson(Jsons.j(Jsons.f("a", Jsons.v(10)), Jsons.f("b", Jsons.v(20))).merge(Jsons.j(Jsons.f("a", Jsons.v(30))))))
+    JsonAssert.with(serializer.toJson(j(f("a", v(10)), f("b", v(20))).merge(j(f("a", v(30))))))
             .assertThat("$.a", contains(10, 30))
             .assertThat("$.a", hasSize(2))
             .assertThat("$.b", equalTo(20));
@@ -87,8 +97,8 @@ public class JsonsTest {
 
   @Test
   public void testAppend() {
-    final JArrayWrite a = Jsons.a(Jsons.v(10), Jsons.v(20));
-    final JArrayWrite b = Jsons.a(Jsons.v(20), Jsons.v(30));
+    final JArrayWrite a = a(v(10), v(20));
+    final JArrayWrite b = a(v(20), v(30));
     assertEquals(4, ListBuilders.SIA.mk(a.append(b)).size());
     assertEquals(2, ListBuilders.SIA.mk(a).size());
     assertEquals(2, ListBuilders.SIA.mk(b).size());
@@ -97,8 +107,8 @@ public class JsonsTest {
 
   @Test
   public void testMerge() {
-    final JObjectWrite a = Jsons.j(Jsons.f("name", Jsons.v("karl")), Jsons.f("surname", Jsons.v("lagerfeld")));
-    final JObjectWrite b = Jsons.j(Jsons.f("name", Jsons.v("karl")), Jsons.f("surname", Jsons.v("krause")), Jsons.f("city", Jsons.v("herne")));
+    final JObjectWrite a = j(f("name", v("karl")), f("surname", v("lagerfeld")));
+    final JObjectWrite b = j(f("name", v("karl")), f("surname", v("krause")), f("city", v("herne")));
     System.out.println($(a.override(b)).map(serializer.jFieldToJson()).mkString(","));
     assertEquals(3, ListBuilders.SIA.mk(a.override(b)).size());
     assertEquals(2, ListBuilders.SIA.mk(a).size());

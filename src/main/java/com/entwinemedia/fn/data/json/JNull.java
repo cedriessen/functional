@@ -17,7 +17,7 @@
 package com.entwinemedia.fn.data.json;
 
 public final class JNull implements JValue {
-  public JNull() {
+  JNull() {
   }
 
   @Override public int hashCode() {

@@ -23,7 +23,7 @@ public final class JField implements JValue {
   private final String key;
   private final JValue value;
 
-  public JField(String key, JValue value) {
+  JField(String key, JValue value) {
     this.key = key;
     this.value = value;
   }
@@ -41,7 +41,7 @@ public final class JField implements JValue {
   }
 
   @Override public boolean equals(Object that) {
-    return that instanceof JField && eqFields((JField) that);
+    return (this == that) || (that instanceof JField && eqFields((JField) that));
   }
 
   private boolean eqFields(JField that) {

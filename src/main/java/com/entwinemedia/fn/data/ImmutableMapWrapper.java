@@ -84,4 +84,12 @@ public final class ImmutableMapWrapper<A, B> implements Map<A, B>, Immutable {
   @Override public void clear() {
     throw new UnsupportedOperationException();
   }
+
+  @Override public int hashCode() {
+    return wrapped.hashCode();
+  }
+
+  @Override public boolean equals(Object obj) {
+    return wrapped.equals(obj);
+  }
 }

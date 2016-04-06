@@ -24,13 +24,21 @@ import java.util.Iterator;
  * <em>Attention:</em> The iterable can still be modified through the wrapped iterable.
  */
 public final class ImmutableIterableWrapper<A> implements Iterable<A>, Immutable {
-  private final Iterable<A> a;
+  private final Iterable<A> wrapped;
 
-  public ImmutableIterableWrapper(Iterable<A> a) {
-    this.a = a;
+  public ImmutableIterableWrapper(Iterable<A> wrapped) {
+    this.wrapped = wrapped;
   }
 
   @Override public Iterator<A> iterator() {
-    return new ImmutableIteratorWrapper<A>(a.iterator());
+    return new ImmutableIteratorWrapper<>(wrapped.iterator());
+  }
+
+  @Override public int hashCode() {
+    return wrapped.hashCode();
+  }
+
+  @Override public boolean equals(Object obj) {
+    return wrapped.equals(obj);
   }
 }

@@ -18,7 +18,7 @@ package com.entwinemedia.fn.data.json;
 
 /** Identity element. */
 public final class JZero implements JValue {
-  public JZero() {
+  JZero() {
   }
 
   @Override public boolean equals(Object that) {

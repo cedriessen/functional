@@ -45,4 +45,12 @@ public class ImmutableListIteratorWrapper<A> extends ImmutableListIteratorBase<A
   @Override public int nextIndex() {return wrapped.nextIndex();}
 
   @Override public int previousIndex() {return wrapped.previousIndex();}
+
+  @Override public int hashCode() {
+    return wrapped.hashCode();
+  }
+
+  @Override public boolean equals(Object obj) {
+    return wrapped.equals(obj);
+  }
 }

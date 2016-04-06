@@ -30,7 +30,7 @@ public final class JArrayWrite implements JValue, Iterable<JValue> {
   private Iterable<JValue> values;
 
   @SuppressWarnings("unchecked")
-  public JArrayWrite(Iterable<JValue> values) {
+  JArrayWrite(Iterable<JValue> values) {
     this.values = values;
   }
 
@@ -53,6 +53,10 @@ public final class JArrayWrite implements JValue, Iterable<JValue> {
 
   /** Delegated to the wrapped iterable. */
   @Override public boolean equals(Object that) {
-    return that instanceof JObjectWrite && eq(values, ((JArrayWrite) that).values);
+    return (this == that) || (that instanceof JArrayWrite && eqFields((JArrayWrite) that));
+  }
+
+  private boolean eqFields(JArrayWrite that) {
+    return eq(values, that.values);
   }
 }

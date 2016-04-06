@@ -72,8 +72,4 @@ public final class ImmutableListWrapper<A> extends ImmutableListBase<A> {
   @Override public boolean equals(Object o) {
     return wrapped.equals(o);
   }
-
-  @Override public String toString() {
-    return wrapped.toString();
-  }
 }

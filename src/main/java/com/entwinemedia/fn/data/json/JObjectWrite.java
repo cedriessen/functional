@@ -16,7 +16,8 @@
 
 package com.entwinemedia.fn.data.json;
 
-import com.entwinemedia.fn.Equality;
+import static com.entwinemedia.fn.Equality.eq;
+
 import com.entwinemedia.fn.Fn2;
 import com.entwinemedia.fn.Stream;
 
@@ -32,7 +33,7 @@ import java.util.Map;
 public final class JObjectWrite implements JValue, Iterable<JField> {
   private final Map<String, JField> fields;
 
-  public JObjectWrite(Map<String, JField> fields) {
+  JObjectWrite(Map<String, JField> fields) {
     this.fields = fields;
   }
 
@@ -74,6 +75,10 @@ public final class JObjectWrite implements JValue, Iterable<JField> {
 
   /** Delegated to the wrapped iterable. */
   @Override public boolean equals(Object that) {
-    return that instanceof JObjectWrite && Equality.eq(fields, ((JObjectWrite) that).fields);
+    return (this == that) || (that instanceof JObjectWrite && eqFields((JObjectWrite) that));
+  }
+
+  private boolean eqFields(JObjectWrite that) {
+    return eq(fields, that.fields);
   }
 }

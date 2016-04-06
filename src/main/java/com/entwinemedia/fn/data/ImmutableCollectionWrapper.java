@@ -88,7 +88,7 @@ public final class ImmutableCollectionWrapper<A> implements Collection<A>, Immut
     if (wrapped.size() < 100) {
       return Stream.<Object>$(wrapped).inject(",").wrap("ImmutableCollectionWrapper(", ")").mkString();
     } else {
-      return super.toString();
+      return wrapped.toString();
     }
   }
 }

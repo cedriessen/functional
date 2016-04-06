@@ -37,4 +37,12 @@ public class ImmutableIteratorWrapper<A> extends ImmutableIteratorBase<A> {
   @Override public A next() {
     return wrapped.next();
   }
+
+  @Override public int hashCode() {
+    return wrapped.hashCode();
+  }
+
+  @Override public boolean equals(Object obj) {
+    return wrapped.equals(obj);
+  }
 }
