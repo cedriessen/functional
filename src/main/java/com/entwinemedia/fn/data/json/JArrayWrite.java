@@ -26,7 +26,7 @@ import java.util.Iterator;
  * Write implementation for JSON arrays. With only the efficient creation and writing of arrays in mind it
  * does not provide indexed access to the array's elements.
  */
-final class JArrayWrite implements JValue, Iterable<JValue> {
+public final class JArrayWrite implements JValue, Iterable<JValue> {
   private Iterable<JValue> values;
 
   @SuppressWarnings("unchecked")
