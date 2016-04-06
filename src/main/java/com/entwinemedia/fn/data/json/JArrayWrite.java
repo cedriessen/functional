@@ -16,8 +16,6 @@
 
 package com.entwinemedia.fn.data.json;
 
-import static com.entwinemedia.fn.Equality.eq;
-
 import com.entwinemedia.fn.data.Iterables;
 
 import java.util.Iterator;
@@ -57,6 +55,6 @@ public final class JArrayWrite implements JValue, Iterable<JValue> {
   }
 
   private boolean eqFields(JArrayWrite that) {
-    return eq(values, that.values);
+    return Iterables.eq(values, that.values);
   }
 }
