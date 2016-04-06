@@ -61,4 +61,8 @@ public final class ImmutableSetWrapper<A> implements Set<A>, Immutable {
   @Override public boolean equals(Object o) {return wrapped.equals(o);}
 
   @Override public int hashCode() {return wrapped.hashCode();}
+
+  @Override public String toString() {
+    return Util.createToString(this, wrapped);
+  }
 }

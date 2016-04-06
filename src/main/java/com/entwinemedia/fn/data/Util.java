@@ -32,4 +32,13 @@ public final class Util {
   };
 
   public static final StreamFold<Collection, Integer> sumSizeFold = StreamFold.foldl(0, sumSizeFn);
+
+  /**
+   * Create a string that could be returned by wrappers.
+   */
+  static String createToString(Object wrapperInstance, Object wrappedInstance) {
+    return wrapperInstance.getClass().getSimpleName() +
+        "@" + System.identityHashCode(wrapperInstance) +
+        "{" + wrappedInstance.toString() + "}";
+  }
 }

@@ -41,4 +41,8 @@ public final class ImmutableIterableWrapper<A> implements Iterable<A>, Immutable
   @Override public boolean equals(Object obj) {
     return wrapped.equals(obj);
   }
+
+  @Override public String toString() {
+    return Util.createToString(this, wrapped);
+  }
 }

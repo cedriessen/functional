@@ -16,8 +16,6 @@
 
 package com.entwinemedia.fn.data;
 
-import com.entwinemedia.fn.Stream;
-
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -85,10 +83,6 @@ public final class ImmutableCollectionWrapper<A> implements Collection<A>, Immut
   }
 
   @Override public String toString() {
-    if (wrapped.size() < 100) {
-      return Stream.<Object>$(wrapped).inject(",").wrap("ImmutableCollectionWrapper(", ")").mkString();
-    } else {
-      return wrapped.toString();
-    }
+    return Util.createToString(this, wrapped);
   }
 }

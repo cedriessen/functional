@@ -33,6 +33,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import com.entwinemedia.fn.data.ImmutableListWrapper;
 import com.entwinemedia.fn.data.Iterables;
 import com.entwinemedia.fn.data.ListBuilders;
 import com.jayway.jsonassert.JsonAssert;
@@ -64,6 +65,8 @@ public class JsonsTest {
     //
     assertEquals(j(f("test", v("test"))), j(f("test", v("test"))));
     assertNotEquals(j(f("test", v("test"))), j(f("test2", v("test2"))));
+
+    System.out.println(new ImmutableListWrapper<>(ListBuilders.SIA.mk(10, 20, 30)));
   }
 
   // see for json-path examples https://code.google.com/p/json-path/

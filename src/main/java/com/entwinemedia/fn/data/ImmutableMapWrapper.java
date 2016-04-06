@@ -92,4 +92,8 @@ public final class ImmutableMapWrapper<A, B> implements Map<A, B>, Immutable {
   @Override public boolean equals(Object obj) {
     return wrapped.equals(obj);
   }
+
+  @Override public String toString() {
+    return Util.createToString(this, wrapped);
+  }
 }

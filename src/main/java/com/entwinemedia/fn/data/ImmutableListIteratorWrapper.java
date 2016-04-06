@@ -53,4 +53,8 @@ public class ImmutableListIteratorWrapper<A> extends ImmutableListIteratorBase<A
   @Override public boolean equals(Object obj) {
     return wrapped.equals(obj);
   }
+
+  @Override public String toString() {
+    return Util.createToString(this, wrapped);
+  }
 }
