@@ -81,4 +81,8 @@ public final class JObjectWrite implements JValue, Iterable<JField> {
   private boolean eqFields(JObjectWrite that) {
     return eq(fields, that.fields);
   }
+
+  @Override public String toString() {
+    return new SimpleSerializer().toJson(this);
+  }
 }

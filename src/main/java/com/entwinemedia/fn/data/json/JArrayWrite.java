@@ -57,4 +57,8 @@ public final class JArrayWrite implements JValue, Iterable<JValue> {
   private boolean eqFields(JArrayWrite that) {
     return Iterables.eq(values, that.values);
   }
+
+  @Override public String toString() {
+    return new SimpleSerializer().toJson(this);
+  }
 }
