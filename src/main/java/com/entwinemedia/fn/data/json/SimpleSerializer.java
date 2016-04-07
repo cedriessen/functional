@@ -96,7 +96,7 @@ public class SimpleSerializer implements Serializer {
   }
 
   public boolean toJson(Writer writer, JField j) {
-    if (ne(j.getValue(), Jsons.jz)) {
+    if (ne(j.getValue(), Jsons.ZERO)) {
       writeString(writer, j.getKey());
       write(writer, ":");
       return toJson(writer, j.getValue());

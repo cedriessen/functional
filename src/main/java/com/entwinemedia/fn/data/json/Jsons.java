@@ -35,10 +35,11 @@ public final class Jsons {
   // loose immutable
   private static final ListBuilder l = ListBuilders.looseImmutableArray;
 
-  public static final JZero jz = new JZero();
-
-  public static final JNull jn = new JNull();
-
+  public static final JZero ZERO = new JZero();
+  public static final JNull NULL = new JNull();
+  public static final JBoolean TRUE = new JBoolean(true);
+  public static final JBoolean FALSE = new JBoolean(false);
+  public static final JString EMPTY = new JString("");
 
   public static JObjectWrite j(JField... fields) {
     return j($(fields));

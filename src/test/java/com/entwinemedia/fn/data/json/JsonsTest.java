@@ -17,11 +17,11 @@
 package com.entwinemedia.fn.data.json;
 
 import static com.entwinemedia.fn.Stream.$;
+import static com.entwinemedia.fn.data.json.Jsons.NULL;
+import static com.entwinemedia.fn.data.json.Jsons.ZERO;
 import static com.entwinemedia.fn.data.json.Jsons.a;
 import static com.entwinemedia.fn.data.json.Jsons.f;
 import static com.entwinemedia.fn.data.json.Jsons.j;
-import static com.entwinemedia.fn.data.json.Jsons.jn;
-import static com.entwinemedia.fn.data.json.Jsons.jz;
 import static com.entwinemedia.fn.data.json.Jsons.v;
 import static com.entwinemedia.fn.data.json.Jsons.vN;
 import static org.hamcrest.Matchers.contains;
@@ -38,7 +38,6 @@ import static org.junit.Assert.assertTrue;
 import com.entwinemedia.fn.data.Iterables;
 import com.entwinemedia.fn.data.ListBuilders;
 import com.jayway.jsonassert.JsonAssert;
-
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
@@ -48,9 +47,9 @@ public class JsonsTest {
 
   @Test
   public void testEquality() throws Exception {
-    Assert.assertEquals(jn, jn);
-    Assert.assertNotEquals(jn, new JBoolean(true));
-    Assert.assertNotEquals(jn, jz);
+    Assert.assertEquals(NULL, NULL);
+    Assert.assertNotEquals(NULL, new JBoolean(true));
+    Assert.assertNotEquals(NULL, ZERO);
     assertEquals(new JString("test"), new JString("test"));
     assertNotEquals(new JNumber(1), new JString("1"));
     assertNotEquals(new JNumber(1), new JNumber(1.0));
@@ -80,10 +79,10 @@ public class JsonsTest {
   public void testSerialization() {
     final JObjectWrite o = j(f("key", v(10)),
                              f("bla", v("hallo")),
-                             f("remove", jz),
+                             f("remove", ZERO),
                              f("array", a(v("sad,,,asd"),
                                           v(10),
-                                          jz,
+                                          ZERO,
                                           v(20.34),
                                           v(true),
                                           j(f("key", v(true))))));
@@ -124,6 +123,27 @@ public class JsonsTest {
     assertEquals(3, ListBuilders.SIA.mk(b).size());
     assertThat($(a.override(b)).map(Jsons.valueOfFieldFn).bind(Jsons.valueOfPrimitiveFn).toList(),
                Matchers.<Object>containsInAnyOrder("karl", "krause", "herne"));
+    assertEquals(
+        j(f("company", v("Extron")), f("city", a(a(v("Anaheim"), v("Zurich")), v("Raleigh")))),
+        j(f("company", v("Extron")), f("city", v("Anaheim")))
+            .merge(j(f("city", v("Zurich"))))
+            .merge(j(f("city", v("Raleigh")))));
+    assertEquals(
+        j(f("company", v("Extron")),
+          f("city", a(v("Anaheim"), v("Raleigh"))),
+          f("products", j(
+              f("hardware", v("SMP")),
+              f("software", v("Entwine EMP"))))),
+        j(f("company", v("Extron")),
+          f("city", v("Anaheim")),
+          f("products", j(f("hardware", v("SMP")))))
+            .merge(j(f("city", v("Raleigh"))))
+            .merge(j(f("products", j(f("software", v("Entwine EMP")))))));
+//    assertEquals(
+//        j(f("company", "Extron"), f("city", a("Anaheim", "Zurich", "Raleigh"))),
+//        j(f("company", "Extron"), f("city", "Anaheim"))
+//            .flatMerge(j(f("city", "Zurich")))
+//            .flatMerge(j(f("city", "Raleigh"))));
   }
 
   @Test
