@@ -90,17 +90,21 @@ public final class Jsons {
    * @return JSON value with the value inside or an empty string if the given value was null
    */
   public static JValue vN(Object value) {
-    String stringValue;
+    final JValue jval;
 
     if (value == null) {
-      stringValue = "";
+      jval = v("");
     } else if (value instanceof String) {
-      stringValue = (String) value;
+      jval = v((String) value);
+    } else if (value instanceof Number) {
+      jval = v((Number) value);
+    } else if (value instanceof Boolean) {
+      jval = v((Boolean) value);
     } else {
-      stringValue = value.toString();
+      jval = v(value.toString());
     }
 
-    return v(stringValue);
+    return jval;
   }
 
   public static final JZero jz = new JZero();
