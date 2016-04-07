@@ -17,9 +17,9 @@
 package com.entwinemedia.fn.data.json;
 
 import static com.entwinemedia.fn.Equality.eq;
+import static com.entwinemedia.fn.Stream.$;
 
 import com.entwinemedia.fn.Fn2;
-import com.entwinemedia.fn.Stream;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -43,18 +43,18 @@ public final class JObjectWrite implements JValue, Iterable<JField> {
 
   /** Merge with <code>obj</code>. Fields in <code>obj</code> override fields in this object. */
   public JObjectWrite override(Iterable<JField> obj) {
-    return Jsons.j(Stream.$(this).append(obj));
+    return Jsons.j($(this).append(obj));
   }
 
   /** Merge with <code>obj</code>. Fields in <code>obj</code> overwrite fields in this object. */
   public JObjectWrite merge(Iterable<JField> obj) {
-    final Map<String, JField> m = Stream.$(Stream.$(this).append(obj).groupMulti(Jsons.keyOfFieldFn).values())
+    final Map<String, JField> m = $($(this).append(obj).groupMulti(Jsons.keyOfFieldFn).values())
             .foldl(new HashMap<String, JField>(), new Fn2<HashMap<String, JField>, List<JField>, HashMap<String, JField>>() {
               @Override public HashMap<String, JField> apply(HashMap<String, JField> sum, List<JField> fields) {
                 // list "fields" has at least one element
                 final JField head = fields.get(0);
                 if (fields.size() > 1) {
-                  sum.put(head.getKey(), Jsons.f(head.getKey(), Jsons.a(Stream.$(fields).map(Jsons.valueOfFieldFn))));
+                  sum.put(head.getKey(), Jsons.f(head.getKey(), Jsons.a($(fields).map(Jsons.valueOfFieldFn))));
                 } else {
                   sum.put(head.getKey(), head);
                 }
