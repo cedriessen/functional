@@ -154,7 +154,7 @@ public class JsonsTest {
           f("number", v(15, EMPTY)));
     System.out.println(a);
     JsonAssert.with(serializer.toJson(a))
-        .assertNotDefined("$.blubber")
+        .assertNotDefined("$.string")
         .assertThat("$.number", equalTo(15));
   }
 
