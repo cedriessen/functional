@@ -30,13 +30,17 @@ abstract class JPrimitive<A> implements JValue {
     return value;
   }
 
+  @Override public int hashCode() {
+    return hash(value);
+  }
+
   @Override
   @SuppressWarnings("unchecked")
   public boolean equals(Object that) {
-    return (this == that) || (this.getClass().isAssignableFrom(that.getClass()) && (eq(value, ((JPrimitive<A>) that).value)));
+    return (this == that) || (this.getClass().isAssignableFrom(that.getClass()) && (eqFields((JPrimitive) that)));
   }
 
-  @Override public int hashCode() {
-    return hash(value);
+  private boolean eqFields(JPrimitive that) {
+    return eq(value, that.value);
   }
 }
