@@ -17,12 +17,12 @@
 package com.entwinemedia.fn.data.json;
 
 import static com.entwinemedia.fn.Stream.$;
-import static com.entwinemedia.fn.data.json.Jsons.EMPTY;
+import static com.entwinemedia.fn.data.json.Jsons.BLANK;
 import static com.entwinemedia.fn.data.json.Jsons.NULL;
 import static com.entwinemedia.fn.data.json.Jsons.ZERO;
-import static com.entwinemedia.fn.data.json.Jsons.a;
+import static com.entwinemedia.fn.data.json.Jsons.arr;
 import static com.entwinemedia.fn.data.json.Jsons.f;
-import static com.entwinemedia.fn.data.json.Jsons.j;
+import static com.entwinemedia.fn.data.json.Jsons.obj;
 import static com.entwinemedia.fn.data.json.Jsons.v;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
@@ -31,13 +31,11 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import com.entwinemedia.fn.data.Iterables;
 import com.entwinemedia.fn.data.ListBuilders;
 import com.jayway.jsonassert.JsonAssert;
-import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -55,21 +53,21 @@ public class JsonsTest {
     assertEquals(new JNumber(1.0), new JNumber(1.0));
     assertNotEquals(new JNumber(1), new JNumber(1l));
     assertNotEquals(new JNumber(1), new JNumber((short) 1));
-    assertTrue(Iterables.eq(a(v(10), v(20)), a(v(10), v(20))));
-    assertFalse(Iterables.eq(a(v(10), v(20)), a(v(20), v(20))));
-    assertFalse(Iterables.eq(a(v(10), v(20)), a(v(10), v(20), v("x"))));
+    assertTrue(Iterables.eq(arr(v(10), v(20)), arr(v(10), v(20))));
+    assertFalse(Iterables.eq(arr(v(10), v(20)), arr(v(20), v(20))));
+    assertFalse(Iterables.eq(arr(v(10), v(20)), arr(v(10), v(20), v("x"))));
     //
-    assertEquals(a(v("1")), a(v("1")));
-    assertEquals(a(v("1"), v("2")), a(v("1"), v("2")));
-    assertNotEquals(a(v("1"), v("3")), a(v("1"), v("2")));
+    assertEquals(arr(v("1")), arr(v("1")));
+    assertEquals(arr(v("1"), v("2")), arr(v("1"), v("2")));
+    assertNotEquals(arr(v("1"), v("3")), arr(v("1"), v("2")));
     //
-    assertEquals(j(f("test", v("test"))), j(f("test", v("test"))));
-    assertNotEquals(j(f("test", v("test"))), j(f("test2", v("test2"))));
+    assertEquals(obj(f("test", v("test"))), obj(f("test", v("test"))));
+    assertNotEquals(obj(f("test", v("test"))), obj(f("test2", v("test2"))));
     //
     final JObjectWrite o1 =
-        j(f("title", v("some title")), f("subjects", v("subject no 1"))).merge(j(f("subjects", v("subject no 2"))));
+        obj(f("title", v("some title")), f("subjects", v("subject no 1"))).merge(obj(f("subjects", v("subject no 2"))));
     final JObjectWrite o2 =
-        j(f("title", v("some title")), f("subjects", a(v("subject no 1"), v("subject no 2"))));
+        obj(f("title", v("some title")), f("subjects", arr(v("subject no 1"), v("subject no 2"))));
     assertEquals(o1, o2);
   }
 
@@ -77,16 +75,16 @@ public class JsonsTest {
   @Test
   public void testSerialization() {
     final JObjectWrite o =
-        j(f("key", v(10)),
-          f("bla", v("hallo")),
-          f("remove", ZERO),
-          f("array",
-            a(v("sad,,,asd"),
-              v(10),
-              ZERO,
-              v(20.34),
-              v(true),
-              j(f("key", v(true))))));
+        obj(f("key", v(10)),
+            f("bla", v("hallo")),
+            f("remove", ZERO),
+            f("array",
+              arr(v("sad,,,asd"),
+                  v(10),
+                  ZERO,
+                  v(20.34),
+                  v(true),
+                  obj(f("key", v(true))))));
     final String json = serializer.toJson(o);
     System.out.println(json);
     JsonAssert.with(json).assertThat("$.key", equalTo(10))
@@ -95,10 +93,10 @@ public class JsonsTest {
         .assertThat("$.array", hasSize(5))
         .assertThat("$.array", hasItems("sad,,,asd", 10, 20.34, true))
         .assertThat("$.array[4].key", equalTo(true));
-    JsonAssert.with(serializer.toJson(j(f("a", v(10)), f("b", v(20))).override(j(f("a", v(30))))))
+    JsonAssert.with(serializer.toJson(obj(f("a", v(10)), f("b", v(20))).override(obj(f("a", v(30))))))
         .assertThat("$.a", equalTo(30))
         .assertThat("$.b", equalTo(20));
-    JsonAssert.with(serializer.toJson(j(f("a", v(10)), f("b", v(20))).merge(j(f("a", v(30))))))
+    JsonAssert.with(serializer.toJson(obj(f("a", v(10)), f("b", v(20))).merge(obj(f("a", v(30))))))
         .assertThat("$.a", contains(10, 30))
         .assertThat("$.a", hasSize(2))
         .assertThat("$.b", equalTo(20));
@@ -106,52 +104,127 @@ public class JsonsTest {
 
   @Test
   public void testAppend() {
-    final JArrayWrite a = a(v(10), v(20));
-    final JArrayWrite b = a(v(20), v(30));
+    final JArrayWrite a = arr(v(10), v(20));
+    final JArrayWrite b = arr(v(20), v(30));
     assertEquals(4, ListBuilders.SIA.mk(a.append(b)).size());
     assertEquals(2, ListBuilders.SIA.mk(a).size());
     assertEquals(2, ListBuilders.SIA.mk(b).size());
-    assertEquals(ListBuilders.LIA.<Object>mk(10, 20, 20, 30), $(a.append(b)).bind(Jsons.valueOfPrimitiveFn).toList());
+    assertEquals(ListBuilders.LIA.<Object>mk(10, 20, 20, 30), $(a.append(b)).bind(Jsons.Functions.valueOfPrimitive).toList());
   }
 
   @Test
   public void testMerge() {
-    final JObjectWrite a = j(f("name", v("karl")), f("surname", v("lagerfeld")));
-    final JObjectWrite b = j(f("name", v("karl")), f("surname", v("krause")), f("city", v("herne")));
-    System.out.println($(a.override(b)).map(serializer.jFieldToJson()).mkString(","));
-    assertEquals(3, ListBuilders.SIA.mk(a.override(b)).size());
-    assertEquals(2, ListBuilders.SIA.mk(a).size());
-    assertEquals(3, ListBuilders.SIA.mk(b).size());
-    assertThat($(a.override(b)).map(Jsons.valueOfFieldFn).bind(Jsons.valueOfPrimitiveFn).toList(),
-               Matchers.<Object>containsInAnyOrder("karl", "krause", "herne"));
     assertEquals(
-        j(f("company", v("Extron")), f("city", a(a(v("Anaheim"), v("Zurich")), v("Raleigh")))),
-        j(f("company", v("Extron")), f("city", v("Anaheim")))
-            .merge(j(f("city", v("Zurich"))))
-            .merge(j(f("city", v("Raleigh")))));
-//    assertEquals(
-//        j(f("company", v("Extron")),
-//          f("city", a(v("Anaheim"), v("Raleigh"))),
-//          f("products", j(
-//              f("hardware", v("SMP")),
-//              f("software", v("Entwine EMP"))))),
-//        j(f("company", v("Extron")),
-//          f("city", v("Anaheim")),
-//          f("products", j(f("hardware", v("SMP")))))
-//            .merge(j(f("city", v("Raleigh"))))
-//            .merge(j(f("products", j(f("software", v("Entwine EMP")))))));
-//    assertEquals(
-//        j(f("company", "Extron"), f("city", a("Anaheim", "Zurich", "Raleigh"))),
-//        j(f("company", "Extron"), f("city", "Anaheim"))
-//            .flatMerge(j(f("city", "Zurich")))
-//            .flatMerge(j(f("city", "Raleigh"))));
+        obj(
+            f("company", v("Extron")),
+            f("city", arr(v("Anaheim"), v("Zurich"), v("Raleigh")))
+        ),
+        obj(
+            f("company", v("Extron")),
+            f("city", v("Anaheim"))
+        ).merge(
+            obj(f("city", v("Zurich")))
+        ).merge(
+            obj(f("city", v("Raleigh")))
+        )
+    );
+    assertEquals(
+        obj(
+            f("company", v("Extron")),
+            f("city", arr(v("Anaheim"), v("Raleigh"))),
+            f("products", obj(
+                f("hardware", v("SMP")),
+                f("software", v("Entwine EMP"))
+            ))
+        ),
+        obj(
+            f("company", v("Extron")),
+            f("city", v("Anaheim")),
+            f("products", obj(
+                f("hardware", v("SMP"))
+            ))
+        ).merge(
+            obj(f("city", v("Raleigh")))
+        ).merge(
+            obj(
+                f("products", obj(
+                    f("software", v("Entwine EMP"))
+                ))
+            )
+        )
+    );
+    assertEquals(
+        obj(
+            f("company", v("Extron")),
+            f("address", obj(
+                f("city", arr(v("Anaheim"), v("Zurich"), v("Raleigh"))))
+            )
+        ),
+        obj(
+            f("company", v("Extron"))
+        ).merge(
+            obj(
+                f("address", obj(f("city", v("Anaheim"))))
+            ).merge(
+                obj(f("address", obj(f("city", v("Zurich")))))
+            )
+        ).merge(
+            obj(f("address", obj(f("city", v("Raleigh")))))
+        )
+    );
+    assertEquals(
+        obj(
+            f("company", v("Extron")),
+            f("address", arr(
+                v("unknown"),
+                obj(f("city", v("Zurich"))),
+                obj(f("city", v("Anaheim"))),
+                obj(f("city", v("Raleigh")))
+            ))
+        ),
+        obj(
+            f("company", v("Extron"))
+        ).merge(
+            obj(f("address", v("unknown")))
+        ).merge(
+            obj(f("address", obj(f("city", v("Zurich")))))
+        ).merge(
+            obj(f("address", obj(f("city", v("Anaheim")))))
+        ).merge(
+            obj(f("address", obj(f("city", v("Raleigh")))))
+        )
+    );
+  }
+
+  @Test
+  public void testOverride() {
+    assertEquals(
+        obj(f("name", v("Karl")),
+            f("age", v(10))),
+
+        obj(f("name", v("Peter")))
+            .override(
+                obj(f("name", v("Karl")),
+                    f("age", v(10)))));
+
+    assertEquals(
+        obj(f("address",
+              obj(f("city", v("Bochum")),
+                  f("street", v("Kortumstr"))))),
+
+        obj(f("address",
+              obj(f("city", v("Zurich")))))
+            .override(
+                obj(f("address",
+                      obj(f("city", v("Bochum")),
+                          f("street", v("Kortumstr")))))));
   }
 
   @Test
   public void testIdentityElement() {
     final JObjectWrite a =
-        j(f("string", v(null, ZERO)),
-          f("number", v(15, EMPTY)));
+        obj(f("string", v(null, ZERO)),
+            f("number", v(15, BLANK)));
     System.out.println(a);
     JsonAssert.with(serializer.toJson(a))
         .assertNotDefined("$.string")
@@ -161,10 +234,10 @@ public class JsonsTest {
   @Test
   public void testNullSafeValueHandling() {
     final JObjectWrite a =
-        j(f("string", v("String", EMPTY)),
-          f("number", v(15, EMPTY)),
-          f("bool", v(true, EMPTY)),
-          f("null", v(null, EMPTY)));
+        obj(f("string", v("String", BLANK)),
+            f("number", v(15, BLANK)),
+            f("bool", v(true, BLANK)),
+            f("null", v(null, BLANK)));
 
     JsonAssert.with(serializer.toJson(a))
         .assertThat("$.string", equalTo("String"))

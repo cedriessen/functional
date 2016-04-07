@@ -16,6 +16,8 @@
 
 package com.entwinemedia.fn.data.json;
 
+import static com.entwinemedia.fn.Stream.$;
+
 import com.entwinemedia.fn.data.Iterables;
 
 import java.util.Iterator;
@@ -36,20 +38,20 @@ public final class JArrayWrite implements JValue, Iterable<JValue> {
     return values.iterator();
   }
 
+  /** Append values to this array. */
   public JArrayWrite append(Iterable<JValue> array) {
-    return new JArrayWrite(Iterables.join(this, array));
+    return new JArrayWrite($(this).append(array));
   }
 
+  /** Check if the array contains any values. */
   public boolean isEmpty() {
     return values.iterator().hasNext();
   }
 
-  /** Delegated to the wrapped iterable. */
   @Override public int hashCode() {
     return values.hashCode();
   }
 
-  /** Delegated to the wrapped iterable. */
   @Override public boolean equals(Object that) {
     return (this == that) || (that instanceof JArrayWrite && eqFields((JArrayWrite) that));
   }
@@ -58,6 +60,7 @@ public final class JArrayWrite implements JValue, Iterable<JValue> {
     return Iterables.eq(values, that.values);
   }
 
+  /** Print a JSON representation. */
   @Override public String toString() {
     return new SimpleSerializer().toJson(this);
   }

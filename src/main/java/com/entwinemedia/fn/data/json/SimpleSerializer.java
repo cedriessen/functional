@@ -42,23 +42,23 @@ public class SimpleSerializer implements Serializer {
   }
 
   @Override
-  public boolean toJson(Writer writer, JValue j) {
-    if (j instanceof JString) {
-      return toJson(writer, (JString) j);
-    } else if (j instanceof JPrimitive) {
-      return toJson(writer, (JPrimitive) j);
-    } else if (j instanceof JObjectWrite) {
-      return toJson(writer, (JObjectWrite) j);
-    } else if (j instanceof JField) {
-      return toJson(writer, (JField) j);
-    } else if (j instanceof JArrayWrite) {
-      return toJson(writer, (JArrayWrite) j);
-    } else if (j instanceof JZero) {
-      return toJson(writer, (JZero) j);
-    } else if (j instanceof JNull) {
-      return toJson(writer, (JNull) j);
+  public boolean toJson(Writer writer, JValue v) {
+    if (v instanceof JString) {
+      return toJson(writer, (JString) v);
+    } else if (v instanceof JPrimitive) {
+      return toJson(writer, (JPrimitive) v);
+    } else if (v instanceof JObjectWrite) {
+      return toJson(writer, (JObjectWrite) v);
+    } else if (v instanceof JField) {
+      return toJson(writer, (JField) v);
+    } else if (v instanceof JArrayWrite) {
+      return toJson(writer, (JArrayWrite) v);
+    } else if (v instanceof JZero) {
+      return toJson(writer, (JZero) v);
+    } else if (v instanceof JNull) {
+      return toJson(writer, (JNull) v);
     } else {
-      return Prelude.<Boolean>unexhaustiveMatch(j);
+      return Prelude.<Boolean>unexhaustiveMatch(v);
     }
   }
 
@@ -68,9 +68,9 @@ public class SimpleSerializer implements Serializer {
     return writer.toString();
   }
 
-  public boolean toJson(Writer writer, JObjectWrite j) {
+  public boolean toJson(Writer writer, JObjectWrite obj) {
     write(writer, "{");
-    toJson(writer, j.iterator());
+    toJson(writer, obj.iterator());
     write(writer, "}");
     return true;
   }
@@ -95,11 +95,11 @@ public class SimpleSerializer implements Serializer {
     return true;
   }
 
-  public boolean toJson(Writer writer, JField j) {
-    if (ne(j.getValue(), Jsons.ZERO)) {
-      writeString(writer, j.getKey());
+  public boolean toJson(Writer writer, JField f) {
+    if (ne(f.value(), Jsons.ZERO)) {
+      writeString(writer, f.key());
       write(writer, ":");
-      return toJson(writer, j.getValue());
+      return toJson(writer, f.value());
     } else {
       return false;
     }
@@ -122,7 +122,7 @@ public class SimpleSerializer implements Serializer {
   }
 
   public boolean toJson(Writer writer, JString j) {
-    writeString(writer, j.getValue());
+    writeString(writer, j.value());
     return true;
   }
 
@@ -136,7 +136,7 @@ public class SimpleSerializer implements Serializer {
   }
 
   public <A> boolean toJson(Writer writer, JPrimitive<A> j) {
-    write(writer, j.getValue().toString());
+    write(writer, j.value().toString());
     return true;
   }
 

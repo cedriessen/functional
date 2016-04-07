@@ -28,12 +28,17 @@ public final class JField implements JValue {
     this.value = value;
   }
 
-  public String getKey() {
+  public String key() {
     return key;
   }
 
-  public JValue getValue() {
+  public JValue value() {
     return value;
+  }
+
+  /** Create a new field with the given value. */
+  public JField mk(JValue value) {
+    return new JField(key, value);
   }
 
   @Override public int hashCode() {

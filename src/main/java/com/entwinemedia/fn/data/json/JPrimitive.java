@@ -19,6 +19,9 @@ package com.entwinemedia.fn.data.json;
 import static com.entwinemedia.fn.Equality.eq;
 import static com.entwinemedia.fn.Equality.hash;
 
+/**
+ * Abstract base class for JSON primitives.
+ */
 abstract class JPrimitive<A> implements JValue {
   private A value;
 
@@ -26,7 +29,8 @@ abstract class JPrimitive<A> implements JValue {
     this.value = value;
   }
 
-  public A getValue() {
+  /** Return the wrapped value. */
+  public A value() {
     return value;
   }
 
