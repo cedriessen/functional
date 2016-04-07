@@ -146,6 +146,17 @@ public class JsonsTest {
   }
 
   @Test
+  public void testIdentityElement() {
+    final JObjectWrite a =
+        j(f("string", v(null, ZERO)),
+          f("number", v(15, EMPTY)));
+    System.out.println(a);
+    JsonAssert.with(serializer.toJson(a))
+        .assertNotDefined("$.blubber")
+        .assertThat("$.number", equalTo(15));
+  }
+
+  @Test
   public void testNullSafeValueHandling() {
     final JObjectWrite a =
         j(f("string", v("String", EMPTY)),
