@@ -17,18 +17,17 @@
 package com.entwinemedia.fn.data.json;
 
 import static com.entwinemedia.fn.Stream.$;
+import static com.entwinemedia.fn.data.json.Jsons.EMPTY;
 import static com.entwinemedia.fn.data.json.Jsons.NULL;
 import static com.entwinemedia.fn.data.json.Jsons.ZERO;
 import static com.entwinemedia.fn.data.json.Jsons.a;
 import static com.entwinemedia.fn.data.json.Jsons.f;
 import static com.entwinemedia.fn.data.json.Jsons.j;
 import static com.entwinemedia.fn.data.json.Jsons.v;
-import static com.entwinemedia.fn.data.json.Jsons.vN;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -128,17 +127,17 @@ public class JsonsTest {
         j(f("company", v("Extron")), f("city", v("Anaheim")))
             .merge(j(f("city", v("Zurich"))))
             .merge(j(f("city", v("Raleigh")))));
-    assertEquals(
-        j(f("company", v("Extron")),
-          f("city", a(v("Anaheim"), v("Raleigh"))),
-          f("products", j(
-              f("hardware", v("SMP")),
-              f("software", v("Entwine EMP"))))),
-        j(f("company", v("Extron")),
-          f("city", v("Anaheim")),
-          f("products", j(f("hardware", v("SMP")))))
-            .merge(j(f("city", v("Raleigh"))))
-            .merge(j(f("products", j(f("software", v("Entwine EMP")))))));
+//    assertEquals(
+//        j(f("company", v("Extron")),
+//          f("city", a(v("Anaheim"), v("Raleigh"))),
+//          f("products", j(
+//              f("hardware", v("SMP")),
+//              f("software", v("Entwine EMP"))))),
+//        j(f("company", v("Extron")),
+//          f("city", v("Anaheim")),
+//          f("products", j(f("hardware", v("SMP")))))
+//            .merge(j(f("city", v("Raleigh"))))
+//            .merge(j(f("products", j(f("software", v("Entwine EMP")))))));
 //    assertEquals(
 //        j(f("company", "Extron"), f("city", a("Anaheim", "Zurich", "Raleigh"))),
 //        j(f("company", "Extron"), f("city", "Anaheim"))
@@ -148,12 +147,15 @@ public class JsonsTest {
 
   @Test
   public void testNullSafeValueHandling() {
-    final JObjectWrite a = j(f("string", vN("String")), f("number", vN(15)), f("boolTrue", vN(true)), f("boolFalse", vN(false)));
+    final JObjectWrite a =
+        j(f("string", v("String", EMPTY)),
+          f("number", v(15, EMPTY)),
+          f("bool", v(true, EMPTY)),
+          f("null", v(null, EMPTY)));
 
     JsonAssert.with(serializer.toJson(a))
             .assertThat("$.string", equalTo("String"))
             .assertThat("$.number", equalTo(15))
-            .assertThat("$.boolTrue", is(true))
-            .assertThat("$.boolFalse", is(false));
+            .assertThat("$.null", equalTo(""));
   }
 }

@@ -28,9 +28,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
+
 /**
  * Collection of functions and methods to build JSON structures.
  */
+@ParametersAreNonnullByDefault
 public final class Jsons {
   // loose immutable
   private static final ListBuilder l = ListBuilders.looseImmutableArray;
@@ -78,7 +82,7 @@ public final class Jsons {
     return new JArrayWrite((Iterable<JValue>) values);
   }
 
-  public static JBoolean v(boolean value) {
+  public static JBoolean v(Boolean value) {
     return new JBoolean(value);
   }
 
@@ -91,28 +95,27 @@ public final class Jsons {
   }
 
   /**
-   * Wrap the given string in an JSON value and changing null value to empty string.
-   *
-   * @param value
-   *          the value to wrap in a JSON value
-   * @return JSON value with the value inside or an empty string if the given value was null
+   * Create a JSON value from an arbitrary object.
+   * <ul>
+   *   <li>null -> <code>nullValue</code></li>
+   *   <li>{@link String} -> {@link JString}</li>
+   *   <li>{@link Number} -> {@link JNumber}</li>
+   *   <li>{@link Boolean} -> {@link JBoolean}</li>
+   *   <li>everything else -> string representation as {@link JString}</li>
+   * </ul>
    */
-  public static JValue vN(Object value) {
-    final JValue jval;
-
+  public static JValue v(@Nullable Object value, JValue nullValue) {
     if (value == null) {
-      jval = v("");
+      return nullValue;
     } else if (value instanceof String) {
-      jval = v((String) value);
+      return v((String) value);
     } else if (value instanceof Number) {
-      jval = v((Number) value);
+      return v((Number) value);
     } else if (value instanceof Boolean) {
-      jval = v((Boolean) value);
+      return v((Boolean) value);
     } else {
-      jval = v(value.toString());
+      return v(value.toString());
     }
-
-    return jval;
   }
 
   public static <A> Fn<JPrimitive<A>, A> valueFn() {
