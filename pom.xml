@@ -24,6 +24,10 @@
   <inceptionYear>2013</inceptionYear>
   <packaging>bundle</packaging>
 
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
   <dependencies>
     <!-- Testing -->
     <dependency>
