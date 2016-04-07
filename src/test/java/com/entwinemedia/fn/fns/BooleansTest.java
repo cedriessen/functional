@@ -47,5 +47,10 @@ public class BooleansTest {
     assertFalse(Booleans.<Integer, Integer>ge(20).apply(10));
     assertTrue(Booleans.<Integer, Integer>ge().apply(10, 10));
     assertTrue(Booleans.<Integer, Integer>ge(10).apply(10));
+    //
+    assertTrue(Booleans.isInstanceOf(Object.class).apply("string"));
+    assertTrue(Booleans.isInstanceOf().apply("string", Object.class));
+    assertFalse(Booleans.<Object>isInstanceOf(String.class).apply(new Object()));
+    assertFalse(Booleans.<Object>isInstanceOf().apply(new Object(), String.class));
   }
 }

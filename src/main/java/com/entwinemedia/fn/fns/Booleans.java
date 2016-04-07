@@ -20,7 +20,10 @@ import com.entwinemedia.fn.Fn;
 import com.entwinemedia.fn.Fn2;
 import com.entwinemedia.fn.Pred;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
 /** Functions on booleans. */
+@ParametersAreNonnullByDefault
 public final class Booleans {
   private static final Pred yes = new Pred() {
     @Override public Boolean apply(Object a) {
@@ -132,6 +135,24 @@ public final class Booleans {
     return not(eq(b));
   }
 
+  /** Create a function that checks if argument 1 is an instance of argument 2. */
+  public static Fn2<Object, Class<?>, Boolean> isInstanceOf() {
+    return new Fn2<Object, Class<?>, Boolean>() {
+      @Override public Boolean apply(Object a, Class<?> b) {
+        return b.isAssignableFrom(a.getClass());
+      }
+    };
+  }
+
+  /** Create a predicate that checks if its argument is an instance of <code>b</code>. */
+  public static Pred<Object> isInstanceOf(final Class<?> b) {
+    return new Pred<Object>() {
+      @Override public Boolean apply(Object a) {
+        return b.isAssignableFrom(a.getClass());
+      }
+    };
+  }
+
   public static <A> Pred<A> or(final Fn<? super A, Boolean> p1, final Fn<? super A, Boolean> p2) {
     return new Pred<A>() {
       @Override public Boolean apply(A a) {
@@ -162,6 +183,7 @@ public final class Booleans {
     }
   };
 
+  @SafeVarargs
   public static <A> Pred<A> all(final Fn<? super A, Boolean>... ps) {
     return new Pred<A>() {
       @Override public Boolean apply(A a) {
@@ -175,6 +197,7 @@ public final class Booleans {
     };
   }
 
+  @SafeVarargs
   public static <A> Pred<A> one(final Fn<? super A, Boolean>... ps) {
     return new Pred<A>() {
       @Override public Boolean apply(A a) {
