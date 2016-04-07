@@ -76,30 +76,32 @@ public class JsonsTest {
   // see for json-path examples https://code.google.com/p/json-path/
   @Test
   public void testSerialization() {
-    final JObjectWrite o = j(f("key", v(10)),
-                             f("bla", v("hallo")),
-                             f("remove", ZERO),
-                             f("array", a(v("sad,,,asd"),
-                                          v(10),
-                                          ZERO,
-                                          v(20.34),
-                                          v(true),
-                                          j(f("key", v(true))))));
+    final JObjectWrite o =
+        j(f("key", v(10)),
+          f("bla", v("hallo")),
+          f("remove", ZERO),
+          f("array",
+            a(v("sad,,,asd"),
+              v(10),
+              ZERO,
+              v(20.34),
+              v(true),
+              j(f("key", v(true))))));
     final String json = serializer.toJson(o);
     System.out.println(json);
     JsonAssert.with(json).assertThat("$.key", equalTo(10))
-            .assertThat("$.bla", equalTo("hallo"))
-            .assertNull("$.remove")
-            .assertThat("$.array", hasSize(5))
-            .assertThat("$.array", hasItems("sad,,,asd", 10, 20.34, true))
-            .assertThat("$.array[4].key", equalTo(true));
+        .assertThat("$.bla", equalTo("hallo"))
+        .assertNotDefined("$.remove")
+        .assertThat("$.array", hasSize(5))
+        .assertThat("$.array", hasItems("sad,,,asd", 10, 20.34, true))
+        .assertThat("$.array[4].key", equalTo(true));
     JsonAssert.with(serializer.toJson(j(f("a", v(10)), f("b", v(20))).override(j(f("a", v(30))))))
-            .assertThat("$.a", equalTo(30))
-            .assertThat("$.b", equalTo(20));
+        .assertThat("$.a", equalTo(30))
+        .assertThat("$.b", equalTo(20));
     JsonAssert.with(serializer.toJson(j(f("a", v(10)), f("b", v(20))).merge(j(f("a", v(30))))))
-            .assertThat("$.a", contains(10, 30))
-            .assertThat("$.a", hasSize(2))
-            .assertThat("$.b", equalTo(20));
+        .assertThat("$.a", contains(10, 30))
+        .assertThat("$.a", hasSize(2))
+        .assertThat("$.b", equalTo(20));
   }
 
   @Test
@@ -165,8 +167,8 @@ public class JsonsTest {
           f("null", v(null, EMPTY)));
 
     JsonAssert.with(serializer.toJson(a))
-            .assertThat("$.string", equalTo("String"))
-            .assertThat("$.number", equalTo(15))
-            .assertThat("$.null", equalTo(""));
+        .assertThat("$.string", equalTo("String"))
+        .assertThat("$.number", equalTo(15))
+        .assertThat("$.null", equalTo(""));
   }
 }
