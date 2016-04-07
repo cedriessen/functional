@@ -50,6 +50,20 @@ public final class Iterators {
     return EMPTY_ITERATOR;
   }
 
+  public static <A> Iterator<A> singleton(final A a) {
+    return new ImmutableIteratorBase<A>() {
+      private boolean next = true;
+      @Override public boolean hasNext() {
+        return next;
+      }
+
+      @Override public A next() {
+        next = false;
+        return a;
+      }
+    };
+  }
+
   /** Join two iterators into a new immutable iterator. */
   public static <A> Iterator<A> join(final Iterator<? extends A> a, final Iterator<? extends A> b) {
     return new ImmutableIteratorBase<A>() {

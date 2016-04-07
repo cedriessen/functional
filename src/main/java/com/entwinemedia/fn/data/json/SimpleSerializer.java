@@ -19,7 +19,6 @@ package com.entwinemedia.fn.data.json;
 import static com.entwinemedia.fn.Equality.ne;
 import static com.entwinemedia.fn.Prelude.chuck;
 
-import com.entwinemedia.fn.Fn;
 import com.entwinemedia.fn.Fx;
 import com.entwinemedia.fn.Prelude;
 
@@ -33,16 +32,26 @@ import java.util.Iterator;
  */
 public class SimpleSerializer implements Serializer {
   /** {@link SimpleSerializer#toJson(java.io.Writer, JValue)} as an effect. */
-  public Fx<Writer> toJsonFx(final JValue j) {
+  public Fx<Writer> toJsonFx(final JValue v) {
     return new Fx<Writer>() {
       @Override public void apply(Writer writer) {
-        toJson(writer, j);
+        toJson(writer, v);
       }
     };
   }
 
+  public String toJson(JValue v) {
+    final StringWriter writer = new StringWriter();
+    toJson(writer, v);
+    return writer.toString();
+  }
+
   @Override
   public boolean toJson(Writer writer, JValue v) {
+    return objectToJson(writer, v);
+  }
+
+  private boolean objectToJson(Writer writer, Object v) {
     if (v instanceof JString) {
       return toJson(writer, (JString) v);
     } else if (v instanceof JPrimitive) {
@@ -62,35 +71,16 @@ public class SimpleSerializer implements Serializer {
     }
   }
 
-  public String toJson(JValue j) {
-    final StringWriter writer = new StringWriter();
-    toJson(writer, j);
-    return writer.toString();
-  }
-
   public boolean toJson(Writer writer, JObjectWrite obj) {
     write(writer, "{");
-    toJson(writer, obj.iterator());
+    objectsToJson(writer, obj.iterator());
     write(writer, "}");
     return true;
   }
 
-  private void toJson(Writer writer, Iterator<? extends JValue> it) {
-    boolean writeSep = false;
-    if (it.hasNext()) {
-      writeSep = toJson(writer, it.next());
-    }
-    while (it.hasNext()) {
-      if (writeSep) {
-        write(writer, ",");
-      }
-      writeSep = toJson(writer, it.next());
-    }
-  }
-
   public boolean toJson(Writer writer, JArrayWrite j) {
     write(writer, "[");
-    toJson(writer, j.iterator());
+    objectsToJson(writer, j.iterator());
     write(writer, "]");
     return true;
   }
@@ -103,22 +93,6 @@ public class SimpleSerializer implements Serializer {
     } else {
       return false;
     }
-  }
-
-  public Fx<JField> jFieldToJson(final Writer writer) {
-    return new Fx<JField>() {
-      @Override public void apply(JField j) {
-        toJson(writer, j);
-      }
-    };
-  }
-
-  public Fn<JField, String> jFieldToJson() {
-    return new Fn<JField, String>() {
-      @Override public String apply(JField j) {
-        return toJson(j);
-      }
-    };
   }
 
   public boolean toJson(Writer writer, JString j) {
@@ -138,6 +112,19 @@ public class SimpleSerializer implements Serializer {
   public <A> boolean toJson(Writer writer, JPrimitive<A> j) {
     write(writer, j.value().toString());
     return true;
+  }
+
+  private void objectsToJson(Writer writer, Iterator<?> it) {
+    boolean writeSep = false;
+    if (it.hasNext()) {
+      writeSep = objectToJson(writer, it.next());
+    }
+    while (it.hasNext()) {
+      if (writeSep) {
+        write(writer, ",");
+      }
+      writeSep = objectToJson(writer, it.next());
+    }
   }
 
   private void writeString(Writer writer, String s) {

@@ -19,7 +19,7 @@ package com.entwinemedia.fn.data.json;
 import static com.entwinemedia.fn.Equality.eq;
 import static com.entwinemedia.fn.Equality.hash;
 
-public final class JField implements JValue {
+public final class JField {
   private final String key;
   private final JValue value;
 

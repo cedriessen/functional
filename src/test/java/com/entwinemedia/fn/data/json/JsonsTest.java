@@ -114,20 +114,27 @@ public class JsonsTest {
 
   @Test
   public void testMerge() {
-    assertEquals(
-        obj(
-            f("company", v("Extron")),
-            f("city", arr(v("Anaheim"), v("Zurich"), v("Raleigh")))
-        ),
-        obj(
-            f("company", v("Extron")),
-            f("city", v("Anaheim"))
-        ).merge(
-            obj(f("city", v("Zurich")))
-        ).merge(
-            obj(f("city", v("Raleigh")))
-        )
-    );
+    {
+      final JObjectWrite expected = obj(
+          f("company", v("Extron")),
+          f("city", arr(v("Anaheim"), v("Zurich"), v("Raleigh")))
+      );
+      final JObjectWrite base = obj(
+          f("company", v("Extron")),
+          f("city", v("Anaheim"))
+      );
+      final JObjectWrite merge1 = base.merge(obj(f("city", v("Zurich"))));
+      final JObjectWrite merge2 = merge1.merge(obj(f("city", v("Raleigh"))));
+      assertEquals(expected, merge2);
+      // make sure the base object hasn't been modified by the merge
+      assertEquals(
+          obj(
+              f("company", v("Extron")),
+              f("city", v("Anaheim"))
+          ),
+          base
+      );
+    }
     assertEquals(
         obj(
             f("company", v("Extron")),
