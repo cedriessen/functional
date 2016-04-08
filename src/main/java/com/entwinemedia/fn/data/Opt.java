@@ -27,26 +27,43 @@ import com.entwinemedia.fn.StreamOp;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
+
 /**
  * The option type encapsulates on optional value. It contains either some value or is empty.
  * Please make sure to NEVER wrap null into a some. Instead use none.
  */
+@ParametersAreNonnullByDefault
 public abstract class Opt<A> implements Iterable<A> {
   private static final ListBuilder l = ListBuilders.LIA;
 
   private Opt() {
   }
 
+  /** Get the wrapped value. Calling this on a None is not defined. */
   public abstract A get();
 
+  /** Check if this is a Some, i.e. it contains a value. */
   public abstract boolean isSome();
 
-  public boolean isNone() {
+  /** Check if this is a None, i.e. it is empty or calling {@link #get()} is not defined. */
+  public final boolean isNone() {
     return !isSome();
   }
 
+  /** Synonym for {@link #isSome()}. */
+  public final boolean isDefined() {
+    return isSome();
+  }
+
+  /** Synonym for {@link #isNone()}. */
+  public final boolean isEmpty() {
+    return isNone();
+  }
+
   /** Safe decomposition of the option type using functions. */
-  public <B> B fold(Fn<? super A, ? extends B> some, P1<? extends B> none) {
+  public final <B> B fold(Fn<? super A, ? extends B> some, P1<? extends B> none) {
     // cannot be written using the ternary operator ?: because of type inference issues
     if (isSome()) {
       return some.apply(get());
@@ -55,7 +72,7 @@ public abstract class Opt<A> implements Iterable<A> {
     }
   }
 
-  public <B> B fold(P1<? extends B> some, P1<? extends B> none) {
+  public final <B> B fold(P1<? extends B> some, P1<? extends B> none) {
     // cannot be written using the ternary operator ?: because of type inference issues
     if (isSome()) {
       return some.get1();
@@ -64,7 +81,7 @@ public abstract class Opt<A> implements Iterable<A> {
     }
   }
 
-  public <B> B fold(P2<? extends B, ? extends B> someNone) {
+  public final <B> B fold(P2<? extends B, ? extends B> someNone) {
     // cannot be written using the ternary operator ?: because of type inference issues
     if (isSome()) {
       return someNone.get1();
@@ -73,24 +90,22 @@ public abstract class Opt<A> implements Iterable<A> {
     }
   }
 
-//  public abstract Option<A> foreach(Function<A, Void> f);
-
-  public <B> Opt<B> fmap(Fn<? super A, ? extends B> f) {
+  public final <B> Opt<B> fmap(Fn<? super A, ? extends B> f) {
     return isSome() ? some(f.apply(get())) : Opt.<B>none();
   }
 
   /** @see #fmap(com.entwinemedia.fn.Fn) */
-  public <B> Opt<B> map(Fn<? super A, ? extends B> f) {
+  public final <B> Opt<B> map(Fn<? super A, ? extends B> f) {
     return fmap(f);
   }
 
   /** Monadic bind operation <code>m a -> (a -> m b) -> m b</code>. */
-  public <B> Opt<B> bind(Fn<? super A, Opt<B>> f) {
+  public final <B> Opt<B> bind(Fn<? super A, Opt<B>> f) {
     return isSome() ? f.apply(get()) : Opt.<B>none();
   }
 
   /** @see #bind(com.entwinemedia.fn.Fn) */
-  public <B> Opt<B> flatMap(Fn<? super A, Opt<B>> f) {
+  public final <B> Opt<B> flatMap(Fn<? super A, Opt<B>> f) {
     return bind(f);
   }
 
@@ -103,94 +118,73 @@ public abstract class Opt<A> implements Iterable<A> {
   }
 
   /** If predicate <code>p</code> does not match return none. */
-  public Opt<A> filter(Fn<? super A, Boolean> p) {
+  public final Opt<A> filter(Fn<? super A, Boolean> p) {
     return isSome() && p.apply(get()) ? this : Opt.<A>none();
   }
 
   /** Throw <code>none</code> if none. */
-  public <T extends Throwable> Opt<A> orError(T none) throws T {
+  public final <T extends Throwable> Opt<A> orError(T none) throws T {
     if (isSome()) return this;
     else throw none;
   }
 
-//  /** Throw <code>none</code> if none. */
-//  public <T extends Throwable> Opt<A> orError(Class<T> none) throws T {
-//    if (isSome()) return this;
-//    else {
-//      T t;
-//      try {
-//        t = none.newInstance();
-//      } catch (InstantiationException e) {
-//        return chuck(new Error("Error creating exception", e));
-//      } catch (IllegalAccessException e) {
-//        return chuck(new Error("Error creating exception", e));
-//      }
-//      throw t;
-//    }
-//  }
+  /** Return this Opt if it is some or return <code>none</code> otherwise. */
+  public final Opt<A> or(Opt<A> none) {
+    return isSome() ? this : none;
+  }
 
-  /** Throw exception returned by <code>none</code> if none. */
-//  public <T extends Throwable> Opt<A> orError(Function0<T> none) throws T {
-//    if (isSome()) return this;
-//    else throw none.apply();
-//  }
+  /** Return this Opt is it is some or return the value of product <code>none</code> otherwise. */
+  public final Opt<A> or(P1<Opt<A>> none) {
+    return isSome() ? this : none.get1();
+  }
 
   /** Get the contained value in case of being "some" or return parameter <code>none</code> otherwise. */
-  public A or(A none) {
+  public final A getOr(A none) {
     return isSome() ? get() : none;
   }
 
   /** Get the contained value in case of being "some" or return the result of evaluating <code>none</code> otherwise. */
-  public A or(P1<A> none) {
+  public final A getOr(P1<A> none) {
     return isSome() ? get() : none.get1();
   }
 
-  /** To interface with legacy applications or frameworks that still use <code>null</code> values. */
-  public A orNull() {
+  /**
+   * Return the value in case of being <i>some</i> or return null otherwise.
+   * To interface with legacy applications or frameworks that still use <code>null</code> values.
+   */
+  public final A orNull() {
     return isSome() ? get() : null;
   }
 
-  /** Short hand methods for <code>toStream().apply(op)</code>. */
-  public <B> Stream<B> apply(StreamOp<? super A, B> op) {
+  /** Short hand methods for {@code toStream().apply(op)}. */
+  public final <B> Stream<B> apply(StreamOp<? super A, B> op) {
     return toStream().apply(op);
   }
 
-  /** Short hand methods for <code>toStream().apply(fold)</code>. */
-  public <B> B apply(StreamFold<? super A, B> fold) {
+  /** Short hand methods for {@code toStream().apply(fold)}. */
+  public final <B> B apply(StreamFold<? super A, B> fold) {
     return toStream().apply(fold);
   }
 
-  /** Transform the option into a monadic list. */
+  /** Transform the option into a stream. */
   @SuppressWarnings("unchecked")
-  public Stream<A> toStream() {
+  public final Stream<A> toStream() {
     return isSome() ? Stream.mk(get()) : Stream.<A>empty();
   }
 
   /** Transform an option into an immutable list, either with a single element or an empty list. */
   @SuppressWarnings("unchecked")
-  public List<A> toList() {
+  public final List<A> toList() {
     return isSome() ? l.mk(get()) : l.<A>nil();
   }
 
-  /**
-   * Left projection of this option. If the option is <code>some</code> return the
-   * value in an {@link Either#left(Object)} else return <code>right</code> in an {@link Either#right(Object)}.
-   */
-//  public abstract <B> Either<A, B> left(B right);
-
-  /**
-   * Right projection of this optio. If the option is <code>some</code> return the
-   * value in an {@link Either#left(Object)} else return <code>right</code> in an {@link Either#right(Object)}.
-   */
-//  public abstract <B> Either<B, A> right(B left);
-
   /** Inversion. If some return none. If none return some(zero). */
-  public Opt<A> inv(A zero) {
+  public final Opt<A> invert(A zero) {
     return isSome() ? Opt.<A>none() : some(zero);
   }
 
   @Override
-  public Iterator<A> iterator() {
+  public final Iterator<A> iterator() {
     return toList().iterator();
   }
 
@@ -271,12 +265,12 @@ public abstract class Opt<A> implements Iterable<A> {
   }
 
   @SuppressWarnings("unchecked")
-  public static <A> Opt<A> none(Class<A> t) {
+  public static <A> Opt<A> none(Class<A> ev) {
     return NONE;
   }
 
   /** Return some(a) if a is not null, none otherwise. */
-  public static <A> Opt<A> nul(A a) {
+  public static <A> Opt<A> nul(@Nullable A a) {
     return a != null ? some(a) : Opt.<A>none();
   }
 }

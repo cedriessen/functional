@@ -24,10 +24,10 @@ public final class Opts {
   private Opts() {
   }
 
-  public static <A> Fn<Opt<A>, A> or(final A a) {
+  public static <A> Fn<Opt<A>, A> getOr(final A a) {
     return new Fn<Opt<A>, A>() {
       @Override public A apply(Opt<A> o) {
-        return o.or(a);
+        return o.getOr(a);
       }
     };
   }
