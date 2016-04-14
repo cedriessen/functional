@@ -44,6 +44,10 @@ public final class Jsons {
   public static final JString BLANK = new JString("");
   public static final JObjectWrite EMPTY = new JObjectWrite(new HashMap<String, JField>());
 
+  //
+  // Objects
+  //
+
   public static JObjectWrite obj(JField... fields) {
     return obj($(fields));
   }
@@ -60,6 +64,22 @@ public final class Jsons {
     return new JField(key, value);
   }
 
+  public static JField f(String key, String value) {
+    return f(key, v(value));
+  }
+
+  public static JField f(String key, Number value) {
+    return f(key, v(value));
+  }
+
+  public static JField f(String key, Boolean value) {
+    return f(key, v(value));
+  }
+
+  //
+  // Arrays
+  //
+
   public static JArrayWrite arr(JValue... values) {
     return arr(l.mk(values));
   }
@@ -68,6 +88,22 @@ public final class Jsons {
   public static JArrayWrite arr(Iterable<? extends JValue> values) {
     return new JArrayWrite((Iterable<JValue>) values);
   }
+
+  public static JArrayWrite arr(String... values) {
+    return arr($(values).map(Functions.stringToJValue));
+  }
+
+  public static JArrayWrite arr(Number... values) {
+    return arr($(values).map(Functions.numberToJValue));
+  }
+
+  public static JArrayWrite arr(Boolean... values) {
+    return arr($(values).map(Functions.booleanToJValue));
+  }
+
+  //
+  // Primitives
+  //
 
   public static JBoolean v(Boolean value) {
     return new JBoolean(value);
@@ -166,6 +202,18 @@ public final class Jsons {
 
     public static Fn<String, JValue> stringToJValue = new Fn<String, JValue>() {
       @Override public JValue apply(String s) {
+        return v(s);
+      }
+    };
+
+    public static Fn<Number, JValue> numberToJValue = new Fn<Number, JValue>() {
+      @Override public JValue apply(Number s) {
+        return v(s);
+      }
+    };
+
+    public static Fn<Boolean, JValue> booleanToJValue = new Fn<Boolean, JValue>() {
+      @Override public JValue apply(Boolean s) {
         return v(s);
       }
     };
