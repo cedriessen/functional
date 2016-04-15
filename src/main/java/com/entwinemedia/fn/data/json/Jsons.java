@@ -56,7 +56,7 @@ public final class Jsons {
   }
 
   public static JObject obj(Iterable<? extends Field> fields) {
-    return new JObject($(fields).group(Jsons.Functions.keyOfField));
+    return new JObject($(fields).filter(not(Functions.isFieldZero)).group(Jsons.Functions.keyOfField));
   }
 
   /**
@@ -87,13 +87,17 @@ public final class Jsons {
   // Arrays
   //
 
+  public static JArray arr() {
+    return arr(l.<JValue>nil());
+  }
+
   public static JArray arr(JValue... values) {
     return arr(l.mk(values));
   }
 
   @SuppressWarnings("unchecked")
   public static JArray arr(Iterable<? extends JValue> values) {
-    return new JArray((Iterable<JValue>) values);
+    return new JArray($(values).filter(not(Functions.isZero)));
   }
 
   public static JArray arr(String... values) {
@@ -176,6 +180,10 @@ public final class Jsons {
     } else {
       return Prelude.unexhaustiveMatch(v);
     }
+  }
+
+  public static Iterable<Field> removeZeros(Iterable<Field> fields) {
+    return $(fields).filter(not(Functions.isFieldZero));
   }
 
 

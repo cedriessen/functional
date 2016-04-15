@@ -86,6 +86,16 @@ public class JsonsTest {
     assertTrue(isZero(obj(f("key", obj(f("key", arr(ZERO, ZERO)))))));
   }
 
+  @Test
+  public void testBuildWithZero() throws Exception {
+    assertEquals(obj(), obj(f("key", ZERO)));
+    assertEquals(obj(), obj(f("key", obj(f("key", ZERO)))));
+    assertEquals(obj(), obj(f("key", obj(f("key", arr(ZERO))))));
+    assertEquals(arr(), arr(ZERO));
+    assertEquals(arr(), arr(ZERO, ZERO, ZERO));
+    assertEquals(arr("one"), arr(ZERO, v("one"), ZERO, ZERO));
+  }
+
   // see for json-path examples https://code.google.com/p/json-path/
   @Test
   public void testSerialization() {
@@ -115,6 +125,11 @@ public class JsonsTest {
         .assertThat("$.a", contains(10, 30))
         .assertThat("$.a", hasSize(2))
         .assertThat("$.b", equalTo(20));
+    assertEquals("", ser.toJson(ZERO));
+    assertEquals("[]", ser.toJson(arr(ZERO)));
+    assertEquals("[]", ser.toJson(arr(obj(f("key", ZERO)))));
+    assertEquals("{}", ser.toJson(obj(f("key", ZERO))));
+    assertEquals("{}", ser.toJson(obj(f("key", arr(ZERO)))));
   }
 
   @Test
@@ -242,9 +257,7 @@ public class JsonsTest {
     );
     // Plain ZERO
     //
-    Object x = obj(f("city", "Bochum")).merge(obj(f("city", ZERO)));
-    assertNotEquals(
-        "The inner data structures are NOT the same. The second object contains a ZERO.",
+    assertEquals(
         obj(f("city", "Bochum")),
         obj(f("city", "Bochum")).merge(obj(f("city", ZERO)))
     );
@@ -254,12 +267,11 @@ public class JsonsTest {
         ser.toJson(obj(f("city", "Bochum")).merge(obj(f("city", ZERO))))
     );
     //
-    assertNotEquals(
-        "The inner data structures are NOT the same. The second object contains a ZERO.",
+    assertEquals(
         obj(f("city", arr("Bochum"))),
         obj(f("city", arr("Bochum"))).merge(obj(f("city", arr(ZERO))))
     );
-    assertNotEquals(
+    assertEquals(
         "Serialized structure should be equal.",
         ser.toJson(obj(f("city", arr("Bochum")))),
         ser.toJson(obj(f("city", arr("Bochum"))).merge(obj(f("city", arr(ZERO)))))

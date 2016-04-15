@@ -34,18 +34,17 @@ import java.util.Iterator;
  */
 public class SimpleSerializer implements Serializer {
   @Override
-  public boolean toJson(OutputStream out, JValue v) {
+  public void toJson(OutputStream out, JValue v) {
     final Writer writer = new OutputStreamWriter(out);
-    final boolean r = objectToJson(writer, false, v);
+    objectToJson(writer, v);
     try {
       writer.flush();
     } catch (IOException ignore) {
     }
-    return r;
   }
 
-  public boolean toJson(Writer writer, JValue v) {
-    return objectToJson(writer, false, v);
+  public void toJson(Writer writer, JValue v) {
+    objectToJson(writer, v);
   }
 
   public String toJson(JValue v) {
@@ -57,96 +56,72 @@ public class SimpleSerializer implements Serializer {
     }
   }
 
-  private boolean objectToJson(Writer writer, boolean notFirst, Object v) {
+  private void objectToJson(Writer writer, Object v) {
     if (v instanceof JString) {
-      return toJson(writer, notFirst, (JString) v);
+      toJson(writer, (JString) v);
     } else if (v instanceof JPrimitive) {
-      return toJson(writer, notFirst, (JPrimitive) v);
+      toJson(writer, (JPrimitive) v);
     } else if (v instanceof JObject) {
-      return toJson(writer, notFirst, (JObject) v);
+      toJson(writer, (JObject) v);
     } else if (v instanceof Field) {
-      return toJson(writer, notFirst, (Field) v);
+      toJson(writer, (Field) v);
     } else if (v instanceof JArray) {
-      return toJson(writer, notFirst, (JArray) v);
+      toJson(writer, (JArray) v);
     } else if (v instanceof Zero) {
-      return toJson(writer, (Zero) v);
+      // do nothing
     } else if (v instanceof JNull) {
-      return toJson(writer, notFirst, (JNull) v);
+      toJson(writer, (JNull) v);
     } else {
-      return Prelude.<Boolean>unexhaustiveMatch(v);
+      Prelude.<Boolean>unexhaustiveMatch(v);
     }
   }
 
-  private boolean toJson(Writer writer, boolean notFirst, JObject obj) {
-    if (notFirst) {
-      write(writer, ",");
-    }
+  private void toJson(Writer writer, JObject obj) {
     write(writer, "{");
     objectsToJson(writer, obj.iterator());
     write(writer, "}");
-    return true;
   }
 
-  private boolean toJson(Writer writer, boolean notFirst, JArray j) {
-    if (notFirst) {
-      write(writer, ",");
-    }
+  private void toJson(Writer writer, JArray j) {
     write(writer, "[");
     objectsToJson(writer, j.iterator());
     write(writer, "]");
-    return true;
   }
 
-  private boolean toJson(Writer writer, boolean notFirst, Field f) {
+  private void toJson(Writer writer, Field f) {
     if (ne(f.value(), Jsons.ZERO)) {
-      writeQuoted(writer, notFirst, f.key());
+      writeQuoted(writer, f.key());
       write(writer, ":");
-      return toJson(writer, f.value());
-    } else {
-      return false;
+      toJson(writer, f.value());
     }
   }
 
-  private boolean toJson(Writer writer, boolean notFirst, JString j) {
-    writeQuoted(writer, notFirst, j.value());
-    return true;
+  private void toJson(Writer writer, JString j) {
+    writeQuoted(writer, j.value());
   }
 
-  private boolean toJson(Writer writer, boolean notFirst, JNull j) {
-    writeSimple(writer, notFirst, "null");
-    return true;
+  private void toJson(Writer writer, JNull j) {
+    write(writer, "null");
   }
 
-  private boolean toJson(Writer writer, Zero j) {
-    return false;
-  }
-
-  private <A> boolean toJson(Writer writer, boolean notFirst, JPrimitive<A> j) {
-    writeSimple(writer, notFirst, j.value().toString());
-    return true;
+  private <A> void toJson(Writer writer, JPrimitive<A> j) {
+    write(writer, j.value().toString());
   }
 
   private void objectsToJson(Writer writer, Iterator<?> it) {
-    boolean hasBeenWritten = false;
+    if (it.hasNext()) {
+      objectToJson(writer, it.next());
+    }
     while (it.hasNext()) {
-      hasBeenWritten = objectToJson(writer, hasBeenWritten, it.next()) || hasBeenWritten;
+      write(writer, ",");
+      objectToJson(writer, it.next());
     }
   }
 
-  private void writeQuoted(Writer writer, boolean notFirst, String s) {
-    if (notFirst) {
-      write(writer, ",");
-    }
+  private void writeQuoted(Writer writer, String s) {
     write(writer, "\"");
     write(writer, Util.escape(s));
     write(writer, "\"");
-  }
-
-  private void writeSimple(Writer writer, boolean notFirst, String s) {
-    if (notFirst) {
-      write(writer, ",");
-    }
-    write(writer, s);
   }
 
   private void write(Writer writer, String s) {

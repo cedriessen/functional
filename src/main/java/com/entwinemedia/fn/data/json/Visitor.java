@@ -16,9 +16,6 @@
 
 package com.entwinemedia.fn.data.json;
 
-/**
- * Created by ced on 15.04.16.
- */
 public interface Visitor<A> {
   A visit(A fold, JString a);
   A visit(A fold, JNumber a);

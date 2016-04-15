@@ -121,7 +121,9 @@ public final class JObject implements JValue, Iterable<Field> {
    * Work horse function for {@link #merge(Iterable)}.
    */
   private Field doMerge(Field a, JValue b) {
-    if (a.value() instanceof JArray && b instanceof JArray) {
+    if (Jsons.isZero(b)){
+      return a;
+    } if (a.value() instanceof JArray && b instanceof JArray) {
       return a.derive(((JArray) a.value()).append((JArray) b));
     } else if (a.value() instanceof JArray) {
       return a.derive(((JArray) a.value()).append($(b)));

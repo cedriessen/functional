@@ -22,5 +22,5 @@ import java.io.OutputStream;
  * Serialize a JSON value into an output stream.
  */
 public interface Serializer {
-  boolean toJson(OutputStream out, JValue j);
+  void toJson(OutputStream out, JValue j);
 }
