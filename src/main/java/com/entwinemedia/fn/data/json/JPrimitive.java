@@ -29,7 +29,7 @@ abstract class JPrimitive<A> implements JValue {
     this.value = value;
   }
 
-  /** Return the wrapped value. */
+  /** Get the wrapped value. */
   public A value() {
     return value;
   }

@@ -16,8 +16,11 @@
 
 package com.entwinemedia.fn.data.json;
 
-import java.io.Writer;
+import java.io.OutputStream;
 
+/**
+ * Serialize a JSON value into an output stream.
+ */
 public interface Serializer {
-  boolean toJson(Writer writer, JValue j);
+  boolean toJson(OutputStream out, JValue j);
 }

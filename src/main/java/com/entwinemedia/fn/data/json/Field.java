@@ -19,26 +19,31 @@ package com.entwinemedia.fn.data.json;
 import static com.entwinemedia.fn.Equality.eq;
 import static com.entwinemedia.fn.Equality.hash;
 
-public final class JField {
+/**
+ * A field of a {@link JObject}.
+ */
+public final class Field {
   private final String key;
   private final JValue value;
 
-  JField(String key, JValue value) {
+  Field(String key, JValue value) {
     this.key = key;
     this.value = value;
   }
 
+  /** Get the key of the field. */
   public String key() {
     return key;
   }
 
+  /** Get the value of the field. */
   public JValue value() {
     return value;
   }
 
-  /** Create a new field with the given value. */
-  public JField mk(JValue value) {
-    return new JField(key, value);
+  /** Create a new field with the same key but a new {@code value}. */
+  public Field derive(JValue value) {
+    return new Field(key, value);
   }
 
   @Override public int hashCode() {
@@ -46,10 +51,10 @@ public final class JField {
   }
 
   @Override public boolean equals(Object that) {
-    return (this == that) || (that instanceof JField && eqFields((JField) that));
+    return (this == that) || (that instanceof Field && eqFields((Field) that));
   }
 
-  private boolean eqFields(JField that) {
+  private boolean eqFields(Field that) {
     return eq(key, that.key) && eq(value, that.value);
   }
 }

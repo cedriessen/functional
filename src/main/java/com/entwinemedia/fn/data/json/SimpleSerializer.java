@@ -22,8 +22,10 @@ import static com.entwinemedia.fn.Prelude.chuck;
 import com.entwinemedia.fn.Fx;
 import com.entwinemedia.fn.Prelude;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.StringWriter;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Iterator;
 
@@ -31,63 +33,73 @@ import java.util.Iterator;
  * Serialization is not part of the JSON AST classes to allow for different serializer implementations.
  */
 public class SimpleSerializer implements Serializer {
-  /** {@link SimpleSerializer#toJson(java.io.Writer, JValue)} as an effect. */
-  public Fx<Writer> toJsonFx(final JValue v) {
-    return new Fx<Writer>() {
-      @Override public void apply(Writer writer) {
-        toJson(writer, v);
-      }
-    };
+  @Override
+  public boolean toJson(OutputStream out, JValue v) {
+    final Writer writer = new OutputStreamWriter(out);
+    final boolean r = objectToJson(writer, false, v);
+    try {
+      writer.flush();
+    } catch (IOException ignore) {
+    }
+    return r;
+  }
+
+  public boolean toJson(Writer writer, JValue v) {
+    return objectToJson(writer, false, v);
   }
 
   public String toJson(JValue v) {
-    final StringWriter writer = new StringWriter();
-    toJson(writer, v);
-    return writer.toString();
+    try (final ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+      toJson(out, v);
+      return out.toString("UTF-8");
+    } catch (IOException e) {
+      return chuck(e);
+    }
   }
 
-  @Override
-  public boolean toJson(Writer writer, JValue v) {
-    return objectToJson(writer, v);
-  }
-
-  private boolean objectToJson(Writer writer, Object v) {
+  private boolean objectToJson(Writer writer, boolean notFirst, Object v) {
     if (v instanceof JString) {
-      return toJson(writer, (JString) v);
+      return toJson(writer, notFirst, (JString) v);
     } else if (v instanceof JPrimitive) {
-      return toJson(writer, (JPrimitive) v);
-    } else if (v instanceof JObjectWrite) {
-      return toJson(writer, (JObjectWrite) v);
-    } else if (v instanceof JField) {
-      return toJson(writer, (JField) v);
-    } else if (v instanceof JArrayWrite) {
-      return toJson(writer, (JArrayWrite) v);
-    } else if (v instanceof JZero) {
-      return toJson(writer, (JZero) v);
+      return toJson(writer, notFirst, (JPrimitive) v);
+    } else if (v instanceof JObject) {
+      return toJson(writer, notFirst, (JObject) v);
+    } else if (v instanceof Field) {
+      return toJson(writer, notFirst, (Field) v);
+    } else if (v instanceof JArray) {
+      return toJson(writer, notFirst, (JArray) v);
+    } else if (v instanceof Zero) {
+      return toJson(writer, (Zero) v);
     } else if (v instanceof JNull) {
-      return toJson(writer, (JNull) v);
+      return toJson(writer, notFirst, (JNull) v);
     } else {
       return Prelude.<Boolean>unexhaustiveMatch(v);
     }
   }
 
-  public boolean toJson(Writer writer, JObjectWrite obj) {
+  private boolean toJson(Writer writer, boolean notFirst, JObject obj) {
+    if (notFirst) {
+      write(writer, ",");
+    }
     write(writer, "{");
     objectsToJson(writer, obj.iterator());
     write(writer, "}");
     return true;
   }
 
-  public boolean toJson(Writer writer, JArrayWrite j) {
+  private boolean toJson(Writer writer, boolean notFirst, JArray j) {
+    if (notFirst) {
+      write(writer, ",");
+    }
     write(writer, "[");
     objectsToJson(writer, j.iterator());
     write(writer, "]");
     return true;
   }
 
-  public boolean toJson(Writer writer, JField f) {
+  private boolean toJson(Writer writer, boolean notFirst, Field f) {
     if (ne(f.value(), Jsons.ZERO)) {
-      writeString(writer, f.key());
+      writeQuoted(writer, notFirst, f.key());
       write(writer, ":");
       return toJson(writer, f.value());
     } else {
@@ -95,42 +107,46 @@ public class SimpleSerializer implements Serializer {
     }
   }
 
-  public boolean toJson(Writer writer, JString j) {
-    writeString(writer, j.value());
+  private boolean toJson(Writer writer, boolean notFirst, JString j) {
+    writeQuoted(writer, notFirst, j.value());
     return true;
   }
 
-  public boolean toJson(Writer writer, JNull j) {
-    write(writer, "null");
+  private boolean toJson(Writer writer, boolean notFirst, JNull j) {
+    writeSimple(writer, notFirst, "null");
     return true;
   }
 
-  public boolean toJson(Writer writer, JZero j) {
+  private boolean toJson(Writer writer, Zero j) {
     return false;
   }
 
-  public <A> boolean toJson(Writer writer, JPrimitive<A> j) {
-    write(writer, j.value().toString());
+  private <A> boolean toJson(Writer writer, boolean notFirst, JPrimitive<A> j) {
+    writeSimple(writer, notFirst, j.value().toString());
     return true;
   }
 
   private void objectsToJson(Writer writer, Iterator<?> it) {
-    boolean writeSep = false;
-    if (it.hasNext()) {
-      writeSep = objectToJson(writer, it.next());
-    }
+    boolean hasBeenWritten = false;
     while (it.hasNext()) {
-      if (writeSep) {
-        write(writer, ",");
-      }
-      writeSep = objectToJson(writer, it.next());
+      hasBeenWritten = objectToJson(writer, hasBeenWritten, it.next()) || hasBeenWritten;
     }
   }
 
-  private void writeString(Writer writer, String s) {
+  private void writeQuoted(Writer writer, boolean notFirst, String s) {
+    if (notFirst) {
+      write(writer, ",");
+    }
     write(writer, "\"");
     write(writer, Util.escape(s));
     write(writer, "\"");
+  }
+
+  private void writeSimple(Writer writer, boolean notFirst, String s) {
+    if (notFirst) {
+      write(writer, ",");
+    }
+    write(writer, s);
   }
 
   private void write(Writer writer, String s) {
@@ -138,6 +154,20 @@ public class SimpleSerializer implements Serializer {
       writer.write(s);
     } catch (IOException e) {
       chuck(e);
+    }
+  }
+
+  public final class Functions {
+    private Functions() {
+    }
+
+    /** {@link SimpleSerializer#toJson(java.io.OutputStream, JValue)} as an effect. */
+    public Fx<OutputStream> toJson(final JValue v) {
+      return new Fx<OutputStream>() {
+        @Override public void apply(OutputStream out) {
+          SimpleSerializer.this.toJson(out, v);
+        }
+      };
     }
   }
 }

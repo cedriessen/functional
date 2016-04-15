@@ -16,16 +16,15 @@
 
 package com.entwinemedia.fn.data.json;
 
-/** Identity element. */
-public final class JZero implements JValue {
-  JZero() {
-  }
-
-  @Override public boolean equals(Object that) {
-    return that instanceof JZero;
-  }
-
-  @Override public int hashCode() {
-    return -1;
-  }
+/**
+ * Created by ced on 15.04.16.
+ */
+public interface Visitor<A> {
+  A visit(A fold, JString a);
+  A visit(A fold, JNumber a);
+  A visit(A fold, JBoolean a);
+  A visit(A fold, JNull a);
+  A visit(A fold, JObject a);
+  A visit(A fold, JArray a);
+  A visit(A fold, Zero a);
 }

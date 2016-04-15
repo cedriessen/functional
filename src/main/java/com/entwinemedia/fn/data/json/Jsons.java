@@ -16,8 +16,11 @@
 package com.entwinemedia.fn.data.json;
 
 import static com.entwinemedia.fn.Stream.$;
+import static com.entwinemedia.fn.fns.Booleans.not;
 
 import com.entwinemedia.fn.Fn;
+import com.entwinemedia.fn.Pred;
+import com.entwinemedia.fn.Prelude;
 import com.entwinemedia.fn.data.ListBuilder;
 import com.entwinemedia.fn.data.ListBuilders;
 
@@ -37,42 +40,46 @@ public final class Jsons {
   // loose immutable
   private static final ListBuilder l = ListBuilders.looseImmutableArray;
 
-  public static final JZero ZERO = new JZero();
+  public static final Zero ZERO = new Zero();
   public static final JNull NULL = new JNull();
   public static final JBoolean TRUE = new JBoolean(true);
   public static final JBoolean FALSE = new JBoolean(false);
   public static final JString BLANK = new JString("");
-  public static final JObjectWrite EMPTY = new JObjectWrite(new HashMap<String, JField>());
+  public static final JObject EMPTY = new JObject(new HashMap<String, Field>());
 
   //
   // Objects
   //
 
-  public static JObjectWrite obj(JField... fields) {
+  public static JObject obj(Field... fields) {
     return obj($(fields));
   }
 
-  public static JObjectWrite obj(Iterable<? extends JField> fields) {
-    return new JObjectWrite($(fields).group(Jsons.Functions.keyOfField));
+  public static JObject obj(Iterable<? extends Field> fields) {
+    return new JObject($(fields).group(Jsons.Functions.keyOfField));
   }
 
-  public static JObjectWrite obj(Map<String, JField> fields) {
-    return new JObjectWrite(fields);
+  /**
+   * Create a new {@link JObject} from a map.
+   * Please note that the map will be copied.
+   */
+  public static JObject obj(Map<String, Field> fields) {
+    return new JObject(new HashMap<>(fields));
   }
 
-  public static JField f(String key, JValue value) {
-    return new JField(key, value);
+  public static Field f(String key, JValue value) {
+    return new Field(key, value);
   }
 
-  public static JField f(String key, String value) {
+  public static Field f(String key, String value) {
     return f(key, v(value));
   }
 
-  public static JField f(String key, Number value) {
+  public static Field f(String key, Number value) {
     return f(key, v(value));
   }
 
-  public static JField f(String key, Boolean value) {
+  public static Field f(String key, Boolean value) {
     return f(key, v(value));
   }
 
@@ -80,24 +87,24 @@ public final class Jsons {
   // Arrays
   //
 
-  public static JArrayWrite arr(JValue... values) {
+  public static JArray arr(JValue... values) {
     return arr(l.mk(values));
   }
 
   @SuppressWarnings("unchecked")
-  public static JArrayWrite arr(Iterable<? extends JValue> values) {
-    return new JArrayWrite((Iterable<JValue>) values);
+  public static JArray arr(Iterable<? extends JValue> values) {
+    return new JArray((Iterable<JValue>) values);
   }
 
-  public static JArrayWrite arr(String... values) {
+  public static JArray arr(String... values) {
     return arr($(values).map(Functions.stringToJValue));
   }
 
-  public static JArrayWrite arr(Number... values) {
+  public static JArray arr(Number... values) {
     return arr($(values).map(Functions.numberToJValue));
   }
 
-  public static JArrayWrite arr(Boolean... values) {
+  public static JArray arr(Boolean... values) {
     return arr($(values).map(Functions.booleanToJValue));
   }
 
@@ -141,6 +148,37 @@ public final class Jsons {
     }
   }
 
+  /** Check if an object is zero. Being zero is defined as all field values recursively being zero. */
+  public static boolean isZero(JObject obj) {
+    return !$(obj).exists(not(Functions.isFieldZero));
+  }
+
+  /** Check if an object is zero. An array is considered to be <i>zero</i> when all elements are zero. */
+  public static boolean isZero(JArray arr) {
+    return !$(arr).exists(not(Functions.isZero));
+  }
+
+  public static boolean isZero(Field f) {
+    return isZero(f.value());
+  }
+
+  public static boolean isZero(JValue v) {
+    if (v instanceof JPrimitive) {
+      return false;
+    } else if (v instanceof JNull) {
+      return false;
+    } else if (v instanceof JArray) {
+      return isZero((JArray) v);
+    } else if (v instanceof JObject) {
+      return isZero((JObject) v);
+    } else if (v instanceof Zero) {
+      return true;
+    } else {
+      return Prelude.unexhaustiveMatch(v);
+    }
+  }
+
+
   /**
    * Functions.
    */
@@ -160,19 +198,19 @@ public final class Jsons {
     }
 
     /**
-     * Create a function that returns the value of a {@link JField}.
+     * Create a function that returns the value of a {@link Field}.
      */
-    public static Fn<JField, JValue> valueOfField = new Fn<JField, JValue>() {
-      @Override public JValue apply(JField j) {
+    public static final Fn<Field, JValue> valueOfField = new Fn<Field, JValue>() {
+      @Override public JValue apply(Field j) {
         return j.value();
       }
     };
 
     /**
-     * Create a function that returns the key of a {@link JField}.
+     * Create a function that returns the key of a {@link Field}.
      */
-    public static Fn<JField, String> keyOfField = new Fn<JField, String>() {
-      @Override public String apply(JField j) {
+    public static final Fn<Field, String> keyOfField = new Fn<Field, String>() {
+      @Override public String apply(Field j) {
         return j.key();
       }
     };
@@ -181,7 +219,7 @@ public final class Jsons {
      * Create a function that returns the value wrapped in a list if it is a {@link JPrimitive}
      * or an empty list otherwise.
      */
-    public static Fn<JValue, List<Object>> valueOfPrimitive = new Fn<JValue, List<Object>>() {
+    public static final Fn<JValue, List<Object>> valueOfPrimitive = new Fn<JValue, List<Object>>() {
       @Override public List<Object> apply(JValue j) {
         if (j instanceof JPrimitive) {
           return l.mk(((JPrimitive) j).value());
@@ -191,28 +229,40 @@ public final class Jsons {
       }
     };
 
-    /**
-     * Create a function that converts a map entry into a {@link JField}.
-     */
-    public static Fn<Entry<String, JValue>, JField> entryToJField = new Fn<Entry<String, JValue>, JField>() {
-      @Override public JField apply(Entry<String, JValue> e) {
-        return new JField(e.getKey(), e.getValue());
+    public static final Pred<JValue> isZero = new Pred<JValue>() {
+      @Override public Boolean apply(JValue v) {
+        return isZero(v);
       }
     };
 
-    public static Fn<String, JValue> stringToJValue = new Fn<String, JValue>() {
+    public static final Pred<Field> isFieldZero = new Pred<Field>() {
+      @Override public Boolean apply(Field f) {
+        return isZero(f);
+      }
+    };
+
+    /**
+     * Create a function that converts a map entry into a {@link Field}.
+     */
+    public static final Fn<Entry<String, JValue>, Field> entryToJField = new Fn<Entry<String, JValue>, Field>() {
+      @Override public Field apply(Entry<String, JValue> e) {
+        return new Field(e.getKey(), e.getValue());
+      }
+    };
+
+    public static final Fn<String, JValue> stringToJValue = new Fn<String, JValue>() {
       @Override public JValue apply(String s) {
         return v(s);
       }
     };
 
-    public static Fn<Number, JValue> numberToJValue = new Fn<Number, JValue>() {
+    public static final Fn<Number, JValue> numberToJValue = new Fn<Number, JValue>() {
       @Override public JValue apply(Number s) {
         return v(s);
       }
     };
 
-    public static Fn<Boolean, JValue> booleanToJValue = new Fn<Boolean, JValue>() {
+    public static final Fn<Boolean, JValue> booleanToJValue = new Fn<Boolean, JValue>() {
       @Override public JValue apply(Boolean s) {
         return v(s);
       }
