@@ -57,7 +57,7 @@ public final class JArray implements JValue, Iterable<JValue> {
     while (arrayIterator.hasNext()) {
       final JValue val = arrayIterator.next();
       if (val instanceof JPrimitive) {
-        values.add(((JString) val).value());
+        values.add(((JPrimitive) val).value());
       } else if (val instanceof JObject) {
         values.add(((JObject) val).toMap());
       } else if (val instanceof JArray) {
