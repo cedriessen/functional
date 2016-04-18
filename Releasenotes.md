@@ -1,3 +1,8 @@
+Release 1.3.1
+-------------
+
+- Fix type cast bug in `JArray#toArray`.
+
 Release 1.3
 -----------
 
