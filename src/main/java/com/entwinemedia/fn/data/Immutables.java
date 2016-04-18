@@ -24,15 +24,15 @@ public final class Immutables {
   private Immutables() {
   }
 
-  public static <A> boolean isImmutableList(Iterable<A> it) {
+  public static boolean isImmutableList(Object it) {
     return it instanceof List && it instanceof Immutable;
   }
 
-  public static <A> boolean isImmutableSet(Iterable<A> it) {
+  public static boolean isImmutableSet(Object it) {
     return it instanceof Set && it instanceof Immutable;
   }
 
-  public static <A> boolean isImmutableMap(Iterable<A> it) {
+  public static boolean isImmutableMap(Object it) {
     return it instanceof Map && it instanceof Immutable;
   }
 }

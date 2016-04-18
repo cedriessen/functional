@@ -16,19 +16,20 @@
 
 package com.entwinemedia.fn.data.json;
 
-public final class JNull implements JValue {
-  JNull() {
-  }
-
-  @Override public int hashCode() {
-    return -2;
+/** Identity element. */
+public final class Zero implements JValue {
+  Zero() {
   }
 
   @Override public boolean equals(Object that) {
-    return that instanceof JNull;
+    return that instanceof Zero;
+  }
+
+  @Override public int hashCode() {
+    return -1;
   }
 
   @Override public String toString() {
-    return "Jsons{null}";
+    return "Jsons{ZERO}";
   }
 }

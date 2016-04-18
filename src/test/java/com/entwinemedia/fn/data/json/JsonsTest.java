@@ -22,6 +22,7 @@ import static com.entwinemedia.fn.data.json.Jsons.NULL;
 import static com.entwinemedia.fn.data.json.Jsons.ZERO;
 import static com.entwinemedia.fn.data.json.Jsons.arr;
 import static com.entwinemedia.fn.data.json.Jsons.f;
+import static com.entwinemedia.fn.data.json.Jsons.isZero;
 import static com.entwinemedia.fn.data.json.Jsons.obj;
 import static com.entwinemedia.fn.data.json.Jsons.v;
 import static org.hamcrest.Matchers.contains;
@@ -40,7 +41,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class JsonsTest {
-  private final SimpleSerializer serializer = new SimpleSerializer();
+  private final SimpleSerializer ser = new SimpleSerializer();
 
   @Test
   public void testEquality() throws Exception {
@@ -64,17 +65,41 @@ public class JsonsTest {
     assertEquals(obj(f("test", v("test"))), obj(f("test", v("test"))));
     assertNotEquals(obj(f("test", v("test"))), obj(f("test2", v("test2"))));
     //
-    final JObjectWrite o1 =
+    final JObject o1 =
         obj(f("title", v("some title")), f("subjects", v("subject no 1"))).merge(obj(f("subjects", v("subject no 2"))));
-    final JObjectWrite o2 =
+    final JObject o2 =
         obj(f("title", v("some title")), f("subjects", arr(v("subject no 1"), v("subject no 2"))));
     assertEquals(o1, o2);
+  }
+
+  @Test
+  public void testIsZero() throws Exception {
+    assertTrue(isZero(ZERO));
+    assertTrue(isZero(arr(ZERO)));
+    assertFalse(isZero(arr(1)));
+    assertFalse(isZero(arr("one")));
+    assertFalse(isZero(arr(ZERO, v("one"))));
+    assertTrue(isZero(obj(f("key", ZERO))));
+    assertTrue(isZero(obj(f("key", arr(ZERO)))));
+    assertTrue(isZero(obj(f("key", obj(f("key", ZERO))))));
+    assertTrue(isZero(obj(f("key", obj(f("key", arr(ZERO)))))));
+    assertTrue(isZero(obj(f("key", obj(f("key", arr(ZERO, ZERO)))))));
+  }
+
+  @Test
+  public void testBuildWithZero() throws Exception {
+    assertEquals(obj(), obj(f("key", ZERO)));
+    assertEquals(obj(), obj(f("key", obj(f("key", ZERO)))));
+    assertEquals(obj(), obj(f("key", obj(f("key", arr(ZERO))))));
+    assertEquals(arr(), arr(ZERO));
+    assertEquals(arr(), arr(ZERO, ZERO, ZERO));
+    assertEquals(arr("one"), arr(ZERO, v("one"), ZERO, ZERO));
   }
 
   // see for json-path examples https://code.google.com/p/json-path/
   @Test
   public void testSerialization() {
-    final JObjectWrite o =
+    final JObject o =
         obj(f("key", v(10)),
             f("bla", v("hallo")),
             f("remove", ZERO),
@@ -85,7 +110,7 @@ public class JsonsTest {
                   v(20.34),
                   v(true),
                   obj(f("key", v(true))))));
-    final String json = serializer.toJson(o);
+    final String json = ser.toJson(o);
     System.out.println(json);
     JsonAssert.with(json).assertThat("$.key", equalTo(10))
         .assertThat("$.bla", equalTo("hallo"))
@@ -93,19 +118,24 @@ public class JsonsTest {
         .assertThat("$.array", hasSize(5))
         .assertThat("$.array", hasItems("sad,,,asd", 10, 20.34, true))
         .assertThat("$.array[4].key", equalTo(true));
-    JsonAssert.with(serializer.toJson(obj(f("a", v(10)), f("b", v(20))).override(obj(f("a", v(30))))))
+    JsonAssert.with(ser.toJson(obj(f("a", v(10)), f("b", v(20))).override(obj(f("a", v(30))))))
         .assertThat("$.a", equalTo(30))
         .assertThat("$.b", equalTo(20));
-    JsonAssert.with(serializer.toJson(obj(f("a", v(10)), f("b", v(20))).merge(obj(f("a", v(30))))))
+    JsonAssert.with(ser.toJson(obj(f("a", v(10)), f("b", v(20))).merge(obj(f("a", v(30))))))
         .assertThat("$.a", contains(10, 30))
         .assertThat("$.a", hasSize(2))
         .assertThat("$.b", equalTo(20));
+    assertEquals("", ser.toJson(ZERO));
+    assertEquals("[]", ser.toJson(arr(ZERO)));
+    assertEquals("[]", ser.toJson(arr(obj(f("key", ZERO)))));
+    assertEquals("{}", ser.toJson(obj(f("key", ZERO))));
+    assertEquals("{}", ser.toJson(obj(f("key", arr(ZERO)))));
   }
 
   @Test
   public void testAppend() {
-    final JArrayWrite a = arr(v(10), v(20));
-    final JArrayWrite b = arr(v(20), v(30));
+    final JArray a = arr(v(10), v(20));
+    final JArray b = arr(v(20), v(30));
     assertEquals(4, ListBuilders.SIA.mk(a.append(b)).size());
     assertEquals(2, ListBuilders.SIA.mk(a).size());
     assertEquals(2, ListBuilders.SIA.mk(b).size());
@@ -115,16 +145,16 @@ public class JsonsTest {
   @Test
   public void testMerge() {
     {
-      final JObjectWrite expected = obj(
+      final JObject expected = obj(
           f("company", v("Extron")),
           f("city", arr(v("Anaheim"), v("Zurich"), v("Raleigh")))
       );
-      final JObjectWrite base = obj(
+      final JObject base = obj(
           f("company", v("Extron")),
           f("city", v("Anaheim"))
       );
-      final JObjectWrite merge1 = base.merge(obj(f("city", v("Zurich"))));
-      final JObjectWrite merge2 = merge1.merge(obj(f("city", v("Raleigh"))));
+      final JObject merge1 = base.merge(obj(f("city", v("Zurich"))));
+      final JObject merge2 = merge1.merge(obj(f("city", v("Raleigh"))));
       assertEquals(expected, merge2);
       // make sure the base object hasn't been modified by the merge
       assertEquals(
@@ -201,6 +231,51 @@ public class JsonsTest {
             obj(f("address", obj(f("city", v("Raleigh")))))
         )
     );
+    assertEquals(
+        obj(f("city", arr("Bochum", "Zurich"))),
+        obj(f("city", arr("Bochum"))).merge(obj(f("city", arr("Zurich"))))
+    );
+    assertEquals(
+        obj(f("city", arr("Bochum", "Zurich"))),
+        obj(f("city", arr("Bochum"))).merge(f("city", arr("Zurich")))
+    );
+  }
+
+  @Test
+  public void testMergeWithZero() {
+    // ZERO in an array
+    //
+    assertNotEquals(
+        "The inner data structures are NOT the same. The second object contains a ZERO.",
+        obj(f("city", arr("Bochum"))),
+        obj(f("city", "Bochum")).merge(obj(f("city", arr(ZERO))))
+    );
+    assertEquals(
+        "Merging should not produce an array since value of the second object is an array that contains only a ZERO.",
+        ser.toJson(obj(f("city", "Bochum"))),
+        ser.toJson(obj(f("city", "Bochum")).merge(obj(f("city", arr(ZERO)))))
+    );
+    // Plain ZERO
+    //
+    assertEquals(
+        obj(f("city", "Bochum")),
+        obj(f("city", "Bochum")).merge(obj(f("city", ZERO)))
+    );
+    assertEquals(
+        "Merging should not produce an array since the value of the second object is only a ZERO",
+        ser.toJson(obj(f("city", "Bochum"))),
+        ser.toJson(obj(f("city", "Bochum")).merge(obj(f("city", ZERO))))
+    );
+    //
+    assertEquals(
+        obj(f("city", arr("Bochum"))),
+        obj(f("city", arr("Bochum"))).merge(obj(f("city", arr(ZERO))))
+    );
+    assertEquals(
+        "Serialized structure should be equal.",
+        ser.toJson(obj(f("city", arr("Bochum")))),
+        ser.toJson(obj(f("city", arr("Bochum"))).merge(obj(f("city", arr(ZERO)))))
+    );
   }
 
   @Test
@@ -229,24 +304,29 @@ public class JsonsTest {
 
   @Test
   public void testIdentityElement() {
-    final JObjectWrite a =
+    final JObject a =
         obj(f("string", v(null, ZERO)),
             f("number", v(15, BLANK)));
-    System.out.println(a);
-    JsonAssert.with(serializer.toJson(a))
+    JsonAssert.with(ser.toJson(a))
         .assertNotDefined("$.string")
         .assertThat("$.number", equalTo(15));
+    //
+    assertEquals("[]", ser.toJson(arr(ZERO)));
+    //
+    assertEquals("[\"one\",\"two\"]", (ser.toJson(arr(v("one"), v("two"), ZERO))));
+    assertEquals("[\"one\",\"two\"]", (ser.toJson(arr(ZERO, v("one"), v("two")))));
+    assertEquals("[\"one\",\"two\"]", (ser.toJson(arr(v("one"), ZERO, v("two")))));
   }
 
   @Test
   public void testNullSafeValueHandling() {
-    final JObjectWrite a =
+    final JObject a =
         obj(f("string", v("String", BLANK)),
             f("number", v(15, BLANK)),
             f("bool", v(true, BLANK)),
             f("null", v(null, BLANK)));
 
-    JsonAssert.with(serializer.toJson(a))
+    JsonAssert.with(ser.toJson(a))
         .assertThat("$.string", equalTo("String"))
         .assertThat("$.number", equalTo(15))
         .assertThat("$.null", equalTo(""));
