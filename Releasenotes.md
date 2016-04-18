@@ -1,3 +1,16 @@
+Release 1.3
+-----------
+
+Most of the work has been done on the Jsons package.
+
+- Fix parameter types of immutable check methods (see Immutables).
+- Add #toArray and #toMap methods to JArray and JObject. 
+- Rename types in Jsons package to better reflect the type hierarchy. JArrayWrite -> JArray, JObjectWrite -> JObject, JField -> Field, JZero -> Zero.
+- Generalize JSON Serializer API from Writer to OutputStream.
+- Make various Jsons functions final.
+- Simplify Jsons field and array construction by adding constructor functions that take plain (unwrapped) values.
+
+
 Release 1.2
 -----------
 
