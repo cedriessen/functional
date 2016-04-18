@@ -144,7 +144,7 @@ public final class JObject implements JValue, Iterable<Field> {
     for (final Field field : this) {
       final JValue value = field.value();
       if (value instanceof JPrimitive) {
-        map.put(field.key(), ((JString) field.value()).value());
+        map.put(field.key(), ((JPrimitive) value).value());
       } else if (value instanceof JObject) {
         map.put(field.key(), ((JObject) value).toMap());
       } else if (value instanceof JArray) {
