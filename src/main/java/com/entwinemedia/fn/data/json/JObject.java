@@ -139,8 +139,12 @@ public final class JObject implements JValue, Iterable<Field> {
   //
   //
 
-  public Map<String, Object> toMap() {
-    final Map<String, Object> map = new HashMap<>();
+  /**
+   * Turn the JSON object into a map (actually a tree).
+   * Keys are strings, values are the unwrapped JSON values, e.g. plain strings, numbers, booleans, maps, arrays, etc.
+   */
+  public Map toMap() {
+    final Map map = new HashMap();
     for (final Field field : this) {
       final JValue value = field.value();
       if (value instanceof JPrimitive) {
@@ -151,13 +155,11 @@ public final class JObject implements JValue, Iterable<Field> {
         map.put(field.key(), ((JArray) value).toArray());
       } else if (value instanceof JNull) {
         map.put(field.key(), null);
-      } else if (value instanceof Zero) {
-        // skip zeros
       } else {
         Prelude.unexhaustiveMatch(value.getClass());
       }
     }
-    return new ImmutableMapWrapper<>(map);
+    return new ImmutableMapWrapper(map);
   }
 
   //
