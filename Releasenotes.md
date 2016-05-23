@@ -1,3 +1,8 @@
+Release 1.3.2
+-------------
+
+- Make functions of `SimpleSerializer` available via instance variable.
+
 Release 1.3.1
 -------------
 
