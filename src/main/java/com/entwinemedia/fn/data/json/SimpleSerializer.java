@@ -33,6 +33,9 @@ import java.util.Iterator;
  * Serialization is not part of the JSON AST classes to allow for different serializer implementations.
  */
 public class SimpleSerializer implements Serializer {
+  /** Functions */
+  public final Functions fn = new Functions();
+
   @Override
   public void toJson(OutputStream out, JValue v) {
     final Writer writer = new OutputStreamWriter(out);
