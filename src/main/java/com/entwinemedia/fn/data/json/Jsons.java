@@ -20,10 +20,10 @@ import static com.entwinemedia.fn.fns.Booleans.not;
 
 import com.entwinemedia.fn.Fn;
 import com.entwinemedia.fn.Pred;
-import com.entwinemedia.fn.Prelude;
 import com.entwinemedia.fn.data.ListBuilder;
 import com.entwinemedia.fn.data.ListBuilders;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,16 +40,34 @@ public final class Jsons {
   // loose immutable
   private static final ListBuilder l = ListBuilders.looseImmutableArray;
 
+  /** The identity object. */
   public static final Zero ZERO = new Zero();
+
+  /** JSON null. */
   public static final JNull NULL = new JNull();
+
+  /** JSON true. */
   public static final JBoolean TRUE = new JBoolean(true);
+
+  /** JSON false. */
   public static final JBoolean FALSE = new JBoolean(false);
+
+  /** A blank string. */
   public static final JString BLANK = new JString("");
-  public static final JObject EMPTY = new JObject(new HashMap<String, Field>());
+
+  /** An empty object. */
+  private static final JObject EMPTY_OBJ = new JObject(new HashMap<String, Field>());
+
+  /** An empty array. */
+  private static final JArray EMPTY_ARR = new JArray(new ArrayList<JValue>());
 
   //
   // Objects
   //
+
+  public static JObject obj() {
+    return EMPTY_OBJ;
+  }
 
   public static JObject obj(Field... fields) {
     return obj($(fields));
@@ -88,7 +106,7 @@ public final class Jsons {
   //
 
   public static JArray arr() {
-    return arr(l.<JValue>nil());
+    return EMPTY_ARR;
   }
 
   public static JArray arr(JValue... values) {
@@ -152,34 +170,20 @@ public final class Jsons {
     }
   }
 
-  /** Check if an object is zero. Being zero is defined as all field values recursively being zero. */
-  public static boolean isZero(JObject obj) {
-    return !$(obj).exists(not(Functions.isFieldZero));
-  }
-
-  /** Check if an object is zero. An array is considered to be <i>zero</i> when all elements are zero. */
-  public static boolean isZero(JArray arr) {
-    return !$(arr).exists(not(Functions.isZero));
-  }
-
+  /** A field is considered zero if its value is zero. */
   public static boolean isZero(Field f) {
     return isZero(f.value());
   }
 
+  /**
+   * Check if a value is zero. Returns true only for {@link Zero} itself
+   * or a {@link JObject} which contains only fields whose values are zero.
+   */
   public static boolean isZero(JValue v) {
-    if (v instanceof JPrimitive) {
-      return false;
-    } else if (v instanceof JNull) {
-      return false;
-    } else if (v instanceof JArray) {
-      return isZero((JArray) v);
-    } else if (v instanceof JObject) {
-      return isZero((JObject) v);
-    } else if (v instanceof Zero) {
-      return true;
-    } else {
-      return Prelude.unexhaustiveMatch(v);
-    }
+    return
+        v instanceof Zero
+            || (v instanceof JObject
+            && !$((JObject) v).exists(not(Functions.isFieldZero)));
   }
 
   public static Iterable<Field> removeZeros(Iterable<Field> fields) {

@@ -75,22 +75,30 @@ public class JsonsTest {
   @Test
   public void testIsZero() throws Exception {
     assertTrue(isZero(ZERO));
-    assertTrue(isZero(arr(ZERO)));
+    assertFalse(isZero(arr(ZERO)));
     assertFalse(isZero(arr(1)));
     assertFalse(isZero(arr("one")));
     assertFalse(isZero(arr(ZERO, v("one"))));
     assertTrue(isZero(obj(f("key", ZERO))));
-    assertTrue(isZero(obj(f("key", arr(ZERO)))));
+    assertFalse(isZero(obj(f("key", arr(ZERO)))));
     assertTrue(isZero(obj(f("key", obj(f("key", ZERO))))));
-    assertTrue(isZero(obj(f("key", obj(f("key", arr(ZERO)))))));
-    assertTrue(isZero(obj(f("key", obj(f("key", arr(ZERO, ZERO)))))));
+    assertFalse(isZero(obj(f("key", obj(f("key", arr(ZERO)))))));
+    assertFalse(isZero(obj(f("key", obj(f("key", arr(ZERO, ZERO)))))));
   }
 
   @Test
   public void testBuildWithZero() throws Exception {
     assertEquals(obj(), obj(f("key", ZERO)));
-    assertEquals(obj(), obj(f("key", obj(f("key", ZERO)))));
-    assertEquals(obj(), obj(f("key", obj(f("key", arr(ZERO))))));
+    assertEquals("{}", obj(f("key", ZERO)).toString());
+
+    assertEquals(obj(f("key", arr())), obj(f("key", arr(ZERO))));
+    assertEquals("{\"key\":[]}", obj(f("key", arr(ZERO))).toString());
+
+    assertEquals(obj(f("key", arr())), obj(f("key", arr(ZERO))));
+    assertEquals("{\"key\":[]}", obj(f("key", arr())), obj(f("key", arr(ZERO))));
+
+    assertEquals(obj(f("key", obj())), obj(f("key", obj(f("key", ZERO)))));
+    assertEquals(obj(f("key", obj(f("key", arr())))), obj(f("key", obj(f("key", arr(ZERO))))));
     assertEquals(arr(), arr(ZERO));
     assertEquals(arr(), arr(ZERO, ZERO, ZERO));
     assertEquals(arr("one"), arr(ZERO, v("one"), ZERO, ZERO));
@@ -129,7 +137,7 @@ public class JsonsTest {
     assertEquals("[]", ser.toJson(arr(ZERO)));
     assertEquals("[]", ser.toJson(arr(obj(f("key", ZERO)))));
     assertEquals("{}", ser.toJson(obj(f("key", ZERO))));
-    assertEquals("{}", ser.toJson(obj(f("key", arr(ZERO)))));
+    assertEquals("{\"key\":[]}", ser.toJson(obj(f("key", arr(ZERO)))));
   }
 
   @Test
@@ -245,14 +253,14 @@ public class JsonsTest {
   public void testMergeWithZero() {
     // ZERO in an array
     //
-    assertNotEquals(
-        "The inner data structures are NOT the same. The second object contains a ZERO.",
+    assertEquals(
+        "Merging a field with a simple value and a field that contains an array should produce an array",
         obj(f("city", arr("Bochum"))),
         obj(f("city", "Bochum")).merge(obj(f("city", arr(ZERO))))
     );
     assertEquals(
-        "Merging should not produce an array since value of the second object is an array that contains only a ZERO.",
-        ser.toJson(obj(f("city", "Bochum"))),
+        "Merging should produce an array.",
+        ser.toJson(obj(f("city", arr("Bochum")))),
         ser.toJson(obj(f("city", "Bochum")).merge(obj(f("city", arr(ZERO)))))
     );
     // Plain ZERO
