@@ -1,3 +1,9 @@
+Release 1.4
+-----------
+
+- Empty JSON arrays and arrays containing only zeros are not considered zero anymore.
+  As a result, object fields are not removed anymore but have an empty array as value.
+
 Release 1.3.2
 -------------
 
