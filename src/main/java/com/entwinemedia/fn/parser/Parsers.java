@@ -16,11 +16,13 @@
 
 package com.entwinemedia.fn.parser;
 
+import static com.entwinemedia.fn.P2.p2;
+import static com.entwinemedia.fn.P3.p3;
+
 import com.entwinemedia.fn.Fn;
 import com.entwinemedia.fn.Fns;
 import com.entwinemedia.fn.P2;
 import com.entwinemedia.fn.P3;
-import com.entwinemedia.fn.Products;
 import com.entwinemedia.fn.Unit;
 import com.entwinemedia.fn.data.Opt;
 import com.entwinemedia.fn.fns.Booleans;
@@ -84,7 +86,7 @@ public final class Parsers {
       @Override public Parser<P2<A, B>> def(final A a) {
         return p.bind(new Fn<B, Parser<P2<A, B>>>() {
           @Override public Parser<P2<A, B>> def(B b) {
-            return yield(Products.E.p2(a, b));
+            return yield(p2(a, b));
           }
         });
       }
@@ -96,7 +98,7 @@ public final class Parsers {
       @Override public Parser<P3<A, B, C>> def(final P2<A, B> a) {
         return p.bind(new Fn<C, Parser<P3<A, B, C>>>() {
           @Override public Parser<P3<A, B, C>> def(C c) {
-            return yield(Products.E.p3(a.get1(), a.get2(), c));
+            return yield(p3(a._1, a._2, c));
           }
         });
       }

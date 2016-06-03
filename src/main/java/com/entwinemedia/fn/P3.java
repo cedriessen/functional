@@ -20,30 +20,36 @@ import static com.entwinemedia.fn.Equality.eq;
 import static com.entwinemedia.fn.Equality.hash;
 
 /** Product of arity 3. */
-public abstract class P3<A, B, C> {
-  public abstract A get1();
+public final class P3<A, B, C> {
+  public final A _1;
+  public final B _2;
+  public final C _3;
 
-  public abstract B get2();
+  public P3(A _1, B _2, C _3) {
+    this._1 = _1;
+    this._2 = _2;
+    this._3 = _3;
+  }
 
-  public abstract C get3();
+  public static <A, B, C> P3<A, B, C> p3(A _1, B _2, C _3) {
+    return new P3<>(_1, _2, _3);
+  }
 
   @Override public boolean equals(Object that) {
     return (this == that) || (that instanceof P3 && eqFields((P3) that));
   }
 
-  public boolean canEqual(Object that) {
-    return that instanceof P3;
-  }
-
   private boolean eqFields(P3 that) {
-    return that.canEqual(this) && eq(get1(), that.get1()) && eq(get2(), that.get2()) && eq(get3(), that.get3());
+    return eq(_1, that._1)
+        && eq(_2, that._2)
+        && eq(_3, that._3);
   }
 
   @Override public int hashCode() {
-    return hash(get1(), get2(), get3());
+    return hash(_1, _2, _3);
   }
 
   @Override public String toString() {
-    return "(" + get1() + "," + get2() + "," + get3() + ")";
+    return "{" + _1 + "," + _2 + "," + _3 + "}";
   }
 }

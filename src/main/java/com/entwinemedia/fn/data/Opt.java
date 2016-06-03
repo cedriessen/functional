@@ -84,9 +84,9 @@ public abstract class Opt<A> implements Iterable<A> {
   public final <B> B fold(P2<? extends B, ? extends B> someNone) {
     // cannot be written using the ternary operator ?: because of type inference issues
     if (isSome()) {
-      return someNone.get1();
+      return someNone._1;
     } else {
-      return someNone.get2();
+      return someNone._2;
     }
   }
 

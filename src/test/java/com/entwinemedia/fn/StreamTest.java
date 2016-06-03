@@ -16,6 +16,7 @@
 
 package com.entwinemedia.fn;
 
+import static com.entwinemedia.fn.P2.p2;
 import static com.entwinemedia.fn.Prelude.chuck;
 import static com.entwinemedia.fn.Stream.$;
 import static com.entwinemedia.fn.fns.Booleans.eq;
@@ -59,7 +60,6 @@ import java.util.Map.Entry;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class StreamTest {
   private static final ListBuilder l = ListBuilders.SIA;
-  private static final ProductBuilder p = Products.E;
 
   @Test
   public void testFilter1() {
@@ -354,10 +354,9 @@ public class StreamTest {
   @Test
   @SuppressWarnings("unchecked")
   public void testZipWithIndex() {
-    final ProductBuilder p = Products.E;
     final List<P2<String, Integer>> r = $("1", "2", "3").zipWithIndex().toList();
     assertEquals(3, r.size());
-    assertEquals(l.mk(p.p2("1", 0), p.p2("2", 1), p.p2("3", 2)), r);
+    assertEquals(l.mk(p2("1", 0), p2("2", 1), p2("3", 2)), r);
   }
 
   @Test
@@ -554,10 +553,10 @@ public class StreamTest {
   @Test
   public void testZip() {
     final Stream<P2<String, Integer>> zipped = $("a", "b", "c").zip($(1, 2, 3));
-    assertEquals(l.mk(p.p2("a", 1), p.p2("b", 2), p.p2("c", 3)), zipped.toList());
+    assertEquals(l.mk(p2("a", 1), p2("b", 2), p2("c", 3)), zipped.toList());
     final Stream<P2<String, Integer>> zipped2 = $("a").zip($(1, 2, 3));
     assertEquals(1, zipped2.toList().size());
-    assertEquals(l.mk(p.p2("a", 1)), zipped2.toList());
+    assertEquals(l.mk(p2("a", 1)), zipped2.toList());
     assertTrue(Stream.empty().zip($(1, 2, 3)).isEmpty());
     assertTrue($(1, 2).zip(Stream.empty()).isEmpty());
   }

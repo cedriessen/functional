@@ -16,35 +16,43 @@
 
 package com.entwinemedia.fn;
 
+import static com.entwinemedia.fn.Equality.eq;
+import static com.entwinemedia.fn.Equality.hash;
+
 /** Product of arity 4. */
-public abstract class P4<A, B, C, D> {
-  public abstract A get1();
+public final class P4<A, B, C, D> {
+  public final A _1;
+  public final B _2;
+  public final C _3;
+  public final D _4;
 
-  public abstract B get2();
+  public P4(A _1, B _2, C _3, D _4) {
+    this._1 = _1;
+    this._2 = _2;
+    this._3 = _3;
+    this._4 = _4;
+  }
 
-  public abstract C get3();
-
-  public abstract D get4();
-
+  public static <A, B, C, D> P4<A, B, C, D> p4(A _1, B _2, C _3, D _4) {
+    return new P4<>(_1, _2, _3, _4);
+  }
 
   @Override public boolean equals(Object that) {
     return (this == that) || (that instanceof P4 && eqFields((P4) that));
   }
 
-  public boolean canEqual(Object that) {
-    return that instanceof P4;
-  }
-
   private boolean eqFields(P4 that) {
-    return that.canEqual(this)
-            && Equality.eq(get1(), that.get1()) && Equality.eq(get2(), that.get2()) && Equality.eq(get3(), that.get3()) && Equality.eq(get4(), that.get4());
+    return eq(_1, that._1)
+        && eq(_2, that._2)
+        && eq(_3, that._3)
+        && eq(_4, that._4);
   }
 
   @Override public int hashCode() {
-    return Equality.hash(get1(), get2(), get3(), get4());
+    return hash(_1, _2, _3, _4);
   }
 
   @Override public String toString() {
-    return "(" + get1() + "," + get2() + "," + get3() + "," + get4() + ")";
+    return "(" + _1 + "," + _2 + "," + _3 + "," + _4 + ")";
   }
 }

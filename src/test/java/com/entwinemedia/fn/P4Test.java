@@ -13,23 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.entwinemedia.fn;
 
-import static com.entwinemedia.fn.P2.p2;
+import static com.entwinemedia.fn.P4.p4;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-public class P2Test {
+public class P4Test {
   @Test
   public void testEquality() {
-    final P2<Integer, String> x = p2(1, "2");
-    final P2<Integer, String> y = p2(1, "2");
-    final P2<Integer, String> z = p2(1, "2");
+    final P4<Integer, String, String, Integer> x = p4(1, "2", "3", 4);
+    final P4<Integer, String, String, Integer> y = p4(1, "2", "3", 4);
+    final P4<Integer, String, String, Integer> z = p4(1, "2", "3", 4);
     // reflexive
     assertEquals(x, x);
-    assertEquals(x, p2(1, "2"));
+    assertEquals(x, p4(1, "2", "3", 4));
     // symmetric
     assertEquals(x, y);
     assertEquals(y, x);

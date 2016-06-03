@@ -20,30 +20,42 @@ import static com.entwinemedia.fn.Equality.eq;
 import static com.entwinemedia.fn.Equality.hash;
 
 /** Product of arity 1. */
-public abstract class P1<A> {
-  public abstract A get1();
+public final class P1<A> {
+  public final A _1;
 
-  public abstract <B> P1<B> fmap(final Fn<? super A, ? extends B> f);
+  public P1(A _1) {
+    this._1 = _1;
+  }
 
-  public abstract <B> P1<B> bind(final Fn<? super A, P1<B>> f);
+  public static <A> P1<A> p(A _1) {
+    return new P1<>(_1);
+  }
+
+  public A get1() {
+    return _1;
+  }
+
+  public <B> P1<B> fmap(final Fn<? super A, ? extends B> f) {
+    return p(f.apply(_1));
+  }
+
+  public <B> P1<B> bind(final Fn<? super A, P1<B>> f) {
+    return f.apply(_1);
+  }
 
   @Override public boolean equals(Object that) {
     return (this == that) || (that instanceof P1 && eqFields((P1) that));
   }
 
   private boolean eqFields(P1 that) {
-    return that.canEqual(this) && eq(get1(), that.get1());
-  }
-
-  public boolean canEqual(Object that) {
-    return that instanceof P1;
+    return eq(_1, that._1);
   }
 
   @Override public int hashCode() {
-    return hash(get1());
+    return hash(_1);
   }
 
   @Override public String toString() {
-    return "(" + get1() + ")";
+    return "(" + _1 + ")";
   }
 }

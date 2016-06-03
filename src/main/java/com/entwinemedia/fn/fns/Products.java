@@ -35,7 +35,7 @@ public final class Products {
   public static <A> Fn<P2<A, ?>, A> p2_1() {
     return new Fn<P2<A, ?>, A>() {
       @Override public A def(P2<A, ?> p) {
-        return p.get1();
+        return p._1;
       }
     };
   }
@@ -43,7 +43,7 @@ public final class Products {
   public static <B> Fn<P2<?, B>, B> p2_2() {
     return new Fn<P2<?, B>, B>() {
       @Override public B def(P2<?, B> p) {
-        return p.get2();
+        return p._2;
       }
     };
   }

@@ -16,20 +16,20 @@
 
 package com.entwinemedia.fn;
 
-import static com.entwinemedia.fn.P2.p2;
+import static com.entwinemedia.fn.P3.p3;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-public class P2Test {
+public class P3Test {
   @Test
   public void testEquality() {
-    final P2<Integer, String> x = p2(1, "2");
-    final P2<Integer, String> y = p2(1, "2");
-    final P2<Integer, String> z = p2(1, "2");
+    final P3<Integer, String, String> x = p3(1, "2", "3");
+    final P3<Integer, String, String> y = p3(1, "2", "3");
+    final P3<Integer, String, String> z = p3(1, "2", "3");
     // reflexive
     assertEquals(x, x);
-    assertEquals(x, p2(1, "2"));
+    assertEquals(x, p3(1, "2", "3"));
     // symmetric
     assertEquals(x, y);
     assertEquals(y, x);

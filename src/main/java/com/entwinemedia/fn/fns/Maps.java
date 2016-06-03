@@ -16,6 +16,8 @@
 
 package com.entwinemedia.fn.fns;
 
+import static com.entwinemedia.fn.P2.p2;
+
 import com.entwinemedia.fn.Fn;
 import com.entwinemedia.fn.P2;
 
@@ -29,7 +31,7 @@ public final class Maps {
   public static <A, B> Fn<Map.Entry<A, B>, P2<A, B>> toP2() {
     return new Fn<Entry<A, B>, P2<A, B>>() {
       @Override public P2<A, B> def(Entry<A, B> e) {
-        return com.entwinemedia.fn.Products.E.p2(e.getKey(), e.getValue());
+        return p2(e.getKey(), e.getValue());
       }
     };
   }

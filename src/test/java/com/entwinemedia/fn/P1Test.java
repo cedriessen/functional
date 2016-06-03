@@ -16,29 +16,30 @@
 
 package com.entwinemedia.fn;
 
-/**
- * Implementation of {@link P1} with eager evaluation of the encapsulated value {@link P1#get1()}.
- */
-public final class P1Eager<A> extends P1<A> {
-  private final A a;
+import static com.entwinemedia.fn.P1.p;
+import static org.junit.Assert.assertEquals;
 
-  public P1Eager(A a) {
-    this.a = a;
-  }
+import org.junit.Test;
 
-  public static <A> P1<A> p(A a) {
-    return new P1Eager<A>(a);
-  }
-
-  @Override public A get1() {
-    return a;
-  }
-
-  @Override public <B> P1<B> fmap(Fn<? super A, ? extends B> f) {
-    return new P1Eager<B>(f.apply(a));
-  }
-
-  @Override public <B> P1<B> bind(Fn<? super A, P1<B>> f) {
-    return f.apply(a);
+public class P1Test {
+  @Test
+  public void testEquality() {
+    final P1<Integer> x = p(1);
+    final P1<Integer> y = p(1);
+    final P1<Integer> z = p(1);
+    // reflexive
+    assertEquals(x, x);
+    assertEquals(x, p(1));
+    // symmetric
+    assertEquals(x, y);
+    assertEquals(y, x);
+    // transitive
+    assertEquals(x, y);
+    assertEquals(y, z);
+    assertEquals(x, z);
+    // consistent
+    for (int i = 0; i < 10; i++) {
+      assertEquals(x, y);
+    }
   }
 }

@@ -16,6 +16,8 @@
 
 package com.entwinemedia.fn;
 
+import static com.entwinemedia.fn.P2.p2;
+
 import com.entwinemedia.fn.data.ImmutableIteratorBase;
 import com.entwinemedia.fn.data.Iterators;
 import com.entwinemedia.fn.data.ListBuilders;
@@ -28,8 +30,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> {
-  private static final ProductBuilder p = Products.E;
-
   /** Apply the operation to stream <code>s</code>. */
   public abstract Stream<B> def(Stream<? extends A> s);
 
@@ -242,7 +242,7 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
           private int index = 0;
 
           @Override protected P2<A, Integer> apply(A a) {
-            return p.p2(a, index++);
+            return p2(a, index++);
           }
         };
       }
@@ -268,7 +268,7 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
           }
 
           @Override public P2<A, B> next() {
-            return p.p2(itA.next(), itB.next());
+            return p2(itA.next(), itB.next());
           }
         };
       }

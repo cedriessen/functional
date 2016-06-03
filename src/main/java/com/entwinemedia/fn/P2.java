@@ -20,28 +20,33 @@ import static com.entwinemedia.fn.Equality.eq;
 import static com.entwinemedia.fn.Equality.hash;
 
 /** Product of arity 2. */
-public abstract class P2<A, B> {
-  public abstract A get1();
+public final class P2<A, B> {
+  public final A _1;
+  public final B _2;
 
-  public abstract B get2();
+  public P2(A _1, B _2) {
+    this._1 = _1;
+    this._2 = _2;
+  }
+
+  public static <A, B> P2<A, B> p2(A _1, B _2) {
+    return new P2<>(_1, _2);
+  }
 
   @Override public boolean equals(Object that) {
     return (this == that) || (that instanceof P2 && eqFields((P2) that));
   }
 
-  public boolean canEqual(Object that) {
-    return that instanceof P2;
-  }
-
   private boolean eqFields(P2 that) {
-    return that.canEqual(this) && eq(get1(), that.get1()) && eq(get2(), that.get2());
+    return eq(_1, that._1)
+        && eq(_2, that._2);
   }
 
   @Override public int hashCode() {
-    return hash(get1(), get2());
+    return hash(_1, _2);
   }
 
   @Override public String toString() {
-    return "(" + get1() + "," + get2() + ")";
+    return "(" + _1 + "," + _2 + ")";
   }
 }
