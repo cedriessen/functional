@@ -25,57 +25,57 @@ public final class Characters {
   }
 
   public static final Pred<Character> isDigit = new Pred<Character>() {
-    @Override public Boolean apply(Character character) {
+    @Override public Boolean def(Character character) {
       return Character.isDigit(character);
     }
   };
 
   public static final Pred<Character> isLower = new Pred<Character>() {
-    @Override public Boolean apply(Character character) {
+    @Override public Boolean def(Character character) {
       return Character.isLowerCase(character);
     }
   };
 
   public static final Pred<Character> isUpper = new Pred<Character>() {
-    @Override public Boolean apply(Character character) {
+    @Override public Boolean def(Character character) {
       return Character.isUpperCase(character);
     }
   };
 
   public static final Pred<Character> isLetter = new Pred<Character>() {
-    @Override public Boolean apply(Character character) {
+    @Override public Boolean def(Character character) {
       return Character.isLetter(character);
     }
   };
 
   public static final Pred<Character> isAlphaNum = new Pred<Character>() {
-    @Override public Boolean apply(Character character) {
+    @Override public Boolean def(Character character) {
       return Character.isLetterOrDigit(character);
     }
   };
 
   public static final Pred<Character> isWhitespace = new Pred<Character>() {
-    @Override public Boolean apply(Character character) {
+    @Override public Boolean def(Character character) {
       return Character.isWhitespace(character);
     }
   };
 
   public static final Pred<Character> isSpace = new Pred<Character>() {
-    @Override public Boolean apply(Character character) {
+    @Override public Boolean def(Character character) {
       return Character.isSpaceChar(character);
     }
   };
 
   public static Pred<Character> isCharacter(final char c) {
     return new Pred<Character>() {
-      @Override public Boolean apply(Character character) {
+      @Override public Boolean def(Character character) {
         return character == c;
       }
     };
   }
 
   public static final Fn<Iterable<Character>, String> mkString = new Fn<Iterable<Character>, String>() {
-    @Override public String apply(Iterable<Character> characters) {
+    @Override public String def(Iterable<Character> characters) {
       final StringBuilder b = new StringBuilder();
       for (Character c : characters) {
         b.append(c);

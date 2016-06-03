@@ -591,7 +591,7 @@ public class StreamTest {
 
   private static <A, B> Fn2<Map<A, B>, Entry<A, B>, Map<A, B>> mapFold() {
     return new Fn2<Map<A, B>, Entry<A, B>, Map<A, B>>() {
-      @Override public Map<A, B> apply(Map<A, B> sum, Entry<A, B> a) {
+      @Override public Map<A, B> def(Map<A, B> sum, Entry<A, B> a) {
         sum.put(a.getKey(), a.getValue());
         return sum;
       }
@@ -602,7 +602,7 @@ public class StreamTest {
 
   private static <A> Fn<A, A> countCalls(final int[] calls) {
     return new Fn<A, A>() {
-      @Override public A apply(A a) {
+      @Override public A def(A a) {
         calls[0]++;
         return a;
       }
@@ -610,13 +610,13 @@ public class StreamTest {
   }
 
   private static final Fn<Integer, Integer> doubleValue = new Fn<Integer, Integer>() {
-    @Override public Integer apply(Integer i) {
+    @Override public Integer def(Integer i) {
       return 2 * i;
     }
   };
 
   private static final Fn<Integer, Integer> tripleValue = new Fn<Integer, Integer>() {
-    @Override public Integer apply(Integer i) {
+    @Override public Integer def(Integer i) {
       return 3 * i;
     }
   };
@@ -624,7 +624,7 @@ public class StreamTest {
   private static <A> Fn<A, List<A>> doubleList() {
     return new Fn<A, List<A>>() {
       @SuppressWarnings("unchecked")
-      @Override public List<A> apply(A a) {
+      @Override public List<A> def(A a) {
         return l.mk(a, a);
       }
     };
@@ -634,15 +634,15 @@ public class StreamTest {
     return params;
   }
 
-  private static final Fx<Object> println = new Fx<Object>() {
-    @Override public void apply(Object o) {
+  private static final Ef<Object> println = new Ef<Object>() {
+    @Override public void def(Object o) {
       System.out.println(o);
     }
   };
 
-  private static Fx<Object> write(final Writer writer) {
-    return new Fx<Object>() {
-      @Override public void apply(Object o) {
+  private static Ef<Object> write(final Writer writer) {
+    return new Ef<Object>() {
+      @Override public void def(Object o) {
         try {
           writer.write(o.toString());
         } catch (IOException e) {

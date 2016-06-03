@@ -32,7 +32,7 @@ public abstract class StreamFold<A, B> {
 
   public Fn<Stream<A>, B> toFn() {
     return new Fn<Stream<A>, B>() {
-      @Override public B apply(Stream<A> s) {
+      @Override public B def(Stream<A> s) {
         return StreamFold.this.apply(s);
       }
     };
@@ -200,7 +200,7 @@ public abstract class StreamFold<A, B> {
   // todo use MapBuilder
   public static <B, A> Map<B, A> group(final Fn<? super A, ? extends B> key, final Stream<? extends A> s) {
     final Map<B, A> sum = foldl(new HashMap<B, A>(), new Fn2<Map<B, A>, A, Map<B, A>>() {
-      @Override public Map<B, A> apply(Map<B, A> sum, A a) {
+      @Override public Map<B, A> def(Map<B, A> sum, A a) {
         sum.put(key.apply(a), a);
         return sum;
       }
@@ -223,7 +223,7 @@ public abstract class StreamFold<A, B> {
                                           final Fn<? super A, ? extends C> value,
                                           final Stream<? extends A> s) {
     final Map<B, C> sum = foldl(new HashMap<B, C>(), new Fn2<Map<B, C>, A, Map<B, C>>() {
-      @Override public Map<B, C> apply(Map<B, C> sum, A a) {
+      @Override public Map<B, C> def(Map<B, C> sum, A a) {
         sum.put(key.apply(a), value.apply(a));
         return sum;
       }
@@ -245,7 +245,7 @@ public abstract class StreamFold<A, B> {
   public static <B, A> Map<B, List<A>> groupMulti(
           final ListFactory f, final Fn<? super A, ? extends B> key, final Stream<? extends A> s) {
     final Map<B, List<A>> sum = foldl(new HashMap<B, List<A>>(), new Fn2<Map<B, List<A>>, A, Map<B, List<A>>>() {
-      @Override public Map<B, List<A>> apply(Map<B, List<A>> sum, A a) {
+      @Override public Map<B, List<A>> def(Map<B, List<A>> sum, A a) {
         final B k = key.apply(a);
         if (sum.containsKey(k)) {
           sum.get(k).add(a);

@@ -29,7 +29,7 @@ public class FnsTest {
   @Test
   public void testVary() throws Exception {
     final Fn<String, Number> f = Fns.<String, Number>vy(new Fn<Object, Integer>() {
-      @Override public Integer apply(Object s) {
+      @Override public Integer def(Object s) {
         return s.hashCode() + s.hashCode();
       }
     });
@@ -38,8 +38,8 @@ public class FnsTest {
 
   @Test
   public void testFnX() {
-    final Fn<Integer, String> f = new FnX<Integer, String>() {
-      @Override public String applyX(Integer integer) throws IOException {
+    final Fn<Integer, String> f = new Fn<Integer, String>() {
+      @Override public String def(Integer integer) throws IOException {
         throw new IOException();
       }
     };

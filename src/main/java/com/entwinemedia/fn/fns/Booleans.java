@@ -26,7 +26,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public final class Booleans {
   private static final Pred yes = new Pred() {
-    @Override public Boolean apply(Object a) {
+    @Override public Boolean def(Object a) {
       return true;
     }
   };
@@ -46,7 +46,7 @@ public final class Booleans {
 
   public static <A extends Comparable<A>, B extends A> Fn2<A, B, Boolean> lt() {
     return new Fn2<A, B, Boolean>() {
-      @Override public Boolean apply(A a, B b) {
+      @Override public Boolean def(A a, B b) {
         return a.compareTo(b) < 0;
       }
     };
@@ -54,7 +54,7 @@ public final class Booleans {
 
   public static <A extends Comparable<A>, B extends A> Pred<A> lt(final B b) {
     return new Pred<A>() {
-      @Override public Boolean apply(A a) {
+      @Override public Boolean def(A a) {
         return a.compareTo(b) < 0;
       }
     };
@@ -62,7 +62,7 @@ public final class Booleans {
 
   public static <A extends Comparable<A>, B extends A> Fn2<A, B, Boolean> le() {
     return new Fn2<A, B, Boolean>() {
-      @Override public Boolean apply(A a, B b) {
+      @Override public Boolean def(A a, B b) {
         return a.compareTo(b) <= 0;
       }
     };
@@ -70,7 +70,7 @@ public final class Booleans {
 
   public static <A extends Comparable<A>, B extends A> Pred<A> le(final B b) {
     return new Pred<A>() {
-      @Override public Boolean apply(A a) {
+      @Override public Boolean def(A a) {
         return a.compareTo(b) <= 0;
       }
     };
@@ -78,7 +78,7 @@ public final class Booleans {
 
   public static <A extends Comparable<A>, B extends A> Fn2<A, B, Boolean> gt() {
     return new Fn2<A, B, Boolean>() {
-      @Override public Boolean apply(A a, B b) {
+      @Override public Boolean def(A a, B b) {
         return a.compareTo(b) > 0;
       }
     };
@@ -86,7 +86,7 @@ public final class Booleans {
 
   public static <A extends Comparable<A>, B extends A> Pred<A> gt(final B b) {
     return new Pred<A>() {
-      @Override public Boolean apply(A a) {
+      @Override public Boolean def(A a) {
         return a.compareTo(b) > 0;
       }
     };
@@ -94,7 +94,7 @@ public final class Booleans {
 
   public static <A extends Comparable<A>, B extends A> Fn2<A, B, Boolean> ge() {
     return new Fn2<A, B, Boolean>() {
-      @Override public Boolean apply(A a, B b) {
+      @Override public Boolean def(A a, B b) {
         return a.compareTo(b) >= 0;
       }
     };
@@ -102,7 +102,7 @@ public final class Booleans {
 
   public static <A extends Comparable<A>, B extends A> Pred<A> ge(final B b) {
     return new Pred<A>() {
-      @Override public Boolean apply(A a) {
+      @Override public Boolean def(A a) {
         return a.compareTo(b) >= 0;
       }
     };
@@ -110,7 +110,7 @@ public final class Booleans {
 
   public static <A, B> Fn2<A, B, Boolean> eq() {
     return new Fn2<A, B, Boolean>() {
-      @Override public Boolean apply(A a, B b) {
+      @Override public Boolean def(A a, B b) {
         return a.equals(b);
       }
     };
@@ -118,7 +118,7 @@ public final class Booleans {
 
   public static <A> Pred<A> eq(final A b) {
     return new Pred<A>() {
-      @Override public Boolean apply(A a) {
+      @Override public Boolean def(A a) {
         return a.equals(b);
       }
     };
@@ -126,7 +126,7 @@ public final class Booleans {
 
   public static <A, B> Fn2<A, B, Boolean> ne() {
     return new Fn2<A, B, Boolean>() {
-      @Override public Boolean apply(A a, B b) {
+      @Override public Boolean def(A a, B b) {
         return !a.equals(b);
       }
     };
@@ -138,7 +138,7 @@ public final class Booleans {
   /** Create a function that checks if argument 1 is an instance of argument 2. */
   public static Fn2<Object, Class<?>, Boolean> isInstanceOf() {
     return new Fn2<Object, Class<?>, Boolean>() {
-      @Override public Boolean apply(Object a, Class<?> b) {
+      @Override public Boolean def(Object a, Class<?> b) {
         return b.isAssignableFrom(a.getClass());
       }
     };
@@ -147,7 +147,7 @@ public final class Booleans {
   /** Create a predicate that checks if its argument is an instance of <code>b</code>. */
   public static Pred<Object> isInstanceOf(final Class<?> b) {
     return new Pred<Object>() {
-      @Override public Boolean apply(Object a) {
+      @Override public Boolean def(Object a) {
         return b.isAssignableFrom(a.getClass());
       }
     };
@@ -155,7 +155,7 @@ public final class Booleans {
 
   public static <A> Pred<A> or(final Fn<? super A, Boolean> p1, final Fn<? super A, Boolean> p2) {
     return new Pred<A>() {
-      @Override public Boolean apply(A a) {
+      @Override public Boolean def(A a) {
         return p1.apply(a) || p2.apply(a);
       }
     };
@@ -163,7 +163,7 @@ public final class Booleans {
 
   public static <A> Pred<A> and(final Fn<? super A, Boolean> p1, final Fn<? super A, Boolean> p2) {
     return new Pred<A>() {
-      @Override public Boolean apply(A a) {
+      @Override public Boolean def(A a) {
         return p1.apply(a) && p2.apply(a);
       }
     };
@@ -171,14 +171,14 @@ public final class Booleans {
 
   public static <A> Pred<A> not(final Fn<? super A, Boolean> p) {
     return new Pred<A>() {
-      @Override public Boolean apply(A a) {
+      @Override public Boolean def(A a) {
         return !p.apply(a);
       }
     };
   }
 
   public static Fn<Boolean, Boolean> not = new Fn<Boolean, Boolean>() {
-    @Override public Boolean apply(Boolean a) {
+    @Override public Boolean def(Boolean a) {
       return !a;
     }
   };
@@ -186,7 +186,7 @@ public final class Booleans {
   @SafeVarargs
   public static <A> Pred<A> all(final Fn<? super A, Boolean>... ps) {
     return new Pred<A>() {
-      @Override public Boolean apply(A a) {
+      @Override public Boolean def(A a) {
         for (Fn<? super A, Boolean> p : ps) {
           if (!p.apply(a)) {
             return false;
@@ -200,7 +200,7 @@ public final class Booleans {
   @SafeVarargs
   public static <A> Pred<A> one(final Fn<? super A, Boolean>... ps) {
     return new Pred<A>() {
-      @Override public Boolean apply(A a) {
+      @Override public Boolean def(A a) {
         for (Fn<? super A, Boolean> p : ps) {
           if (p.apply(a)) {
             return true;
@@ -212,7 +212,7 @@ public final class Booleans {
   }
 
   public static Fn<String, Boolean> parseBoolean = new Fn<String, Boolean>() {
-    @Override public Boolean apply(String s) {
+    @Override public Boolean def(String s) {
       return Boolean.parseBoolean(s);
     }
   };

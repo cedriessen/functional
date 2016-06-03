@@ -26,7 +26,7 @@ public final class Opts {
 
   public static <A> Fn<Opt<A>, A> getOr(final A a) {
     return new Fn<Opt<A>, A>() {
-      @Override public A apply(Opt<A> o) {
+      @Override public A def(Opt<A> o) {
         return o.getOr(a);
       }
     };
@@ -34,7 +34,7 @@ public final class Opts {
 
   public static <A, B> Fn<Opt<A>, Opt<B>> lift(final Fn<? super A, ? extends B> f) {
     return new Fn<Opt<A>, Opt<B>>() {
-      @Override public Opt<B> apply(Opt<A> as) {
+      @Override public Opt<B> def(Opt<A> as) {
         return as.map(f);
       }
     };

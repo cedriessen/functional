@@ -84,7 +84,7 @@ public final class JObject implements JValue, Iterable<Field> {
         // merge into the existing data (copy of it to guarantee immutability)
         new HashMap<>(fields),
         new Fn2<Map<String, Field>, Field, Map<String, Field>>() {
-          @Override public Map<String, Field> apply(Map<String, Field> sum, Field f) {
+          @Override public Map<String, Field> def(Map<String, Field> sum, Field f) {
             return mergeInto(sum, f);
           }
         });

@@ -203,7 +203,7 @@ public final class Jsons {
      */
     public static <A> Fn<JPrimitive<A>, A> value() {
       return new Fn<JPrimitive<A>, A>() {
-        @Override public A apply(JPrimitive<A> j) {
+        @Override public A def(JPrimitive<A> j) {
           return j.value();
         }
       };
@@ -213,7 +213,7 @@ public final class Jsons {
      * Create a function that returns the value of a {@link Field}.
      */
     public static final Fn<Field, JValue> valueOfField = new Fn<Field, JValue>() {
-      @Override public JValue apply(Field j) {
+      @Override public JValue def(Field j) {
         return j.value();
       }
     };
@@ -222,7 +222,7 @@ public final class Jsons {
      * Create a function that returns the key of a {@link Field}.
      */
     public static final Fn<Field, String> keyOfField = new Fn<Field, String>() {
-      @Override public String apply(Field j) {
+      @Override public String def(Field j) {
         return j.key();
       }
     };
@@ -232,7 +232,7 @@ public final class Jsons {
      * or an empty list otherwise.
      */
     public static final Fn<JValue, List<Object>> valueOfPrimitive = new Fn<JValue, List<Object>>() {
-      @Override public List<Object> apply(JValue j) {
+      @Override public List<Object> def(JValue j) {
         if (j instanceof JPrimitive) {
           return l.mk(((JPrimitive) j).value());
         } else {
@@ -242,13 +242,13 @@ public final class Jsons {
     };
 
     public static final Pred<JValue> isZero = new Pred<JValue>() {
-      @Override public Boolean apply(JValue v) {
+      @Override public Boolean def(JValue v) {
         return isZero(v);
       }
     };
 
     public static final Pred<Field> isFieldZero = new Pred<Field>() {
-      @Override public Boolean apply(Field f) {
+      @Override public Boolean def(Field f) {
         return isZero(f);
       }
     };
@@ -257,25 +257,25 @@ public final class Jsons {
      * Create a function that converts a map entry into a {@link Field}.
      */
     public static final Fn<Entry<String, JValue>, Field> entryToJField = new Fn<Entry<String, JValue>, Field>() {
-      @Override public Field apply(Entry<String, JValue> e) {
+      @Override public Field def(Entry<String, JValue> e) {
         return new Field(e.getKey(), e.getValue());
       }
     };
 
     public static final Fn<String, JValue> stringToJValue = new Fn<String, JValue>() {
-      @Override public JValue apply(String s) {
+      @Override public JValue def(String s) {
         return v(s);
       }
     };
 
     public static final Fn<Number, JValue> numberToJValue = new Fn<Number, JValue>() {
-      @Override public JValue apply(Number s) {
+      @Override public JValue def(Number s) {
         return v(s);
       }
     };
 
     public static final Fn<Boolean, JValue> booleanToJValue = new Fn<Boolean, JValue>() {
-      @Override public JValue apply(Boolean s) {
+      @Override public JValue def(Boolean s) {
         return v(s);
       }
     };

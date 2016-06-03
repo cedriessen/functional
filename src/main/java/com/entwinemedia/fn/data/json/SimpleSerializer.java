@@ -19,7 +19,7 @@ package com.entwinemedia.fn.data.json;
 import static com.entwinemedia.fn.Equality.ne;
 import static com.entwinemedia.fn.Prelude.chuck;
 
-import com.entwinemedia.fn.Fx;
+import com.entwinemedia.fn.Ef;
 import com.entwinemedia.fn.Prelude;
 
 import java.io.ByteArrayOutputStream;
@@ -140,9 +140,9 @@ public class SimpleSerializer implements Serializer {
     }
 
     /** {@link SimpleSerializer#toJson(java.io.OutputStream, JValue)} as an effect. */
-    public Fx<OutputStream> toJson(final JValue v) {
-      return new Fx<OutputStream>() {
-        @Override public void apply(OutputStream out) {
+    public Ef<OutputStream> toJson(final JValue v) {
+      return new Ef<OutputStream>() {
+        @Override public void def(OutputStream out) {
           SimpleSerializer.this.toJson(out, v);
         }
       };

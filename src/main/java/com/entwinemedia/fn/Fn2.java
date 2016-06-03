@@ -16,10 +16,24 @@
 
 package com.entwinemedia.fn;
 
+import static com.entwinemedia.fn.Prelude.chuck;
+
 /** Binary function. */
 public abstract class Fn2<A, B, C> {
-  /** Function application. */
-  public abstract C apply(A a, B b);
+  /** Function definition. */
+  protected abstract C def(A a, B b) throws Exception;
+
+  /**
+   * Function application.
+   * Any exception thrown during application will be caught and rethrown using {@link Prelude#chuck(Throwable)}.
+   */
+  public final C apply(A a, B b) {
+    try {
+      return def(a, b);
+    } catch (Exception e) {
+      return chuck(e);
+    }
+  }
 
   public Fn<A, Fn<B, C>> curry() {
     return Fns.curry(this);

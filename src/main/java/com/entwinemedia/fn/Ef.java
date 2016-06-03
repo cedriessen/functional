@@ -16,15 +16,30 @@
 
 package com.entwinemedia.fn;
 
-/** Effect */
-public abstract class Fx<A> {
-  public abstract void apply(A a);
+import static com.entwinemedia.fn.Prelude.chuck;
 
-  public Fx<A> then(final Fx<? super A>... es) {
-    return new Fx<A>() {
-      @Override public void apply(A a) {
-        Fx.this.apply(a);
-        for (Fx<? super A> e : es) {
+/** Effect */
+public abstract class Ef<A> {
+  /** Effect definition. */
+  protected abstract void def(A a) throws Exception;
+
+  /**
+   * Effect application.
+   * Any exception thrown during application will be caught and rethrown using {@link Prelude#chuck(Throwable)}.
+   */
+  public final void apply(A a) {
+    try {
+      def(a);
+    } catch (Exception e) {
+      chuck(e);
+    }
+  }
+
+  public Ef<A> then(final Ef<? super A>... es) {
+    return new Ef<A>() {
+      @Override public void def(A a) throws Exception {
+        Ef.this.apply(a);
+        for (Ef<? super A> e : es) {
           e.apply(a);
         }
       }
@@ -33,8 +48,8 @@ public abstract class Fx<A> {
 
   public Fn<A, Unit> toFn() {
     return new Fn<A, Unit>() {
-      @Override public Unit apply(A a) {
-        Fx.this.apply(a);
+      @Override public Unit def(A a) throws Exception {
+        Ef.this.apply(a);
         return Unit.unit;
       }
     };

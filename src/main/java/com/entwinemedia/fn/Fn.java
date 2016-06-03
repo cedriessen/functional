@@ -16,6 +16,7 @@
 
 package com.entwinemedia.fn;
 
+import static com.entwinemedia.fn.Prelude.chuck;
 import static com.entwinemedia.fn.Stream.$;
 
 import com.entwinemedia.fn.data.Opt;
@@ -25,8 +26,20 @@ import java.lang.reflect.Type;
 
 /** Function from A to B. */
 public abstract class Fn<A, B> {
-  /** Function application. */
-  public abstract B apply(A a);
+  /** Function definition. */
+  protected abstract B def(A a) throws Exception;
+
+  /**
+   * Function application.
+   * Any exception thrown during application will be caught and rethrown using {@link Prelude#chuck(Throwable)}.
+   */
+  public final B apply(A a) {
+    try {
+      return def(a);
+    } catch (Exception e) {
+      return chuck(e);
+    }
+  }
 
   /** Function composition. */
   public <C> Fn<C, B> o(final Fn<? super C, ? extends A> g) {
@@ -39,7 +52,7 @@ public abstract class Fn<A, B> {
   }
 
   /** Turn this function into an effect by ignoring the functions result. */
-  public Fx<A> toFx() {
+  public Ef<A> toFx() {
     return Fns.toFx(this);
   }
 

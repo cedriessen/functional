@@ -16,8 +16,8 @@
 
 package com.entwinemedia.fn.data;
 
+import com.entwinemedia.fn.Ef;
 import com.entwinemedia.fn.Fn;
-import com.entwinemedia.fn.Fx;
 import com.entwinemedia.fn.P1;
 import com.entwinemedia.fn.P2;
 import com.entwinemedia.fn.Stream;
@@ -110,7 +110,7 @@ public abstract class Opt<A> implements Iterable<A> {
   }
 
   /** Run side effect <code>f</code> on the value of a some; do nothing otherwise. */
-  public final Opt<A> each(Fx<? super A> f) {
+  public final Opt<A> each(Ef<? super A> f) {
     if (isSome()) {
       f.apply(get());
     }

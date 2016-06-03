@@ -24,7 +24,7 @@ public final class Fns {
   }
 
   private static final Fn ID = new Fn() {
-    @Override public Object apply(Object a) {
+    @Override public Object def(Object a) {
       return a;
     }
   };
@@ -34,13 +34,13 @@ public final class Fns {
     return ID;
   }
 
-  private static final Fx NOP = new Fx() {
-    @Override public void apply(Object o) {
+  private static final Ef NOP = new Ef() {
+    @Override public void def(Object o) {
     }
   };
 
   @SuppressWarnings("unchecked")
-  public static <A> Fx<A> nop() {
+  public static <A> Ef<A> nop() {
     return NOP;
   }
 
@@ -50,7 +50,7 @@ public final class Fns {
           final Fn<? super A, ? extends B> g) {
     return new Fn<A, C>() {
       @Override
-      public C apply(A a) {
+      public C def(A a) {
         return f.apply(g.apply(a));
       }
     };
@@ -63,7 +63,7 @@ public final class Fns {
           final Fn<? super A, ? extends B> h) {
     return new Fn<A, D>() {
       @Override
-      public D apply(A a) {
+      public D def(A a) {
         return f.apply(g.apply(h.apply(a)));
       }
     };
@@ -77,7 +77,7 @@ public final class Fns {
           final Fn<? super A, ? extends B> i) {
     return new Fn<A, E>() {
       @Override
-      public E apply(A a) {
+      public E def(A a) {
         return f.apply(g.apply(h.apply(i.apply(a))));
       }
     };
@@ -89,7 +89,7 @@ public final class Fns {
           final Fn<? super B, ? extends C> g) {
     return new Fn<A, C>() {
       @Override
-      public C apply(A a) {
+      public C def(A a) {
         return g.apply(f.apply(a));
       }
     };
@@ -102,7 +102,7 @@ public final class Fns {
           final Fn<? super C, ? extends D> h) {
     return new Fn<A, D>() {
       @Override
-      public D apply(A a) {
+      public D def(A a) {
         return h.apply(g.apply(f.apply(a)));
       }
     };
@@ -120,9 +120,9 @@ public final class Fns {
   /** Curry a function of arity 2. */
   public static <A, B, C> Fn<A, Fn<B, C>> curry(final Fn2<? super A, ? super B, ? extends C> f) {
     return new Fn<A, Fn<B, C>>() {
-      @Override public Fn<B, C> apply(final A a) {
+      @Override public Fn<B, C> def(final A a) {
         return new Fn<B, C>() {
-          @Override public C apply(B b) {
+          @Override public C def(B b) {
             return f.apply(a, b);
           }
         };
@@ -133,7 +133,7 @@ public final class Fns {
   /** Uncurry to a function of arity 2. */
   public static <A, B, C> Fn2<A, B, C> uncurry(final Fn<A, Fn<B, C>> f) {
     return new Fn2<A, B, C>() {
-      @Override public C apply(A a, B b) {
+      @Override public C def(A a, B b) {
         return f.apply(a).apply(b);
       }
     };
@@ -142,7 +142,7 @@ public final class Fns {
   /** Flip arguments of a function of arity 2. */
   public static <A, B, C> Fn2<B, A, C> flip(final Fn2<? super A, ? super B, ? extends C> f) {
     return new Fn2<B, A, C>() {
-      @Override public C apply(B b, A a) {
+      @Override public C def(B b, A a) {
         return f.apply(a, b);
       }
     };
@@ -151,7 +151,7 @@ public final class Fns {
   /** Partial application of argument 1. */
   public static <A, B, C> Fn<B, C> _1p(final Fn2<? super A, ? super B, ? extends C> f, final A a) {
     return new Fn<B, C>() {
-      @Override public C apply(B b) {
+      @Override public C def(B b) {
         return f.apply(a, b);
       }
     };
@@ -160,7 +160,7 @@ public final class Fns {
   /** Partial application of argument 2. */
   public static <A, B, C> Fn<A, C> _2p(final Fn2<? super A, ? super B, ? extends C> f, final B b) {
     return new Fn<A, C>() {
-      @Override public C apply(A a) {
+      @Override public C def(A a) {
         return f.apply(a, b);
       }
     };
@@ -169,7 +169,7 @@ public final class Fns {
   /** Partial application of argument 2. */
   public static <A, B, C> Fn<A, C> _2p(final Fn<? super A, Fn<? super B, ? extends C>> f, final B b) {
     return new Fn<A, C>() {
-      @Override public C apply(A a) {
+      @Override public C def(A a) {
         return f.apply(a).apply(b);
       }
     };
@@ -183,7 +183,7 @@ public final class Fns {
 
   public static <A, B> Fn<A, Opt<B>> tryOpt(final Fn<? super A, ? extends B> f) {
     return new Fn<A, Opt<B>>() {
-      @Override public Opt<B> apply(A a) {
+      @Override public Opt<B> def(A a) {
         try {
           return Opt.some(f.apply(a));
         } catch (Exception e) {
@@ -213,30 +213,30 @@ public final class Fns {
   }
 
   /** Turn a function into an effect by discarding its result. */
-  public static <A, B> Fx<A> toFx(final Fn<? super A, ? extends B> f) {
-    return new Fx<A>() {
-      @Override public void apply(A a) {
+  public static <A, B> Ef<A> toFx(final Fn<? super A, ? extends B> f) {
+    return new Ef<A>() {
+      @Override public void def(A a) {
         f.apply(a);
       }
     };
   }
 
   /** Create an effect that applies its argument to all <code>fx</code> in order. */
-  public static <A> Fx<A> all(final Iterable<Fx<A>> fx) {
-    return new Fx<A>() {
-      @Override public void apply(A a) {
-        for (Fx<A> f : fx) {
+  public static <A> Ef<A> all(final Iterable<Ef<A>> fx) {
+    return new Ef<A>() {
+      @Override public void def(A a) {
+        for (Ef<A> f : fx) {
           f.apply(a);
         }
       }
     };
   }
 
-  /** Create a function that applies its argument to <code>fx</code> and then to <code>f</code>. */
-  public static <A, B> Fn<A, B> tee(final Fn<? super A, ? extends B> f, final Fx<? super A> fx) {
+  /** Create a function that applies its argument to <code>ef</code> and then to <code>f</code>. */
+  public static <A, B> Fn<A, B> tee(final Fn<? super A, ? extends B> f, final Ef<? super A> ef) {
     return new Fn<A, B>() {
-      @Override public B apply(A a) {
-        fx.apply(a);
+      @Override public B def(A a) {
+        ef.apply(a);
         return f.apply(a);
       }
     };

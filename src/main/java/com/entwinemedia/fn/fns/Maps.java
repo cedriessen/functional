@@ -28,7 +28,7 @@ public final class Maps {
 
   public static <A, B> Fn<Map.Entry<A, B>, P2<A, B>> toP2() {
     return new Fn<Entry<A, B>, P2<A, B>>() {
-      @Override public P2<A, B> apply(Entry<A, B> e) {
+      @Override public P2<A, B> def(Entry<A, B> e) {
         return com.entwinemedia.fn.Products.E.p2(e.getKey(), e.getValue());
       }
     };
