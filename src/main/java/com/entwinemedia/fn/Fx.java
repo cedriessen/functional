@@ -19,7 +19,7 @@ package com.entwinemedia.fn;
 import static com.entwinemedia.fn.Prelude.chuck;
 
 /** Effect */
-public abstract class Ef<A> {
+public abstract class Fx<A> {
   /** Effect definition. */
   protected abstract void def(A a) throws Exception;
 
@@ -35,11 +35,11 @@ public abstract class Ef<A> {
     }
   }
 
-  public Ef<A> then(final Ef<? super A>... es) {
-    return new Ef<A>() {
+  public Fx<A> then(final Fx<? super A>... es) {
+    return new Fx<A>() {
       @Override public void def(A a) throws Exception {
-        Ef.this.apply(a);
-        for (Ef<? super A> e : es) {
+        Fx.this.apply(a);
+        for (Fx<? super A> e : es) {
           e.apply(a);
         }
       }
@@ -49,7 +49,7 @@ public abstract class Ef<A> {
   public Fn<A, Unit> toFn() {
     return new Fn<A, Unit>() {
       @Override public Unit def(A a) throws Exception {
-        Ef.this.apply(a);
+        Fx.this.apply(a);
         return Unit.unit;
       }
     };

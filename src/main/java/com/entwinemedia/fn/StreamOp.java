@@ -467,7 +467,7 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
     };
   }
 
-  public StreamOp<A, B> each(final Ef<? super B> f) {
+  public StreamOp<A, B> each(final Fx<? super B> f) {
     return new StreamOp<A, B>() {
       @Override public Stream<B> def(Stream<? extends A> s) {
         return StreamOp.each(f, StreamOp.this.apply(s));
@@ -475,7 +475,7 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
     };
   }
 
-  public static <A> Stream<A> each(final Ef<? super A> f, final Stream<A> s) {
+  public static <A> Stream<A> each(final Fx<? super A> f, final Stream<A> s) {
     return new Stream<A>(s.getSizeHint()) {
       @Override public Iterator<A> iterator() {
         return new IdentityIterate<A>(s.iterator()) {

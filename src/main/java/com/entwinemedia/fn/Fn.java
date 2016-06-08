@@ -52,7 +52,7 @@ public abstract class Fn<A, B> {
   }
 
   /** Turn this function into an effect by ignoring the functions result. */
-  public Ef<A> toFx() {
+  public Fx<A> toFx() {
     return Fns.toFx(this);
   }
 

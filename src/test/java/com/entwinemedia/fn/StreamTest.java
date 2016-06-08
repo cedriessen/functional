@@ -633,14 +633,14 @@ public class StreamTest {
     return params;
   }
 
-  private static final Ef<Object> println = new Ef<Object>() {
+  private static final Fx<Object> println = new Fx<Object>() {
     @Override public void def(Object o) {
       System.out.println(o);
     }
   };
 
-  private static Ef<Object> write(final Writer writer) {
-    return new Ef<Object>() {
+  private static Fx<Object> write(final Writer writer) {
+    return new Fx<Object>() {
       @Override public void def(Object o) {
         try {
           writer.write(o.toString());

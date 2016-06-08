@@ -34,13 +34,13 @@ public final class Fns {
     return ID;
   }
 
-  private static final Ef NOP = new Ef() {
+  private static final Fx NOP = new Fx() {
     @Override public void def(Object o) {
     }
   };
 
   @SuppressWarnings("unchecked")
-  public static <A> Ef<A> nop() {
+  public static <A> Fx<A> nop() {
     return NOP;
   }
 
@@ -213,8 +213,8 @@ public final class Fns {
   }
 
   /** Turn a function into an effect by discarding its result. */
-  public static <A, B> Ef<A> toFx(final Fn<? super A, ? extends B> f) {
-    return new Ef<A>() {
+  public static <A, B> Fx<A> toFx(final Fn<? super A, ? extends B> f) {
+    return new Fx<A>() {
       @Override public void def(A a) {
         f.apply(a);
       }
@@ -222,21 +222,21 @@ public final class Fns {
   }
 
   /** Create an effect that applies its argument to all <code>fx</code> in order. */
-  public static <A> Ef<A> all(final Iterable<Ef<A>> fx) {
-    return new Ef<A>() {
+  public static <A> Fx<A> all(final Iterable<Fx<A>> fx) {
+    return new Fx<A>() {
       @Override public void def(A a) {
-        for (Ef<A> f : fx) {
+        for (Fx<A> f : fx) {
           f.apply(a);
         }
       }
     };
   }
 
-  /** Create a function that applies its argument to <code>ef</code> and then to <code>f</code>. */
-  public static <A, B> Fn<A, B> tee(final Fn<? super A, ? extends B> f, final Ef<? super A> ef) {
+  /** Create a function that applies its argument to <code>fx</code> and then to <code>f</code>. */
+  public static <A, B> Fn<A, B> tee(final Fn<? super A, ? extends B> f, final Fx<? super A> fx) {
     return new Fn<A, B>() {
       @Override public B def(A a) {
-        ef.apply(a);
+        fx.apply(a);
         return f.apply(a);
       }
     };

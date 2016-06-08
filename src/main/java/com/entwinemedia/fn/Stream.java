@@ -257,7 +257,7 @@ public abstract class Stream<A> implements Iterable<A> {
     return StreamOp.wrap(pre, post, this);
   }
 
-  public final Stream<A> each(Ef<? super A> f) {
+  public final Stream<A> each(Fx<? super A> f) {
     return StreamOp.each(f, this);
   }
 
