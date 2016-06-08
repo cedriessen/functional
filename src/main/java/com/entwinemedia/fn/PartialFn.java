@@ -18,29 +18,39 @@ package com.entwinemedia.fn;
 
 import com.entwinemedia.fn.data.Opt;
 
-/** A partial function. Partial functions are not defined at any argument. */
+/**
+ * A partial function. Partial functions are not defined for any possible value of the type they accept.
+ * That means their domain is a subset of the domain of the type.
+ * <p/>
+ * In case the function is not defined for a value {@code x} a {@link DomainException} is raised.
+ */
 public abstract class PartialFn<A, B> extends Fn<A, B> {
   /** @return null to indicate that the function is not defined at <code>a</code>. */
-  protected abstract B partial(A a);
+  protected abstract B defPartial(A a) throws Exception;
 
-  public Opt<B> isDefinedAt(A a) {
-    return Opt.nul(partial(a));
+  public boolean isDefinedAt(A a) {
+    try {
+      apply(a);
+      return true;
+    } catch (DomainException e) {
+      return false;
+    }
   }
 
-  @Override public final B def(A a) {
-    final B b = partial(a);
+  @Override protected final B def(A a) throws Exception {
+    final B b = defPartial(a);
     if (b != null) {
       return b;
     } else {
-      throw new RuntimeException("Partial function " + this + " is not defined at " + a);
+      throw new DomainException("Partial function " + this + " is not defined at " + a);
     }
   }
 
   public PartialFn<A, B> or(final PartialFn<? super A, ? extends B> f) {
     return new PartialFn<A, B>() {
-      @Override public B partial(A a) {
-        final B b = PartialFn.this.partial(a);
-        return b != null ? b : f.partial(a);
+      @Override public B defPartial(A a) throws Exception {
+        final B b = PartialFn.this.defPartial(a);
+        return b != null ? b : f.apply(a);
       }
     };
   }
@@ -48,8 +58,8 @@ public abstract class PartialFn<A, B> extends Fn<A, B> {
   /** Convert into a function that returns an option. */
   public Fn<A, Opt<B>> lift() {
     return new Fn<A, Opt<B>>() {
-      @Override public Opt<B> def(A a) {
-        return Opt.nul(PartialFn.this.partial(a));
+      @Override public Opt<B> def(A a) throws Exception {
+        return Opt.nul(PartialFn.this.defPartial(a));
       }
     };
   }

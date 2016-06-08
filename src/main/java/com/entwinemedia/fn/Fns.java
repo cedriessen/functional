@@ -111,7 +111,7 @@ public final class Fns {
   /** Turn a function into a partial function. */
   public static <A, B> PartialFn<A, B> toPartial(final Fn<A, B> f) {
     return new PartialFn<A, B>() {
-      @Override protected B partial(A a) {
+      @Override protected B defPartial(A a) {
         return f.apply(a);
       }
     };
@@ -200,9 +200,9 @@ public final class Fns {
    */
   public static <A, B> PartialFn<A, B> or(final PartialFn<? super A, ? extends B>... fs) {
     return new PartialFn<A, B>() {
-      @Override protected B partial(A a) {
+      @Override protected B defPartial(A a) throws Exception {
         for (PartialFn<? super A, ? extends B> f : fs) {
-          final B b = f.partial(a);
+          final B b = f.defPartial(a);
           if (b != null) {
             return b;
           }

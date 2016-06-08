@@ -514,17 +514,17 @@ public class StreamTest {
   @Test
   public void testFindMap() {
     PartialFn<Integer, String> greater3 = new PartialFn<Integer, String>() {
-      @Override protected String partial(Integer integer) {
+      @Override protected String defPartial(Integer integer) {
         return integer > 3 ? "greater than three" : null;
       }
     };
     PartialFn<Number, String> equals2 = new PartialFn<Number, String>() {
-      @Override protected String partial(Number number) {
+      @Override protected String defPartial(Number number) {
         return number.intValue() == 2 ? "equals two" : null;
       }
     };
     PartialFn<Number, String> less2 = new PartialFn<Number, String>() {
-      @Override protected String partial(Number number) {
+      @Override protected String defPartial(Number number) {
         return number.intValue() < 2 ? "less than two" : null;
       }
     };

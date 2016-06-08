@@ -17,6 +17,7 @@
 package com.entwinemedia.fn;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -37,7 +38,7 @@ public class FnsTest {
   }
 
   @Test
-  public void testFnX() {
+  public void testFn() {
     final Fn<Integer, String> f = new Fn<Integer, String>() {
       @Override public String def(Integer integer) throws IOException {
         throw new IOException();
@@ -49,5 +50,39 @@ public class FnsTest {
     } catch (Exception ignore) {
     }
     assertEquals(Opt.<String>none(), f.tryOpt().apply(10));
+  }
+
+  @Test
+  public void partial() throws Exception {
+    final PartialFn<String, String> abc = new PartialFn<String, String>() {
+      @Override protected String defPartial(String s) throws Exception {
+        return s.startsWith("abc") ? s : null;
+      }
+    };
+    final PartialFn<String, String> bcd = new PartialFn<String, String>() {
+      @Override protected String defPartial(String s) throws Exception {
+        return s.startsWith("bcd") ? s : null;
+      }
+    };
+    try {
+      abc.apply("bla");
+      fail();
+    } catch (DomainException expect) {
+    }
+    assertEquals(abc.apply("abc"), "abc");
+    assertTrue(abc.isDefinedAt("abc"));
+    assertFalse(abc.isDefinedAt("bcd"));
+    assertEquals("bcd", abc.or(bcd).apply("bcd"));
+    assertTrue("bcd", abc.or(bcd).isDefinedAt("bcd"));
+    assertTrue("bcd", abc.or(bcd).isDefinedAt("abc"));
+    assertFalse("bcd", abc.or(bcd).isDefinedAt("cde"));
+    try {
+      abc.or(bcd).apply("cde");
+      fail();
+    } catch (DomainException expect) {
+    }
+    assertEquals(Opt.none(), abc.lift().apply("bcd"));
+    assertEquals(Opt.some("abc"), abc.lift().apply("abc"));
+    assertEquals(Opt.some("abc"), abc.or(bcd).lift().apply("abc"));
   }
 }
