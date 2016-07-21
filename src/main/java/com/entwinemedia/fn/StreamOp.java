@@ -675,7 +675,7 @@ public abstract class StreamOp<A, B> extends Fn<Stream<? extends A>, Stream<B>> 
 
     @Override public final B next() {
       try {
-        if (next != null) {
+        if (hasNext()) {
           return next;
         } else {
           throw new NoSuchElementException();

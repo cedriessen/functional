@@ -51,9 +51,11 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 
 @RunWith(JUnitParamsRunner.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -230,6 +232,44 @@ public class StreamTest {
     final List<Integer> r = $(0, 1, 2, 3, 4, 5, 6, 7, 8, 9).take(5).toList();
     assertEquals(5, r.size());
     assertEquals(l.mk(0, 1, 2, 3, 4), r);
+  }
+
+  @Test
+  public void testTakeWithIterator() {
+    final Stream<Integer> s = $(0, 1, 2, 3, 4, 5).take(3);
+    final Iterator<Integer> i = s.iterator();
+    assertTrue(i.hasNext());
+    assertEquals(new Integer(0), i.next());
+    assertTrue(i.hasNext());
+    assertEquals(new Integer(1), i.next());
+    assertTrue(i.hasNext());
+    assertEquals(new Integer(2), i.next());
+    assertFalse(i.hasNext());
+    try {
+      i.next();
+      fail();
+    } catch (NoSuchElementException expect) {
+    }
+  }
+
+  @Test
+  public void testTakeWithIteratorNoHasNext() {
+    final Iterator<String> s = $("a", "b", "c", "d").take(2).iterator();
+    s.next();
+    s.next();
+    assertFalse(s.hasNext());
+  }
+
+  @Test
+  public void testTakeWithIteratorIdempotencyOfHasNext() {
+    final Iterator<String> s = $("a", "b", "c", "d").take(2).iterator();
+    assertTrue(s.hasNext());
+    assertTrue(s.hasNext());
+    assertTrue(s.hasNext());
+    assertTrue(s.hasNext());
+    assertEquals("a", s.next());
+    assertEquals("b", s.next());
+    assertFalse(s.hasNext());
   }
 
   @Test
