@@ -1,3 +1,7 @@
+Release 1.4.2
+-------------
+- Improve exception handling for JSON fields (#12)
+
 Release 1.4.1
 -------------
 - Fix next() of stream iterator (threw NoSuchElementException if hasNext() has not been called before)
