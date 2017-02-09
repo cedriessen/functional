@@ -27,6 +27,8 @@ public final class Field {
   private final JValue value;
 
   Field(String key, JValue value) {
+    if (value instanceof JPrimitive && ((JPrimitive) value).value() == null)
+      throw new IllegalArgumentException(String.format("Value of field '%s' must not be null", key));
     this.key = key;
     this.value = value;
   }
