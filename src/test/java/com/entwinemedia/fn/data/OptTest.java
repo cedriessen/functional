@@ -107,4 +107,15 @@ public class OptTest {
     assertFalse(set.contains(a));
     assertEquals(0, set.size());
   }
+
+  @Test
+  public void testVavrSome() {
+    assertTrue(Opt.some("x").toVavr().isDefined());
+    assertEquals("x", Opt.some("x").toVavr().get());
+  }
+
+  @Test
+  public void testVavrNone() {
+    assertFalse(Opt.none(String.class).toVavr().isDefined());
+  }
 }

@@ -491,7 +491,7 @@ public class StreamTest {
     final StreamFold<Integer, Integer> sum = dbl.then(StreamFold.sum(Monoids.intAddition));
     final StreamFold<Object, String> mkString = StreamFold.mkString("-");
     assertEquals(new Integer(12), s.apply(sum));
-    assertEquals("4-8-12", s.apply(dbl.o(dbl).then(StreamFold.mkString("-"))));
+    assertEquals("4-8-12", s.apply(((StreamOp)dbl).o(dbl).then(StreamFold.mkString("-"))));
     assertEquals("1-2-3", s.apply(StreamFold.mk(mkString.toFn())));
   }
 

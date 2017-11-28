@@ -1,3 +1,8 @@
+Release 1.5.0
+-------------
+- Add `toVavr` method to `Opt`
+- Please note that this version now depends on vavr.io and requires Java 8
+
 Release 1.4.2
 -------------
 - Improve exception handling for JSON fields (#12)
