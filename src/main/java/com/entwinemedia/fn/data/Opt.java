@@ -24,6 +24,7 @@ import com.entwinemedia.fn.Stream;
 import com.entwinemedia.fn.StreamFold;
 import com.entwinemedia.fn.StreamOp;
 
+import io.vavr.control.Option;
 import java.util.Iterator;
 import java.util.List;
 
@@ -186,6 +187,10 @@ public abstract class Opt<A> implements Iterable<A> {
   @Override
   public final Iterator<A> iterator() {
     return toList().iterator();
+  }
+
+  public Option<A> toVavr() {
+    return Option.of(orNull());
   }
 
   @Override

@@ -1,0 +1,17 @@
+# ignore maven target directories
+target/
+
+# ignore Eclipse project data
+.project
+.classpath
+.metadata/
+.settings/
+.recommenders/
+
+# ignore NetBeans project data
+*/nbproject/*
+
+# Ignore all temporary editor files
+*.swp
+*.iml
+.idea/
