@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+    <servers>
+        <server>
+            <id>artifact-repository</id>
+            <username>${env.ARTIFACT_REPOSITORY_USER}</username>
+            <password>${env.ARTIFACT_REPOSITORY_PASSWORD}</password>
+        </server>
+    </servers>
+
+    <mirrors>
+        <mirror>
+            <!--This ID must be identical to the server artifact-repository in the servers element as otherwise authentication will fail. -->
+            <id>artifact-repository</id>
+            <mirrorOf>*</mirrorOf>
+            <name>All Maven Repositories Mirror</name>
+            <url>${env.ARTIFACT_REPOSITORY_URL}</url>
+        </mirror>
+    </mirrors>
+
+    <profiles>
+        <profile>
+            <id>artifact-repository</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+          <properties>
+            <artifact.repository.snapshot.url>${env.ARTIFACT_REPOSITORY_SNAPSHOT_URL}</artifact.repository.snapshot.url>
+            <artifact.repository.release.url>${env.ARTIFACT_REPOSITORY_RELEASE_URL}</artifact.repository.release.url>
+          </properties>
+          <repositories>
+                <repository>
+                    <!--This ID must be identical to the server artifact-repository in the servers element as otherwise authentication will fail. -->
+                    <id>artifact-repository</id>
+                    <url>${env.ARTIFACT_REPOSITORY_URL}</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </repository>
+            </repositories>
+        </profile>
+    </profiles>
+
+</settings>
