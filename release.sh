@@ -35,6 +35,13 @@ read -s TOKEN
 
 git checkout master &&
 git pull &&
+
+if [ $(git tag -l "$RELEASE_VERSION") ]
+    then
+        echo "Version $RELEASE_VERSION already exists. Release aborted!"
+        exit 1
+fi
+
 ./mvnw versions:set -DnewVersion=$RELEASE_VERSION versions:commit &&
 git add pom.xml &&
 git commit -m "release version $RELEASE_VERSION" &&
