@@ -77,6 +77,7 @@ fi
 
 git config user.name $FIRST_NAME_LAST_NAME
 git config user.email $EMAIL_ADDRESS
+git config push.default simple
 git remote set-url origin "https://$GITHUB_ACCESS_TOKEN@github.com/entwinemedia/functional.git" &&
 
 git add pom.xml &&
