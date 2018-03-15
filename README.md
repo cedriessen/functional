@@ -13,9 +13,11 @@ A library for functional programming in Java.
     export ARTIFACT_REPOSITORY_PASSWORD="<PASSWORD>"
     export ARTIFACT_REPOSITORY_SNAPSHOT_URL="https://<SNAPSHOT_URL>"
     export ARTIFACT_REPOSITORY_RELEASE_URL="https://<RELEASE_URL>"
+    export EMAIL_ADDRESS="<your@email.com>"
+    export FIRST_NAME_LAST_NAME="<Firstname Lastname>"
     ```
     
-    Optional
+    Optional if running in interactive mode, otherwise must be exported.
     
     ```
     export GITHUB_ACCESS_TOKEN="<TOKEN>"

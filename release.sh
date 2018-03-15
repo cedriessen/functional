@@ -14,7 +14,9 @@
     #   - export ARTIFACT_REPOSITORY_PASSWORD="<PASSWORD>"
     #   - export ARTIFACT_REPOSITORY_SNAPSHOT_URL="https://<SNAPSHOT_URL>"
     #   - export ARTIFACT_REPOSITORY_RELEASE_URL="https://<RELEASE_URL>"
-#   - Optional
+    #   - export EMAIL_ADDRESS="<your@email.com>"
+    #   - export FIRST_NAME_LAST_NAME="<Firstname Lastname>"
+#   - Optional if running in interactive mode, otherwise must be exported
 #       - export GITHUB_ACCESS_TOKEN="<TOKEN>"
 
 # - square brackets [optional option]
@@ -42,7 +44,19 @@ GITHUB_PROJECT_URL=https://github.com/entwinemedia/functional
 if [ -z "$GITHUB_ACCESS_TOKEN" ]
   then
     echo "Enter GitHub access token for $GITHUB_PROJECT_URL:"
-    read -t 10 -s GITHUB_ACCESS_TOKEN || echo "Error: GITHUB_ACCESS_TOKEN not supplied."; exit 1
+    read -t 10 -s GITHUB_ACCESS_TOKEN || { echo "Error: GitHub access token not supplied."; exit 1; }
+fi
+
+if [ -z "$FIRST_NAME_LAST_NAME" ]
+  then
+    echo "Enter your first name and last name:"
+    read -t 10 FIRST_NAME_LAST_NAME || { echo "Error: First name and last name not supplied."; exit 1; }
+fi
+
+if [ -z "$EMAIL_ADDRESS" ]
+  then
+    echo "Enter your email address:"
+    read -t 10 EMAIL_ADDRESS || { echo "Error: Email address not supplied."; exit 1; }
 fi
 
 echo "###############################################################"
@@ -64,6 +78,8 @@ fi
 git add pom.xml &&
 git commit -m "release version $RELEASE_VERSION" &&
 git remote set-url origin "https://$GITHUB_ACCESS_TOKEN@github.com/entwinemedia/functional.git" &&
+git config user.name $FIRST_NAME_LAST_NAME
+git config user.email $EMAIL_ADDRESS
 git push origin &&
 git tag -a $RELEASE_VERSION -m "release $RELEASE_VERSION" &&
 git push origin $RELEASE_VERSION &&
