@@ -64,7 +64,7 @@ echo "# Starting Entwine Functional version $RELEASE_VERSION release!"
 echo "###############################################################"
 
 
-git checkout add-release-automation-configuration &&
+git checkout master &&
 git pull &&
 
 if [ $(git tag -l "$RELEASE_VERSION") ]
