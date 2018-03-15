@@ -1,7 +1,33 @@
 #!/usr/bin/env bash
 
+###############################################################################
+# # Script for releasing the Entwine Functional Library
+
+# Requirements:
+# - Java 8
+# - git
+# - Access to GitHub [Entwine Functional Project](https://github.com/entwinemedia/functional)
+# - The following environmental variables exported:
+#   - Required
+    #   - export ARTIFACT_REPOSITORY_URL="https://<URL>"
+    #   - export ARTIFACT_REPOSITORY_USER="<USERNAME>"
+    #   - export ARTIFACT_REPOSITORY_PASSWORD="<PASSWORD>"
+    #   - export ARTIFACT_REPOSITORY_SNAPSHOT_URL="https://<SNAPSHOT_URL>"
+    #   - export ARTIFACT_REPOSITORY_RELEASE_URL="https://<RELEASE_URL>"
+#   - Optional
+#       - export GITHUB_ACCESS_TOKEN="<TOKEN>"
+
+# - square brackets [optional option]
+# - angle brackets <required argument>
+# - curly braces {default values}
+# - parenthesis (miscellaneous info)
+
+# Usage:
+#    ./release.sh <release_version>
+###############################################################################
+
 # Usage instructions
-USAGE="Usage: `basename $0` <release_version> <build_server_url>"
+USAGE="Usage: `basename $0` <release_version>"
 
 if [ -z "$1" ]
   then
@@ -10,30 +36,21 @@ if [ -z "$1" ]
     exit 1
 fi
 
-if [ -z "$2" ]
-  then
-    echo "No build server URL supplied"
-    echo $USAGE
-    exit 1
-fi
-
 RELEASE_VERSION=$1
-BUILD_SERVER_URL=$2
+GITHUB_PROJECT_URL=https://github.com/entwinemedia/functional
+
+if [ -z "$GITHUB_ACCESS_TOKEN" ]
+  then
+    echo "Enter GitHub access token for $GITHUB_PROJECT_URL:"
+    read -t 10 -s GITHUB_ACCESS_TOKEN || echo "Error: GITHUB_ACCESS_TOKEN not supplied."; exit 1
+fi
 
 echo "###############################################################"
 echo "# Starting Entwine Functional version $RELEASE_VERSION release!"
 echo "###############################################################"
 
-echo "Enter username for $BUILD_SERVER_URL:"
-read -s USERNAME
 
-echo "Enter password for $BUILD_SERVER_URL:"
-read -s PASSWORD
-
-echo "Enter token for the Functional Library build on $BUILD_SERVER_URL:"
-read -s TOKEN
-
-git checkout master &&
+git checkout add-release-automation-configuration &&
 git pull &&
 
 if [ $(git tag -l "$RELEASE_VERSION") ]
@@ -43,14 +60,16 @@ if [ $(git tag -l "$RELEASE_VERSION") ]
 fi
 
 ./mvnw versions:set -DnewVersion=$RELEASE_VERSION versions:commit &&
+
 git add pom.xml &&
 git commit -m "release version $RELEASE_VERSION" &&
+git remote set-url origin "https://$GITHUB_ACCESS_TOKEN@github.com/entwinemedia/functional.git" &&
 git push origin &&
 git tag -a $RELEASE_VERSION -m "release $RELEASE_VERSION" &&
 git push origin $RELEASE_VERSION &&
 
-curl -X POST --user $USERNAME:$PASSWORD "$BUILD_SERVER_URL/job/Entwine%20-%20Functional%20-%20Release/buildWithParameters?token=$TOKEN&cause=Build%20Release%20$RELEASE_VERSION%20and%20Publish%20to%20Remote%20Repository" &&
+./mvnw --settings=settings.xml deploy -Pdeploy &&
 
-echo "####################################################################"
-echo "# Entwine Functional version $RELEASE_VERSION successfully released!"
+echo "####################################################################" &&
+echo "# Entwine Functional version $RELEASE_VERSION successfully released!" &&
 echo "####################################################################"
