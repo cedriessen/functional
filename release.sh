@@ -75,11 +75,12 @@ fi
 
 ./mvnw versions:set -DnewVersion=$RELEASE_VERSION versions:commit &&
 
-git add pom.xml &&
-git commit -m "release version $RELEASE_VERSION" &&
-git remote set-url origin "https://$GITHUB_ACCESS_TOKEN@github.com/entwinemedia/functional.git" &&
 git config user.name $FIRST_NAME_LAST_NAME
 git config user.email $EMAIL_ADDRESS
+git remote set-url origin "https://$GITHUB_ACCESS_TOKEN@github.com/entwinemedia/functional.git" &&
+
+git add pom.xml &&
+git commit -m "release version $RELEASE_VERSION" &&
 git push origin &&
 git tag -a $RELEASE_VERSION -m "release $RELEASE_VERSION" &&
 git push origin $RELEASE_VERSION &&
